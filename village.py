@@ -4,9 +4,10 @@
 from House import House
 from mcpi.minecraft import Minecraft
 from mcpi import block
+from mcpi import vec3
 import random 
 
-def get_village_loc(mc):
+def get_village_coords(mc):
     """checks for right clicks while holding a sword, returns the coordinate of the right clicked block in vec3"""
     blockevents = mc.events.pollBlockHits()
 
@@ -16,12 +17,28 @@ def get_village_loc(mc):
 
     return blockevents[0].pos
 
-if __name__ == "__main__":
+def generate_house_coords(start, end, amount):
+    """returns random coordinates of specified amount in a list x,z tuples"""
+    #TODO add restrictions to limit how close each coordinates can be
+    coords = []
 
-    
+    for i in range(amount):
+        x = random.randint(start.x, end.x)
+        z = random.randint(start.z, end.z)
+        coords.append((x, z))
+
+    print(coords)
+    return coords
+
+if __name__ == "__main__":
     mc = Minecraft.create()
-    loc = get_village_loc(mc)
-    
+
+    vil_length = 200
+    vil_start = get_village_coords(mc)
+    vil_end = vec3.Vec3(vil_start.x + vil_length             , vil_start.y,               vil_start.z + vil_length)
+
+    house_coords = generate_house_coords(vil_start,vil_end, 5)
+
     mc.setBlocks(-200,0,-200,100,200,0)
     mc.setBlocks(-200,-3,-200,0,200,2)
     x = 0
