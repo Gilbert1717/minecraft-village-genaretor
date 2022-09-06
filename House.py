@@ -1,7 +1,7 @@
 from mcpi.minecraft import Minecraft
 import random 
 class House:
-    def __init__ (self,x,y,z,stories,width,length):
+    def __init__ (self,x,y,z,stories = random.randint(1,2),width = random.randrange(8,16),length = random.randrange(10,20)):
         self.x = x
         self.y = y
         self.z = z

@@ -8,8 +8,8 @@ import random
 
 if __name__ == "__main__":
     mc = Minecraft.create()
-    mc.setBlocks(-200,0,-200,100,200,0)
-    mc.setBlocks(-200,-3,-200,0,200,2)
+    # mc.setBlocks(-200,0,-200,100,200,0)
+    # mc.setBlocks(-200,-3,-200,0,200,2)
     x = 0
     y = 0
     z = 0
@@ -19,9 +19,6 @@ if __name__ == "__main__":
     #     y = y - 1
     # print(x,y,z)
     # mc.setBlock(x + 1,y + 1,z + 1, 1)
-    # stories = random.randint(1,3)
-    # width = random.randrange(10,15)
-    # length = random.randrange(15,20)
     house1 = House(x,y,z,1,16,20)
     house1.frame(mc)
     house1.ground(mc)
