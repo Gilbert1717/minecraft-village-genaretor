@@ -6,8 +6,22 @@ from mcpi.minecraft import Minecraft
 from mcpi import block
 import random 
 
+def get_village_loc(mc):
+    """checks for right clicks while holding a sword, returns the coordinate of the right clicked block in vec3"""
+    blockevents = mc.events.pollBlockHits()
+
+    while blockevents == []:
+        blockevents = mc.events.pollBlockHits()
+    
+
+    return blockevents[0].pos
+
 if __name__ == "__main__":
+
+    
     mc = Minecraft.create()
+    loc = get_village_loc(mc)
+    
     mc.setBlocks(-200,0,-200,100,200,0)
     mc.setBlocks(-200,-3,-200,0,200,2)
     x = 0
