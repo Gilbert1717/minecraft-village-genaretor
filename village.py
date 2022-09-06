@@ -47,6 +47,8 @@ if __name__ == "__main__":
 
     path_gen.generate_path(vil_start,vil_end, 20)
 
+    print("made it here!")
+
     mc.setBlocks(-200,0,-200,100,200,0)
     mc.setBlocks(-200,-3,-200,0,200,2)
     x = 0
@@ -67,3 +69,5 @@ if __name__ == "__main__":
     house1.back_window(mc)
     house1.left_window(mc)
     house1.right_window(mc)
+
+    mc.player.setTilePos(x, y + 50, z)
