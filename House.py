@@ -1,4 +1,5 @@
 from mcpi.minecraft import Minecraft
+from mcpi import block
 import random 
 
 class McPosition:
@@ -55,15 +56,6 @@ class House:
     def create_ground(self,mc):
         self.create_wall(mc,self.ground_frontleft,self.ground_backright)
             
-
-    def create_wall(self,mc,start_point,end_point,material = 1,color = 3):
-        start_x = start_point.x
-        start_y = start_point.y
-        start_z = start_point.z
-        end_x = end_point.x
-        end_y = end_point.y
-        end_z = end_point.z
-        mc.setBlocks(start_x, start_y, start_z, end_x, end_y, end_z, material ,color)
 
     def create_walls(self,mc):
         for i in range(self.stories):
