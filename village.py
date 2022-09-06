@@ -50,9 +50,6 @@ if __name__ == "__main__":
     #     y = y - 1
     # print(x,y,z)
     # mc.setBlock(x + 1,y + 1,z + 1, 1)
-    # stories = random.randint(1,3)
-    # width = random.randrange(10,15)
-    # length = random.randrange(15,20)
     house1 = House(x,y,z,1,16,20)
     house1.frame(mc)
     house1.ground(mc)
