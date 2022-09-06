@@ -34,10 +34,14 @@ if __name__ == "__main__":
     mc = Minecraft.create()
 
     vil_length = 200
+   
     vil_start = get_village_coords(mc)
+  
     vil_end = vec3.Vec3(vil_start.x + vil_length             , vil_start.y,               vil_start.z + vil_length)
 
     house_coords = generate_house_coords(vil_start,vil_end, 5)
+
+    print("made it here!")
 
     mc.setBlocks(-200,0,-200,100,200,0)
     mc.setBlocks(-200,-3,-200,0,200,2)
@@ -59,3 +63,5 @@ if __name__ == "__main__":
     house1.back_window(mc)
     house1.left_window(mc)
     house1.right_window(mc)
+
+    mc.player.setTilePos(x, y + 50, z)
