@@ -17,28 +17,23 @@ def get_village_loc(mc):
     return blockevents[0].pos
 
 if __name__ == "__main__":
-
     
     mc = Minecraft.create()
-    loc = get_village_loc(mc)
+    # loc = get_village_loc(mc)
     
     mc.setBlocks(-200,0,-200,100,200,0)
     mc.setBlocks(-200,-3,-200,0,200,2)
     x = 0
     y = 0
     z = 0
+    # house1_location = McPosition(x,y,z)
     # mc.player.setPos(x,y,z)
     # mc.player.getPos()
     # while mc.getBlock(x + 1,y,z + 1) is 0:
     #     y = y - 1
     # print(x,y,z)
-    # mc.setBlock(x + 1,y + 1,z + 1, 1)
-    house1 = House(x,y,z,1,16,20)
-    house1.frame(mc)
-    house1.ground(mc)
-    house1.roof(mc)
-    house1.door(mc)
-    house1.window(mc)
-    house1.back_window(mc)
-    house1.left_window(mc)
-    house1.right_window(mc)
+    # mc.setBlock(x + 1,y + 1,z + 1, 1) 
+    mc.setBlocks(x,y,z,x + 30, y + 30, z + 30, 0)
+    house1 = House(x,y,z,2,16,20)
+    house1.create_house(mc)
+   
