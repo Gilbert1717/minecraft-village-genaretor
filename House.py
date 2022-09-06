@@ -11,7 +11,7 @@ class House:
         self.length = length
         
     def random_exterior(self,block):
-        
+        """returns a random block from the provided list, feel free to add more in the exteriorBlocks list"""
         exteriorBlocks = [block.STONE_BRICK.id,
                           block.BRICK_BLOCK.id,
                           block.NETHER_BRICK.id,
@@ -23,12 +23,14 @@ class House:
         
         number = 0
         number = random.randrange(0, len(exteriorBlocks))
-        randomBlock = block.DIRT.id
         
+        randomBlock = block.DIRT.id
         randomBlock = exteriorBlocks[number]
+        
         return randomBlock
     
     def frame(self,mc):
+        # Changed the input for frame, to include a randomised exterior.
         mc.setBlocks(self.x,self.y,self.z,self.x + self.width,self.y + 6,self.z + self.length, self.random_exterior(block))
         mc.setBlocks(self.x + 1,self.y + 1,self.z + 1,self.x + self.width - 1,self.y + 5,self.z + self.length - 1,0)
 
