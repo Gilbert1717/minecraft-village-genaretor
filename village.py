@@ -5,7 +5,11 @@ from House import House
 from mcpi.minecraft import Minecraft
 from mcpi import block
 from mcpi import vec3
-import random 
+import random
+
+
+import path_gen
+
 
 def get_village_coords(mc):
     """checks for right clicks while holding a sword, returns the coordinate of the right clicked block in vec3"""
@@ -35,12 +39,13 @@ if __name__ == "__main__":
     mc = Minecraft.create()
 
     vil_length = 200
-    
 
     vil_start = get_village_coords(mc)
-    vil_end = vec3.Vec3(vil_start.x + vil_length             , vil_start.y,               vil_start.z + vil_length)
+    vil_end = vec3.Vec3(vil_start.x + vil_length, 
+                        vil_start.y,
+                        vil_start.z + vil_length)
 
-    house_coords = generate_house_coords(vil_start,vil_end, 5)
+    path_gen.generate_path(vil_start,vil_end, 20)
 
     mc.setBlocks(-200,0,-200,100,200,0)
     mc.setBlocks(-200,-3,-200,0,200,2)
