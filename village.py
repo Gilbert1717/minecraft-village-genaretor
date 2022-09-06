@@ -10,12 +10,12 @@ import random
 def get_village_coords(mc):
     """checks for right clicks while holding a sword, returns the coordinate of the right clicked block in vec3"""
     blockevents = mc.events.pollBlockHits()
-    
+
     mc.postToChat('right click on a block while holdling a sword to set village location')
     while blockevents == []:
         blockevents = mc.events.pollBlockHits()
     
-
+    mc.postToChat('location set to ' + str(blockevents[0].pos))
     return blockevents[0].pos
 
 def generate_house_coords(start, end, amount):
