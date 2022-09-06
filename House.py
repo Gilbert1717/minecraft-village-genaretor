@@ -1,4 +1,5 @@
 from mcpi.minecraft import Minecraft
+from mcpi import block
 import random 
 class House:
     def __init__ (self,x,y,z,stories = random.randint(1,2),width = random.randrange(8,16),length = random.randrange(10,20)):
@@ -8,9 +9,27 @@ class House:
         self.stories = stories
         self.width = width
         self.length = length
-
+        
+    def random_exterior(self,block):
+        
+        exteriorBlocks = [block.STONE_BRICK.id,
+                          block.BRICK_BLOCK.id,
+                          block.NETHER_BRICK.id,
+                          block.WOOD_PLANKS.id,
+                          block.COBBLESTONE.id,
+                          block.MOSS_STONE.id,
+                          block.SANDSTONE.id
+                          ]
+        
+        number = 0
+        number = random.randrange(0, len(exteriorBlocks))
+        randomBlock = block.DIRT.id
+        
+        randomBlock = exteriorBlocks[number]
+        return randomBlock
+    
     def frame(self,mc):
-        mc.setBlocks(self.x,self.y,self.z,self.x + self.width,self.y + 6,self.z + self.length,1)
+        mc.setBlocks(self.x,self.y,self.z,self.x + self.width,self.y + 6,self.z + self.length, self.random_exterior(block))
         mc.setBlocks(self.x + 1,self.y + 1,self.z + 1,self.x + self.width - 1,self.y + 5,self.z + self.length - 1,0)
 
     # def wall(self,mc):
