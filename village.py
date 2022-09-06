@@ -11,14 +11,15 @@ def get_village_coords(mc):
     """checks for right clicks while holding a sword, returns the coordinate of the right clicked block in vec3"""
     blockevents = mc.events.pollBlockHits()
 
+    mc.postToChat('right click on a block while holdling a sword to set village location')
     while blockevents == []:
         blockevents = mc.events.pollBlockHits()
     
-
+    mc.postToChat('location set to ' + str(blockevents[0].pos))
     return blockevents[0].pos
 
 def generate_house_coords(start, end, amount):
-    """returns random coordinates of specified amount in a list x,z tuples"""
+    """returns random coordinates within the values of start and end parameters in a list x,z tuples"""
     #TODO add restrictions to limit how close each coordinates can be
     coords = []
 
@@ -34,7 +35,7 @@ if __name__ == "__main__":
     mc = Minecraft.create()
 
     vil_length = 200
-   
+
     vil_start = get_village_coords(mc)
   
     vil_end = vec3.Vec3(vil_start.x + vil_length             , vil_start.y,               vil_start.z + vil_length)
