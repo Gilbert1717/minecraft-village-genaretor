@@ -22,19 +22,20 @@ def get_village_coords(mc):
     mc.postToChat('location set to ' + str(blockevents[0].pos))
     return blockevents[0].pos
 
+
 if __name__ == "__main__":
     mc = Minecraft.create()
 
-    vil_length = 200
+    # vil_length = 200
 
-    vil_start = get_village_coords(mc)
-    vil_end = vec3.Vec3(vil_start.x + vil_length, 
-                        vil_start.y,
-                        vil_start.z + vil_length)
+    # vil_start = get_village_coords(mc)
+    # vil_end = vec3.Vec3(vil_start.x + vil_length, 
+    #                     vil_start.y,
+    #                     vil_start.z + vil_length)
 
-    path_gen.generate_path(vil_start,vil_end, 20)
+    # path_gen.generate_path(vil_start,vil_end, 20)
 
-    print("made it here!")
+    # print("made it here!")
 
     mc.setBlocks(-200,0,-200,100,200,0)
     mc.setBlocks(-200,-3,-200,0,200,2)

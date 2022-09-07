@@ -7,15 +7,36 @@ class McPosition:
         self.x = x
         self.y = y
         self.z = z
-    
+
+class Roof:
+    def __init__ (self,mc,house,storey):
+        x = house.x
+        y = house.y
+        z = house.z
+        height = house.height
+        width = house.width
+        length = house.length
+        self.roof_frontleft = McPosition(x, y + height * storey, z)
+        self.roof_frontright = McPosition(x + width, y + height * storey, z)
+        self.roof_backleft = McPosition(x, y + height * storey, z + length)
+        self.roof_backright = McPosition(x + width, y + height * storey, z + length)
+
+    def create(self,mc,material = 1,color = 3):
+        start_x = self.roof_frontleft.x
+        start_y = self.roof_frontleft.y
+        start_z = self.roof_frontleft.z
+        end_x = self.roof_backright.x
+        end_y = self.roof_backright.y
+        end_z = self.roof_backright.z
+        mc.setBlocks(start_x, start_y, start_z, end_x, end_y, end_z, material ,color)
 
         
 class House:
-    def __init__ (self,x,y,z,stories = random.randint(1,2),width = random.randrange(8,16),length = random.randrange(10,20),hight = 6):
+    def __init__ (self,x,y,z,stories = random.randint(1,2),width = random.randrange(8,16),length = random.randrange(10,20),height = 6):
         self.stories = stories
         self.width = width
         self.length = length
-        self.hight = hight
+        self.height = height
         self.x = x
         self.y = y
         self.z = z
@@ -23,10 +44,8 @@ class House:
         self.ground_frontright = McPosition(x + width, y, z)
         self.ground_backleft = McPosition(x, y, z + length)
         self.ground_backright = McPosition(x + width, y, z + length)
-        self.roof_frontleft = McPosition(x, y + hight, z)
-        self.roof_frontright = McPosition(x + width, y + hight, z)
-        self.roof_backleft = McPosition(x, y + hight, z + length)
-        self.roof_backright = McPosition(x + width, y + hight, z + length)
+        self.roofs = []
+        
 
     def random_exterior(self,block):
 
@@ -47,12 +66,13 @@ class House:
         return randomBlock
     
     def create_roof(self,mc):
-        for i in range(self.stories):
-            self.roof_frontleft.y += self.hight * i 
-            self.roof_backright.y += self.hight * i 
-            print(self.roof_frontleft.y,
-            self.roof_backright.y)
-            self.create_wall(mc,self.roof_frontleft,self.roof_backright)
+        material = random.randint(1,2)
+        colour = random.randint(1,3)
+        for storey in range(self.stories):
+            roof = Roof(mc,self,storey + 1)
+            roof.create(mc,material,colour)
+            self.roofs.append(roof)
+            
 
     def create_ground(self,mc):
         self.create_wall(mc,self.ground_frontleft,self.ground_backright)
@@ -67,14 +87,14 @@ class House:
         mc.setBlocks(start_x, start_y, start_z, end_x, end_y, end_z, material ,color)
         
     def create_walls(self,mc):
-        for i in range(self.stories):
-            self.roof_frontleft.y += self.hight * i 
-            self.roof_backright.y += self.hight * i 
-            print(self.roof_frontleft.y,self.roof_backright.y)
-            self.create_wall(mc,self.roof_frontleft,self.ground_backleft)
-            self.create_wall(mc,self.ground_backleft,self.roof_backright)
-            self.create_wall(mc,self.roof_backright,self.ground_frontright)
-            self.create_wall(mc,self.ground_frontright,self.roof_frontleft)
+        for roof in self.roofs:
+            endpoint1 = McPosition(roof.roof_backleft.x,roof.roof_backleft.y - self.height,roof.roof_backleft.z)
+            endpoint2 = McPosition(roof.roof_frontright.x,roof.roof_frontright.y - self.height,roof.roof_frontright.z)
+            self.create_wall(mc,roof.roof_frontleft,endpoint1)
+            self.create_wall(mc,endpoint1,roof.roof_backright)
+            self.create_wall(mc,roof.roof_backright,endpoint2)
+            self.create_wall(mc,endpoint2,roof.roof_frontleft)
+            
 
     def door(self,mc):
         create_position = self.x + random.randrange(int(self.width/2) - 1,self.width - 3)
