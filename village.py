@@ -37,8 +37,8 @@ if __name__ == "__main__":
 
     # print("made it here!")
 
-    mc.setBlocks(-200,0,-200,100,200,0)
-    mc.setBlocks(-200,-3,-200,0,200,2)
+    # mc.setBlocks(-200,0,-200,100,200,0)
+    # mc.setBlocks(-200,-3,-200,0,200,2)
     x = 0
     y = 0
     z = 0
@@ -49,7 +49,8 @@ if __name__ == "__main__":
     #     y = y - 1
     # print(x,y,z)
     # mc.setBlock(x + 1,y + 1,z + 1, 1) 
-    mc.setBlocks(x,y,z,x + 30, y + 30, z + 30, 0)
-    house1 = House(x,y,z,2,16,20)
+    mc.setBlocks(x,y - 1,z,x + 30, y + 20, z + 30, 0)
+    mc.setBlocks(x + 10,y -1,z + 10,x - 30, y + 20, z - 30, 0)
+    house1 = House(x,y,z,2)
     house1.create_house(mc)
    
