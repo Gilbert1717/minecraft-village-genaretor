@@ -27,7 +27,24 @@ class House:
         self.roof_frontright = McPosition(x + width, y + hight, z)
         self.roof_backleft = McPosition(x, y + hight, z + length)
         self.roof_backright = McPosition(x + width, y + hight, z + length)
+        
+    def random_exterior(self,block):
 
+        exteriorBlocks = [block.STONE_BRICK.id,
+                          block.BRICK_BLOCK.id,
+                          block.NETHER_BRICK.id,
+                          block.WOOD_PLANKS.id,
+                          block.COBBLESTONE.id,
+                          block.MOSS_STONE.id,
+                          block.SANDSTONE.id
+                          ]
+
+        number = 0
+        number = random.randrange(0, len(exteriorBlocks))
+        randomBlock = block.DIRT.id
+
+        randomBlock = exteriorBlocks[number]
+        return randomBlock
     
     def create_roof(self,mc):
         for i in range(self.stories):
