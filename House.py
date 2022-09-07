@@ -28,23 +28,7 @@ class House:
         self.roof_backleft = McPosition(x, y + hight, z + length)
         self.roof_backright = McPosition(x + width, y + hight, z + length)
 
-    # def frame(self,mc):
-    #     # frame_materials = []
-    #     # assign start point
-    #     Start_width_point = self.StartPoint.width
-    #     Start_hight_point = self.StartPoint.hight
-    #     Start_length_point = self.StartPoint.length
-
-    #     # calculate size of the frame
-    #     frame_width = Start_width_point + self.width
-    #     frame_hight = Start_hight_point + self.hight
-    #     frame_length = Start_length_point + self.length
-
-    #     # create frame
-    #     colour = random.randint(1,10)
-    #     # material = frame_materials[random.randint(1,10)]
-    #     mc.setBlocks(Start_width_point, Start_hight_point, Start_length_point, frame_width, frame_hight, frame_length,1,colour)
-    #     mc.setBlocks(Start_width_point + 1, Start_hight_point + 1, Start_length_point + 1, frame_width - 2, frame_hight - 2, frame_length - 2,0)
+    
     def create_roof(self,mc):
         for i in range(self.stories):
             self.roof_frontleft.y += self.hight * i 
