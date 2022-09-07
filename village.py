@@ -38,14 +38,14 @@ def generate_house_coords(start, end, amount):
 if __name__ == "__main__":
     mc = Minecraft.create()
 
-    vil_length = 200
+    vil_length = 100
 
     vil_start = get_village_coords(mc)
     vil_end = vec3.Vec3(vil_start.x + vil_length, 
                         vil_start.y,
                         vil_start.z + vil_length)
 
-    path_gen.generate_path(vil_start,vil_end, 20)
+    path_gen.generate_path(vil_start,vil_end, 8)
 
     print("made it here!")
 
@@ -70,4 +70,4 @@ if __name__ == "__main__":
     house1.left_window(mc)
     house1.right_window(mc)
 
-    mc.player.setTilePos(x, y + 50, z)
+    # mc.player.setTilePos(x, y + 50, z)

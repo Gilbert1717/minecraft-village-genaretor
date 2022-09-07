@@ -1,6 +1,5 @@
 
 from mcpi import minecraft
-
 import random
 import math
 
@@ -19,6 +18,7 @@ def get_random_coords(vil_start, vil_end, am):
     return coords
 
 
+# https://en.wikipedia.org/wiki/Voronoi_diagram
 def generate_path(vil_start, vil_end, am):
     coords = get_random_coords(vil_start, vil_end, am)
     for i in range(vil_start.x, vil_end.x):
@@ -27,9 +27,11 @@ def generate_path(vil_start, vil_end, am):
             distances = []
             for coord in coords:
                 distances.append([coord, math.fabs(coord[0] - i) + math.fabs(coord[1] - j)])
+                # distances.append([coord, math.sqrt((coord[0] - i) ** 2 + (coord[1] - j) ** 2)])
             
             distances.sort(key = lambda list : list[1])
 
             distance_sub = distances[0][1] - distances[1][1]
-            if distance_sub < 4 and distance_sub > -4:
-                mc.setBlock(i,100,j, 1)
+            if distance_sub <= 1 and distance_sub >= -1:
+                mc.setBlocks(   i-1,    100,    j-1, 
+                                i+1,    100,    j+1, 1)
