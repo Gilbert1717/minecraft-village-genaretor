@@ -54,5 +54,6 @@ if __name__ == "__main__":
     structure1 = Structure(x,y,z,16,20)
     # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
     house1 = House(structure1,2)
+    house1.create_house(mc)
    
    

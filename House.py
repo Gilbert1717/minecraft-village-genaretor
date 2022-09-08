@@ -37,8 +37,8 @@ def create_door(mc,McPosition1,McPosition2):
             create_position = McPosition1.x - random.randint(2,width - 2)
             # while mc.getBlock(create_position, McPosition1.y, McPosition1.z + 1) == 0 or mc.getBlock(create_position - 1, McPosition1.y, McPosition1.z) == 0:
             #      create_position = McPosition1.x - random.randint(2,width - 2)
-        mc.setBlock(create_position , McPosition1.y + 1, McPosition1.z, 64, 0)
-        mc.setBlock(create_position , McPosition1.y + 2, McPosition1.z, 64, 0)
+        mc.setBlock(create_position , McPosition1.y + 1, McPosition1.z, 0)
+        mc.setBlock(create_position , McPosition1.y + 2, McPosition1.z, 0)
 
 class McPosition:
     def __init__ (self,x,y,z):
@@ -46,17 +46,12 @@ class McPosition:
         self.y = y
         self.z = z
     
-    def move_x(self,x):
+    def move_position(self,x,y,z):
         self.x = self.x + x
-        return McPosition(self.x,self.y,self.z)
-
-    def move_y(self,y):
         self.y = self.y + y
+        self.z = self.z + z
         return McPosition(self.x,self.y,self.z)
 
-    def move_z(self,z):
-         self.z = self.z + z
-         return McPosition(self.x,self.y,self.z)
 
 class Structure:
     def __init__ (self,x,y,z,width = random.randrange(8,16),length = random.randrange(10,20),height = 5,):
@@ -92,9 +87,9 @@ class Floor:
 
 
     def create_room(self,mc,width,length,material = 1,color = 1): 
-        if width > 4 and length > 4:
+        if width > 5 and length > 5:
             if width >= length:
-                split = random.randint(int(width/2),width - 3) 
+                split = random.randint(int(width/2),width - 4) 
                 mc.setBlocks(self.structure.x + split,self.structure.y + 1,self.structure.z,
                     self.structure.x + split,self.structure.y + self.structure.height - 1,self.structure.z + length, 
                     material, color)
@@ -106,7 +101,7 @@ class Floor:
                 if stop != 0:
                     self.create_room(mc,width,length)
             else:
-                split = random.randint(int(length/2),length - 3)
+                split = random.randint(int(length/2),length - 4)
                 mc.setBlocks(self.structure.x, self.structure.y + 1, self.structure.z + split,
                 self.structure.x + width, self.structure.y + self.structure.height - 1, self.structure.z + split, 
                 material, color)
@@ -128,16 +123,17 @@ class House:
         
     
     def create_floor(self,mc):
-        print(1)
         material = random.randint(1,2)
         colour = random.randint(1,3)
         for storey in range(self.stories):
-            floor = Floor(self.structure,storey)
+            structure = Structure(self.structure.x,self.structure.y,self.structure.z,self.structure.width,self.structure.length,self.structure.height)
+            floor = Floor(structure,storey)
             create_wall(mc,floor.frontleft,floor.backright,material,colour)
             self.floors.append(floor)
 
     def create_rooms(self,mc):
         for floor in self.floors:
+            print(floor.structure.y)
             floor.create_room(mc,self.structure.width,self.structure.length)
             
 
@@ -213,10 +209,9 @@ class House:
     
 
     def create_house(self,mc):
-        print(1)
         self.create_floor(mc)
         # self.create_roof(mc)
-        # self.create_rooms(mc)
+        self.create_rooms(mc)
         # self.create_walls(mc)
         # self.front(mc)
         # self.back_window(mc)
