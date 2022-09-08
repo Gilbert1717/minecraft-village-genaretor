@@ -51,7 +51,8 @@ if __name__ == "__main__":
     # mc.setBlock(x + 1,y + 1,z + 1, 1) 
     mc.setBlocks(x,y - 1,z,x + 30, y + 20, z + 30, 0)
     mc.setBlocks(x + 10,y -1,z + 10,x - 30, y + 20, z - 30, 0)
-    structure1 = Structure(x,y,z,2,16,20)
-    house1 = House(structure1)
-    house1.create_house(mc)
+    structure1 = Structure(x,y,z,16,20)
+    # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
+    house1 = House(structure1,2)
+   
    
