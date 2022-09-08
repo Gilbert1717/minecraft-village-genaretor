@@ -8,59 +8,66 @@ class McPosition:
         self.y = y
         self.z = z
 
+class Structure:
+    def __init__ (self,x,y,z,width = random.randrange(8,16),length = random.randrange(10,20),height = 5,):
+        self.height = height
+        self.width = width
+        self.length = length
+        self.x = x - width//2
+        self.y = y
+        self.z = z - length//2
+        self.frontleft = McPosition(self.x, self.y, self.z)
+        self.frontright = McPosition(self.x + self.width, self.y, self.z)
+        self.backleft = McPosition(self.x, self.y, self.z + self.length)
+        self.backright = McPosition(self.x + self.width, self.y, self.z + self.length)
+
 class Floor:
-    def __init__ (self,mc,house,storey):
-        x = house.x
-        y = house.y
-        z = house.z
-        height = house.height
-        width = house.width
-        length = house.length
-        self.floor_frontleft = McPosition(x, y + height * storey , z)
-        self.floor_frontright = McPosition(x + width, y + height * storey, z)
-        self.floor_backleft = McPosition(x, y + height * storey, z + length)
-        self.floor_backright = McPosition(x + width, y + height * storey, z + length)
+    def __init__ (self,structure,storey):
+        self.structure = structure
+        self.structure.y = structure.y + structure.height * storey
+        self.frontleft = self.structure.frontleft
+        self.frontright = self.structure.frontright
+        self.backleft = self.structure.backleft
+        self.backright = self.structure.backright
+    
 
     def create(self,mc,material = 1,color = 3):
-        start_x = self.floor_frontleft.x
-        start_y = self.floor_frontleft.y
-        start_z = self.floor_frontleft.z
-        end_x = self.floor_backright.x
-        end_y = self.floor_backright.y
-        end_z = self.floor_backright.z
+        start_x = self.frontleft.x
+        start_y = self.frontleft.y
+        start_z = self.frontleft.z
+        end_x = self.backright.x
+        end_y = self.backright.y
+        end_z = self.backright.z
         mc.setBlocks(start_x, start_y, start_z, end_x, end_y, end_z, material ,color)
 
-    def measure(self,position1,position2):
-        x = abs(position1.x - position2.x)
-        z = abs(position1.z - position2.z)
-        if x != 0:
-            return x
-        else:
-            return z
 
-    # to do: create rooms using recursion
-    def create_rooms(self,mc,floor):
-        width = self.measure(self.floor_frontleft,self.floor_frontright)
-        length = self.measure(self.floor_frontleft,self.floor_backleft)
-        if width < 3 or length <3:
-            return floor
+    def create_room(self,mc,width,length,material = 1,color = 1): 
+        if width > 4 and length > 4:
+            if width >= length:
+                split = random.randint(int(width/2),width - 3) 
+                mc.setBlocks(self.structure.x + split,self.structure.y + 1,self.structure.z,
+                    self.structure.x + split,self.structure.y + self.structure.height - 1,self.structure.z + length, 
+                    material, color)
+                width = split
+                stop = random.randint(0,3)
+                if stop != 0:
+                    self.create_room(mc,width,length)
+            else:
+                split = random.randint(int(length/2),length - 3)
+                mc.setBlocks(self.structure.x, self.structure.y + 1, self.structure.z + split,
+                self.structure.x + width, self.structure.y + self.structure.height - 1, self.structure.z + split, 
+                material, color)
+                length = split
+                stop = random.randint(0,3)
+                if stop != 0:          
+                    self.create_room(mc,width,length)
+
 
         
 class House:
-    def __init__ (self,x,y,z,stories = random.randint(0,2),width = random.randrange(8,16),length = random.randrange(10,20),height = 4):
+    def __init__ (self,structure,stories = random.randint(0,2)):
+        self.structure = structure
         self.stories = stories
-        self.width = width
-        self.length = length
-        self.height = height
-        x = x - width//2
-        z = z - length//2
-        self.x = x 
-        self.y = y
-        self.z = z
-        self.roof_frontleft = McPosition(x, y + self.height * self.stories, z)
-        self.roof_frontright = McPosition(x + width, y + self.height * self.stories, z)
-        self.roof_backleft = McPosition(x, y + self.height * self.stories, z + length)
-        self.roof_backright = McPosition(x + width, y + self.height * self.stories, z + length)
         self.floors = []
         
     
@@ -68,13 +75,17 @@ class House:
         material = random.randint(1,2)
         colour = random.randint(1,3)
         for storey in range(self.stories):
-            floor = Floor(mc,self,storey)
+            floor = Floor(mc,self.structure,storey)
             floor.create(mc,material,colour)
             self.floors.append(floor)
+
+    def create_rooms(self,mc):
+        for floor in self.floors:
+            floor.create_room(mc,self.structure.width,self.structure.length)
             
 
     def create_roof(self,mc):
-        self.create_wall(mc,self.roof_frontleft,self.roof_backright)
+        self.create_wall(mc,self.structure.frontleft,self.structure.backright)
 
 
             
@@ -89,12 +100,12 @@ class House:
         
     def create_walls(self,mc):
         for floor in self.floors:
-            endpoint1 = McPosition(floor.floor_backleft.x,floor.floor_backleft.y + self.height,floor.floor_backleft.z)
-            endpoint2 = McPosition(floor.floor_frontright.x,floor.floor_frontright.y + self.height,floor.floor_frontright.z)
-            self.create_wall(mc,floor.floor_frontleft,endpoint1)
-            self.create_wall(mc,endpoint1,floor.floor_backright)
-            self.create_wall(mc,floor.floor_backright,endpoint2)
-            self.create_wall(mc,endpoint2,floor.floor_frontleft)
+            endpoint1 = McPosition(floor.backleft.x, floor.backleft.y + self.structure.height, floor.backleft.z)
+            endpoint2 = McPosition(floor.frontright.x, floor.frontright.y + self.structure.height, floor.frontright.z)
+            self.create_wall(mc,floor.frontleft,endpoint1)
+            self.create_wall(mc,endpoint1,floor.backright)
+            self.create_wall(mc,floor.backright,endpoint2)
+            self.create_wall(mc,endpoint2,floor.frontleft)
             
     
     def back_window(self,mc):
@@ -132,9 +143,9 @@ class House:
 
     def door(self,mc):
         create_position = self.x + random.randrange(int(self.width/2) - 1,self.width - 3)
-        door_height = 3
-        door_width = 2
-        mc.setBlocks(create_position, self.y + 1, self.z, create_position + door_width, self.y + 1 + door_height,self.z,0)
+        mc.setBlock(create_position, self.y + 1, self.z, 64, 0)
+        mc.setBlock(create_position, self.y + 2, self.z, 64, 0)
+        
 
     def front_window(self,mc):
         window_x = self.x + 3
@@ -145,13 +156,14 @@ class House:
 
     def front(self,mc):
         self.door(mc)
-        self.front_window(mc)
+        # self.front_window(mc)
 
     
 
     def create_house(self,mc):
         self.create_floor(mc)
         self.create_roof(mc)
+        self.create_rooms(mc)
         self.create_walls(mc)
         self.front(mc)
         self.back_window(mc)
