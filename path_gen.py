@@ -2,6 +2,7 @@
 from mcpi import minecraft
 import random
 import math
+from mcpi import vec3
 
 mc = minecraft.Minecraft.create()
 
@@ -35,3 +36,14 @@ def generate_path(vil_start, vil_end, am):
             if distance_sub <= 1 and distance_sub >= -1:
                 mc.setBlocks(   i-1,    100,    j-1, 
                                 i+1,    100,    j+1, 1)
+
+if __name__ == '__main__':
+    vil_length = 100
+    num_points = 8
+
+    vil_start = mc.player.getTilePos()
+    vil_end = vec3.Vec3(vil_start.x + vil_length, 
+                        vil_start.y,
+                        vil_start.z + vil_length)
+
+    generate_path(vil_start, vil_end, num_points)
