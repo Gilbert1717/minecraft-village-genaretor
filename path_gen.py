@@ -7,10 +7,11 @@ from mcpi import vec3
 mc = minecraft.Minecraft.create()
 
 
-def get_random_coords(vil_start, vil_end, am):
+def get_random_coords(vil_start, vil_end, amount):
     coords = []
+    min_distance_between_coords =  30
 
-    for i in range(am):
+    for i in range(amount):
         condition_1 = False
         condition_2 = False
 
@@ -22,7 +23,7 @@ def get_random_coords(vil_start, vil_end, am):
             condition_2 = True
 
             for coord in coords:
-                if math.fabs(coord[0] - x) + math.fabs(coord[1] - z) < 30:
+                if math.fabs(coord[0] - x) + math.fabs(coord[1] - z) < min_distance_between_coords:
                     condition_2 = False
                     break
             
@@ -33,24 +34,35 @@ def get_random_coords(vil_start, vil_end, am):
 
 
 # https://en.wikipedia.org/wiki/Voronoi_diagram
-def generate_path(vil_start, vil_end, am):
-    coords = get_random_coords(vil_start, vil_end, am)
+def generate_path(vil_start, vil_end, vor_amount):
+    voronoi_points = get_random_coords(vil_start, vil_end, vor_amount)
+
+    path_coords_set = set()
 
     for x in range(vil_start.x, vil_end.x):
         for z in range(vil_start.z, vil_end.z):
-            closest_1 = closest_2 =  [vil_end.x ** 3, vil_end.y ** 3]
+
+            # gives closest_1 and closest_2 a very high value
+            closest_1 = closest_2 = [vil_end.x ** 3, vil_end.y ** 3]
             distances = []
 
-            for coord in coords:
+            for coord in voronoi_points:
                 distances.append([coord, math.fabs(coord[0] - x) + math.fabs(coord[1] - z)])
                 # distances.append([coord, math.sqrt((coord[0] - i) ** 2 + (coord[1] - j) ** 2)])
             
             distances.sort(key = lambda list : list[1])
 
+
             distance_sub = distances[0][1] - distances[1][1]
             if distance_sub <= 1 and distance_sub >= -1:
+                
+                path_coords_set.update({(x-1,z+1),  (x,z+1),    (x+1,z+1),
+                                          (x-1,z),    (x,z),      (x+1,z),
+                                          (x-1,z-1),  (x,z-1),    (x+1,z-1)})
                 mc.setBlocks(   x-1,    100,    z-1, 
-                                x+1,    100,    z+1, 1)
+                                x+1,    100,    z+1, 1)x``
+    
+    return path_coords_set
 
 if __name__ == '__main__':
     vil_length = 100
