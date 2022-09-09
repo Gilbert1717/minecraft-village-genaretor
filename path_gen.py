@@ -37,8 +37,7 @@ def get_random_coords(vil_start, vil_end, amount):
     return coords
 
 def place_plots(points, distance_dict):
-    print(points)
-    print(distance_dict)
+    
     buffer = 2
     for point in points:
         mc.setBlocks(   point[0] - int(distance_dict[point]/2) + buffer,    100,     point[1] - int(distance_dict[point]/2) + buffer,
@@ -80,7 +79,6 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
                 elif voronoi_distances[distances[1][0]] > distances[1][1]:
                     voronoi_distances[distances[1][0]] = distances[1][1]
 
-                print(distances)
                 path_coords_set.update({(x-1,z+1),  (x,z+1),    (x+1,z+1),
                                           (x-1,z),    (x,z),      (x+1,z),
                                           (x-1,z-1),  (x,z-1),    (x+1,z-1)})
