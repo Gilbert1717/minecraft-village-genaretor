@@ -1,7 +1,7 @@
 # Assignment 1 main file
 # Feel free to add additional modules/files as you see fit.
 
-from House import House
+from House import House, Structure
 from mcpi.minecraft import Minecraft
 from mcpi import block
 from mcpi import vec3
@@ -51,6 +51,9 @@ if __name__ == "__main__":
     # mc.setBlock(x + 1,y + 1,z + 1, 1) 
     mc.setBlocks(x,y - 1,z,x + 30, y + 20, z + 30, 0)
     mc.setBlocks(x + 10,y -1,z + 10,x - 30, y + 20, z - 30, 0)
-    house1 = House(x,y,z,2)
+    structure1 = Structure(x,y,z,16,20)
+    # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
+    house1 = House(structure1,2)
     house1.create_house(mc)
+   
    
