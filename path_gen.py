@@ -1,9 +1,15 @@
 
 from mcpi import minecraft
-import random
-import math
 from mcpi import vec3
 from mcpi import block
+
+import random
+import math
+
+from House import Structure
+from House import McPosition
+
+import Plot
 
 mc = minecraft.Minecraft.create()
 
@@ -15,7 +21,7 @@ def get_random_coords(vil_start, vil_end, amount):
     min_distance_between_coords =  40   
 
     for i in range(amount):
-        too_close = False
+        too_close = True
 
         while too_close:
             x = random.randint(vil_start.x, vil_end.x)
@@ -34,13 +40,13 @@ def get_random_coords(vil_start, vil_end, amount):
 
     return coords
 
-def place_plots(points, distance_dict):
-    
-    buffer = 2
+def generate_plots(points, distance_dict):
+    plots = []
     for point in points:
-        mc.setBlocks(   point[0] - int(distance_dict[point]/2) + buffer,    100,     point[1] - int(distance_dict[point]/2) + buffer,
-                        point[0] + int(distance_dict[point]/2) - buffer,    100,     point[1] + int(distance_dict[point]/2) - buffer, 17)
+        new_plot = Plot(point,distance_dict[point])
+        plots.append(new_plot)
 
+    return plots
 
 # https://en.wikipedia.org/wiki/Voronoi_diagram
 def generate_path_and_plots(vil_start, vil_end, vor_amount):
@@ -83,7 +89,7 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
                 mc.setBlocks(   x-1,    100,    z-1, 
                                 x+1,    100,    z+1, 1)
 
-    place_plots(voronoi_points, voronoi_distances)
+    generate_plots(voronoi_points, voronoi_distances)
 
     return path_coords_set
     
