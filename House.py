@@ -1,14 +1,19 @@
-from turtle import width
 from mcpi.minecraft import Minecraft
 from mcpi import block
+from mcpi import vec3
 import random 
-def create_wall(mc,McPosition1,McPosition2,material = 1,color = 3):
-    start_x = McPosition1.x
-    start_y = McPosition1.y
-    start_z = McPosition1.z
-    end_x = McPosition2.x
-    end_y = McPosition2.y
-    end_z = McPosition2.z
+def create_position(position,x,y,z):
+    new_position = McPosition(position.x,position.y,position.z)
+    new_position.change_position(x,y,z)
+    return new_position
+
+def create_wall(mc,start_point,end_point,material = 1,color = 3):
+    start_x = start_point.x
+    start_y = start_point.y
+    start_z = start_point.z
+    end_x = end_point.x
+    end_y = end_point.y
+    end_z = end_point.z
     mc.setBlocks(start_x, start_y, start_z, end_x, end_y, end_z, material ,color)
 
 def create_door(mc,McPosition1,McPosition2):
@@ -25,6 +30,8 @@ def create_door(mc,McPosition1,McPosition2):
             #     create_position = McPosition1.z - random.randint(2,length - 2)
         mc.setBlock(create_position , McPosition1.y, McPosition1.z, 0)
         mc.setBlock(create_position , McPosition1.y + 1, McPosition1.z, 0)
+        mc.setBlock(create_position , McPosition1.y + 1, McPosition1.z,64,8)
+        mc.setBlock(create_position , McPosition1.y, McPosition1.z,0)
 
     elif McPosition1.z == McPosition2.z:
         width = abs(McPosition2.x - McPosition1.x)
@@ -40,13 +47,15 @@ def create_door(mc,McPosition1,McPosition2):
         mc.setBlock(create_position , McPosition1.y + 1, McPosition1.z, 0)
         mc.setBlock(create_position , McPosition1.y + 2, McPosition1.z, 0)
 
+
+
 class McPosition:
     def __init__ (self,x,y,z):
         self.x = x
         self.y = y
         self.z = z
     
-    def move_position(self,x,y,z):
+    def change_position(self,x,y,z):
         self.x = self.x + x
         self.y = self.y + y
         self.z = self.z + z
@@ -54,64 +63,95 @@ class McPosition:
 
 
 class Structure:
-    def __init__ (self,x,y,z,width = random.randrange(8,16),length = random.randrange(10,20),height = 5,):
+    def __init__ (self,mcPosition,width = random.randrange(8,16),length = random.randrange(10,20),height = 5,):
         self.height = height
         self.width = width
         self.length = length
-        self.x = x - width//2
-        self.y = y
-        self.z = z - length//2
-        self.frontleft = McPosition(self.x, self.y, self.z)
-        self.frontright = McPosition(self.x + self.width, self.y, self.z)
-        self.backleft = McPosition(self.x, self.y, self.z + self.length)
-        self.backright = McPosition(self.x + self.width, self.y, self.z + self.length)
+        self.position = McPosition(mcPosition.x, mcPosition.y,mcPosition.z)
+        self.frontleft = McPosition(mcPosition.x, mcPosition.y, mcPosition.z)
+        self.frontright = McPosition(mcPosition.x + self.width, mcPosition.y, mcPosition.z)
+        self.backleft = McPosition(mcPosition.x, mcPosition.y, mcPosition.z + self.length)
+        self.backright = McPosition(mcPosition.x + self.width, mcPosition.y, mcPosition.z + self.length)
 
 class Floor:
     def __init__ (self,structure,storey):
-        structure.y += structure.height * storey
+        structure.position.y += structure.height * storey
+        self.storey = storey
         self.structure = structure
         self.frontleft = McPosition(structure.frontleft.x,
-                                    structure.y,
+                                    structure.position.y,
                                     structure.frontleft.z)
         self.frontright = McPosition(structure.frontright.x,
-                                    structure.y,
+                                    structure.position.y,
                                     structure.frontright.z)
         self.backleft = McPosition(structure.backleft.x,
-                                    structure.y,
+                                    structure.position.y,
                                     structure.backleft.z)
         self.backright = McPosition(structure.backright.x,
-                                    structure.y,
+                                    structure.position.y,
                                     structure.backright.z)
+
+    def split_horizontal(self,split_point):
+        width = split_point - 1
+        structure1 = Structure(self.structure.position, width, self.structure.length)
+        structure2_position = create_position(self.structure.position,split_point,0,0)
+        structure2 = Structure(structure2_position, self.structure.width - split_point, self.structure.length)
+        floor1 = Floor(structure1,self.storey)
+        print('floor1 x',floor1.frontleft.x,floor1.frontright.x,floor1.backleft.x,floor1.backright.x)
+        print('floor1 z',floor1.frontleft.z,floor1.frontright.z,floor1.backleft.z,floor1.backright.z)
+        
+        floor2 = Floor(structure2,self.storey)
+        print('floor2 x',floor2.frontleft.x,floor2.frontright.x,floor2.backleft.x,floor2.backright.x)
+        return floor1, floor2
+
+    def split_vertical(self,split_point):
+        length = split_point - 1
+        structure1 = Structure(self.structure.position, self.structure.width, length)
+        structure2_position = create_position(self.structure.position,0,0,split_point)
+        structure2 = Structure(structure2_position, self.structure.width, self.structure.length - split_point)
+        floor1 = Floor(structure1,self.storey)
+        print('floor1 z',floor1.frontleft.z,floor1.frontright.z,floor1.backleft.z,floor1.backright.z)
+        floor2 = Floor(structure2,self.storey)
+        print('floor2 z',floor2.frontleft.z,floor2.frontright.z,floor2.backleft.z,floor2.backright.z)
+        return floor1, floor2
+
     
 
 
 
-    def create_room(self,mc,width,length,material = 1,color = 1): 
-        if width > 5 and length > 5:
-            if width >= length:
-                split = random.randint(int(width/2),width - 4) 
-                mc.setBlocks(self.structure.x + split,self.structure.y + 1,self.structure.z,
-                    self.structure.x + split,self.structure.y + self.structure.height - 1,self.structure.z + length, 
-                    material, color)
-                McPosition1 = McPosition(self.structure.x + split, self.structure.y + 1, self.structure.z)
-                McPosition2 = McPosition(self.structure.x + split,self.structure.y + 1,self.structure.z + length)
-                create_door(mc,McPosition1,McPosition2)
-                width = split
-                stop = random.randint(0,3)
+    def create_room(self,mc,floor,material = 1,color = 1): 
+        print('outside',floor.structure.width,floor.structure.length)
+        if floor.structure.width > 6 and floor.structure.length > 6:
+            print('if1',floor.structure.width,floor.structure.length)
+            if floor.structure.width >= floor.structure.length:
+                # print('if2',floor.structure.width,floor.structure.length)
+                split = random.randrange(int(floor.structure.width/2),floor.structure.width - 4,1) 
+                floor1,floor2 = floor.split_horizontal(split)
+                print(split)
+                create_wall(mc,floor1.frontright,create_position(floor1.frontright,0,floor.structure.height,floor.structure.length))
+                # McPosition1 = McPosition(self.structure.x + split, self.structure.y, self.structure.z)
+                # McPosition2 = McPosition(self.structure.x + split,self.structure.y,self.structure.z + length)
+                # create_door(mc,McPosition1,McPosition2)
+                stop = 1
+                random.randint(0,3)
                 if stop != 0:
-                    self.create_room(mc,width,length)
+                    floor1.create_room(mc,floor1)
+                    floor2.create_room(mc,floor2)
             else:
-                split = random.randint(int(length/2),length - 4)
-                mc.setBlocks(self.structure.x, self.structure.y + 1, self.structure.z + split,
-                self.structure.x + width, self.structure.y + self.structure.height - 1, self.structure.z + split, 
-                material, color)
-                McPosition1 = McPosition(self.structure.x, self.structure.y + 1, self.structure.z + split)
-                McPosition2 = McPosition(self.structure.x + width,self.structure.y + 1,self.structure.z + split)
-                create_door(mc,McPosition1,McPosition2)
-                length = split
-                stop = random.randint(0,3)
-                if stop != 0:          
-                    self.create_room(mc,width,length)
+                print('else',floor.structure.width,floor.structure.length)
+                split = random.randrange(int(floor.structure.length/2),floor.structure.length - 4,1)
+                
+                floor1,floor2 = floor.split_vertical(split)
+                create_wall(mc,floor1.backleft,create_position(floor1.backleft,floor.structure.width,floor.structure.height,0))
+                print("floorv",floor1.frontleft.x,floor1.frontleft.y,floor1.frontleft.z)
+                # McPosition1 = McPosition(self.structure.x, self.structure.y, self.structure.z + split)
+                # McPosition2 = McPosition(self.structure.x + width,self.structure.y,self.structure.z + split)
+                # create_door(mc,McPosition1,McPosition2)
+                # stop = random.randint(0,3)
+                stop = 1
+                if stop != 0:        
+                    floor1.create_room(mc,floor1)
+                    floor2.create_room(mc,floor2)
 
 
         
@@ -126,15 +166,14 @@ class House:
         material = random.randint(1,2)
         colour = random.randint(1,3)
         for storey in range(self.stories):
-            structure = Structure(self.structure.x,self.structure.y,self.structure.z,self.structure.width,self.structure.length,self.structure.height)
+            structure = Structure(self.structure.position,self.structure.width,self.structure.length,self.structure.height)
             floor = Floor(structure,storey)
             create_wall(mc,floor.frontleft,floor.backright,material,colour)
             self.floors.append(floor)
 
     def create_rooms(self,mc):
         for floor in self.floors:
-            print(floor.structure.y)
-            floor.create_room(mc,self.structure.width,self.structure.length)
+            floor.create_room(mc,floor)
             
 
     def create_roof(self,mc):
