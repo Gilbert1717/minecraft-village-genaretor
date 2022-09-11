@@ -15,20 +15,18 @@ def get_random_coords(vil_start, vil_end, amount):
     min_distance_between_coords =  40   
 
     for i in range(amount):
-        condition_1 = False
-        condition_2 = False
+        too_close = False
 
-        while not (condition_1 and condition_2):
+        while too_close:
             x = random.randint(vil_start.x, vil_end.x)
             z = random.randint(vil_start.z, vil_end.z)
 
-            condition_1 = True
-            condition_2 = True
-
+            too_close = False
+            
             for coord in coords:
                 # if math.fabs(coord[0] - x) + math.fabs(coord[1] - z) < min_distance_between_coords:
                 if math.sqrt((coord[0] - x) ** 2) + math.sqrt((coord[1] - z)** 2) < min_distance_between_coords:
-                    condition_2 = False
+                    too_close = True
                     break
             
         coords.append((x, z))
