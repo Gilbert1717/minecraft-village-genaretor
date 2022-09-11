@@ -56,6 +56,8 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
 
 
 
+
+
     for x in range(vil_start.x, vil_end.x):
         for z in range(vil_start.z, vil_end.z):
 
@@ -86,12 +88,30 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
                 path_coords_set.update({(x-1,z+1),  (x,z+1),    (x+1,z+1),
                                           (x-1,z),    (x,z),      (x+1,z),
                                           (x-1,z-1),  (x,z-1),    (x+1,z-1)})
-                mc.setBlocks(   x-1,    100,    z-1, 
-                                x+1,    100,    z+1, 1)
-
+                mc.setBlocks(   x-1,    getBlockHeight(x, z),    z-1, 
+                                x+1,    getBlockHeight(x, z),    z+1, 1)
+    
     generate_plots(voronoi_points, voronoi_distances)
 
     return path_coords_set
+
+def getBlockHeight(block_x, block_z):
+    
+    y = mc.getHeight(block_x, block_z)
+    
+    ground_block = mc.getBlock(block_x, y, block_z)
+    
+    if ground_block == block.DIRT.id or block.GRASS.id:
+        
+        return y
+    
+    else:
+        
+        while ground_block != block.DIRT.id or block.GRASS.id:
+            y = y - 1
+            ground_block = mc.getBlock(block_x, y, block_z)
+            
+        return y
     
 
 if __name__ == '__main__':
