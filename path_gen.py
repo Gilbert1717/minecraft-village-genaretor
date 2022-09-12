@@ -112,7 +112,7 @@ def getBlockHeight(block_x, block_z):
     
     else:
         
-        while ground_block != block.DIRT.id or ground_block == block.GRASS.id:
+        while ground_block != block.DIRT.id or ground_block != block.GRASS.id:
             y = y - 1
             ground_block = mc.getBlock(block_x, y, block_z)
             
