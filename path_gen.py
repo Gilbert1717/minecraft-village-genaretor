@@ -1,9 +1,15 @@
 
 from mcpi import minecraft
-import random
-import math
 from mcpi import vec3
 from mcpi import block
+
+import random
+import math
+
+from House import Structure
+from House import McPosition
+
+from Plot import Plot
 
 mc = minecraft.Minecraft.create()
 
@@ -15,40 +21,40 @@ def get_random_coords(vil_start, vil_end, amount):
     min_distance_between_coords =  40   
 
     for i in range(amount):
-        condition_1 = False
-        condition_2 = False
+        too_close = True
 
-        while not (condition_1 and condition_2):
+        while too_close:
             x = random.randint(vil_start.x, vil_end.x)
             z = random.randint(vil_start.z, vil_end.z)
 
-            condition_1 = True
-            condition_2 = True
-
+            too_close = False
+            
             for coord in coords:
                 # if math.fabs(coord[0] - x) + math.fabs(coord[1] - z) < min_distance_between_coords:
                 if math.sqrt((coord[0] - x) ** 2) + math.sqrt((coord[1] - z)** 2) < min_distance_between_coords:
-                    condition_2 = False
+                    too_close = True
                     break
             
         coords.append((x, z))
-        mc.setBlock(x,101, z, 3)
+        mc.setBlock(x,getBlockHeight(x,z), z, 3)
 
     return coords
 
-def place_plots(points, distance_dict):
-    
-    buffer = 2
+def generate_plots(points, distance_dict):
+    plots = []
     for point in points:
-        mc.setBlocks(   point[0] - int(distance_dict[point]/2) + buffer,    100,     point[1] - int(distance_dict[point]/2) + buffer,
-                        point[0] + int(distance_dict[point]/2) - buffer,    100,     point[1] + int(distance_dict[point]/2) - buffer, 17)
+        new_plot = Plot(point,distance_dict[point])
+        plots.append(new_plot)
 
+    return plots
 
 # https://en.wikipedia.org/wiki/Voronoi_diagram
 def generate_path_and_plots(vil_start, vil_end, vor_amount):
     voronoi_points = get_random_coords(vil_start, vil_end, vor_amount)
     voronoi_distances = dict()
     path_coords_set = set()
+
+
 
 
 
@@ -82,12 +88,32 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
                 path_coords_set.update({(x-1,z+1),  (x,z+1),    (x+1,z+1),
                                           (x-1,z),    (x,z),      (x+1,z),
                                           (x-1,z-1),  (x,z-1),    (x+1,z-1)})
-                mc.setBlocks(   x-1,    100,    z-1, 
-                                x+1,    100,    z+1, 1)
-
-    place_plots(voronoi_points, voronoi_distances)
+                #mc.setBlock(   x,    getBlockHeight(x, z),    z, 1)
+                #mc.setBlocks(   x-1,    getBlockHeight(x, z),    z-1, 
+                #                x+1,    getBlockHeight(x, z),    z+1, 1)
+    
+    for coord in path_coords_set:
+        mc.setBlock(coord[0], getBlockHeight(coord[0], coord[1]), coord[1] , 1)
+        
+    generate_plots(voronoi_points, voronoi_distances)
 
     return path_coords_set
+
+
+def getBlockHeight(block_x, block_z):
+    """DOES NOT WORK IF SETWORLDSPAWN HEIGHT IS NOT SET TO 0"""
+    y = mc.getHeight(block_x, block_z)
+    
+    ground_block = mc.getBlock(block_x, y, block_z)
+    
+    while (ground_block != block.GRASS.id and ground_block != block.DIRT.id and
+            ground_block !=block.WATER_STATIONARY.id and ground_block != block.SAND.id and ground_block != block.STONE.id):
+        
+        y = y - 1
+        ground_block = mc.getBlock(block_x, y, block_z)
+        print(block_x, y, block_z, ground_block)
+
+    return y
     
 
 if __name__ == '__main__':
