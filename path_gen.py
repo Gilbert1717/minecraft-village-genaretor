@@ -9,7 +9,7 @@ import math
 from House import Structure
 from House import McPosition
 
-import Plot
+from Plot import Plot
 
 mc = minecraft.Minecraft.create()
 
@@ -36,7 +36,7 @@ def get_random_coords(vil_start, vil_end, amount):
                     break
             
         coords.append((x, z))
-        mc.setBlock(x,101, z, 3)
+        mc.setBlock(x,getBlockHeight(x,z), z, 3)
 
     return coords
 
@@ -88,12 +88,17 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
                 path_coords_set.update({(x-1,z+1),  (x,z+1),    (x+1,z+1),
                                           (x-1,z),    (x,z),      (x+1,z),
                                           (x-1,z-1),  (x,z-1),    (x+1,z-1)})
-                mc.setBlocks(   x-1,    getBlockHeight(x, z),    z-1, 
-                                x+1,    getBlockHeight(x, z),    z+1, 1)
+                #mc.setBlock(   x,    getBlockHeight(x, z),    z, 1)
+                #mc.setBlocks(   x-1,    getBlockHeight(x, z),    z-1, 
+                #                x+1,    getBlockHeight(x, z),    z+1, 1)
     
+    for coord in path_coords_set:
+        mc.setBlock(coord[0], getBlockHeight(coord[0], coord[1]), coord[1] , 1)
+        
     generate_plots(voronoi_points, voronoi_distances)
 
     return path_coords_set
+
 
 def getBlockHeight(block_x, block_z):
     
