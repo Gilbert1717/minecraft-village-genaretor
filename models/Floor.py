@@ -50,20 +50,20 @@ def create_door(mc,vector1,vector2):
 
 class Floor:
     def __init__ (self, structure,storey):
-        structure.position.y += structure.height * storey
+        y = structure.position.y + structure.height * storey
         self.storey = storey
         self.structure = structure
         self.frontleft = Vec3(structure.frontleft.x,
-                                structure.position.y,
+                                y,
                                 structure.frontleft.z)
         self.frontright = Vec3(structure.frontright.x,
-                                structure.position.y,
+                                y,
                                 structure.frontright.z)
         self.backleft = Vec3(structure.backleft.x,
-                                structure.position.y,
+                                y,
                                 structure.backleft.z)
         self.backright = Vec3(structure.backright.x,
-                                structure.position.y,
+                                y,
                                 structure.backright.z)
 
     def split_horizontal(self,split_point):
@@ -95,8 +95,8 @@ class Floor:
 
 
     def create_room(self,mc,floor,material = 1,color = 1): 
-        min_room_length = 8
-        min_room_width = 8
+        min_room_length = 6
+        min_room_width = 6
         print('outside',floor.structure.width,floor.structure.length)
         if floor.structure.width > min_room_length and floor.structure.length > min_room_length:
             print('if1',floor.structure.width,floor.structure.length)

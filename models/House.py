@@ -13,6 +13,7 @@ class House:
     def __init__ (self,structure,stories = random.randint(0,2)):
         self.structure = structure
         self.stories = stories
+        self.height = structure.height * stories
         self.floors = []
         
     
@@ -22,6 +23,7 @@ class House:
         for storey in range(self.stories):
             structure = self.structure
             floor = Floor(structure, storey)
+            print(floor.frontleft.y)
             create_blocks(mc, floor.frontleft, floor.backright, material, colour)
             self.floors.append(floor)
 
@@ -37,6 +39,7 @@ class House:
         end_point = vec3.Vec3(self.structure.backright.x,
                                 self.structure.backright.y + self.structure.height * self.stories, 
                                 self.structure.backright.z)
+        print(end_point.y)
         create_blocks(mc, start_point, end_point)
 
             
