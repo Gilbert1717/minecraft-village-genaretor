@@ -4,7 +4,7 @@ import random
 
 class RandomiseMaterial:
     
-    def random_exterior():
+    def random_exterior(mc):
         
         exterior_blocks = [block.STONE_BRICK.id,
                           block.BRICK_BLOCK.id,
@@ -17,8 +17,11 @@ class RandomiseMaterial:
                           ]
 
         
-        blockValue = random.randRange(0, len(exterior_blocks))
-        
-        return exterior_blocks[blockValue]
+        number = 0
+        number = random.randrange(0, len(exterior_blocks))
+        randomBlock = block.DIRT.id
+
+        randomBlock = exterior_blocks[number]
+        return randomBlock
     
     #TODO colorID + randomize roofs 

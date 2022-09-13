@@ -2,9 +2,10 @@ from mcpi.minecraft import Minecraft
 from mcpi import block
 from models.Floor import *
 from mcpi import vec3
+from RandomiseMaterial import RandomiseMaterial
 import random 
 
-
+rm = RandomiseMaterial()
 
          
 
