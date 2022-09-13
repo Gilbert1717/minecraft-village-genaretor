@@ -3,9 +3,12 @@
 
 
 from mcpi.minecraft import Minecraft
+
 from mcpi import block
 from mcpi import vec3
+
 import random
+
 from models.House import House
 from models.Structure import Structure
 
@@ -29,16 +32,21 @@ def get_village_coords(mc):
 if __name__ == "__main__":
     mc = Minecraft.create()
 
-    # vil_length = 100
+    #vil_length = 85
+    #num_points = 5
 
-    # vil_start = get_village_coords(mc)
-    # vil_end = vec3.Vec3(vil_start.x + vil_length, 
-    #                     vil_start.y,
-    #                     vil_start.z + vil_length)
+    #vil_start = get_village_coords(mc)
+    #vil_end = vec3.Vec3(vil_start.x + vil_length, 
+    #                    vil_start.y,
+    #                    vil_start.z + vil_length)
 
-    # path_gen.generate_path(vil_start,vil_end, 8)
-
-    # print("made it here!")
+    #paths, plots = path_gen.generate_path_and_plots(vil_start, vil_end, num_points)
+    
+    #for plot in plots:
+    #   structure = plot.get_structure()
+    #    plot.place_house(structure)
+    
+    
 
     # mc.setBlocks(-200,0,-200,100,200,0)
     # mc.setBlocks(-200,-3,-200,0,200,2)
