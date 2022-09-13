@@ -4,8 +4,8 @@ from mcpi import vec3
 from mcpi import minecraft
 from mcpi import block
 
-import models.Structure
-import models.House
+from models.Structure import Structure
+from models.House import House
 
 
 mc = minecraft.Minecraft.create()
@@ -45,7 +45,7 @@ class Plot:
                 structure_start = vec3.Vec3(randrange(self.plot_start.x, self.plot_end.x - self.structure_length),
                                             self.central_point.y,
                                             randrange(self.plot_start.z, self.plot_end.z - self.structure_width))
-                structure = Structure.Structure(structure_start, self.structure_width, self.structure_length)
+                structure = Structure(structure_start, self.structure_width, self.structure_length)
 
               
 
@@ -53,28 +53,28 @@ class Plot:
                 structure_start = vec3.Vec3(randrange(self.plot_end.x, self.plot_start.x + self.structure_length, -1),
                                             self.central_point.y,
                                             randrange(self.plot_end.z, self.plot_start.z + self.structure_width, -1))
-                structure = Structure.Structure(structure_start, -self.structure_width, -self.structure_length)
+                structure = Structure(structure_start, -self.structure_width, -self.structure_length)
                
                 
             elif self.direction =='z-':
                 structure_start = vec3.Vec3(randrange(self.plot_end.x, self.plot_start.x + self.structure_width, -1),
                                             self.central_point.y,
                                             randrange(self.plot_start.z, self.plot_end.z - self.structure_length))
-                structure = Structure.Structure(structure_start, -self.structure_width, self.structure_length)
+                structure = Structure(structure_start, -self.structure_width, self.structure_length)
                 
 
             elif self.direction =='z+':
                 structure_start = vec3.Vec3(randrange(self.plot_start.x, self.plot_end.x - self.structure_width),
                                             self.central_point.y,
                                             randrange(self.plot_end.z, self.plot_start.z + self.structure_length, -1))
-                structure = Structure.Structure(structure_start, self.structure_width, -self.structure_length)
+                structure = Structure(structure_start, self.structure_width, -self.structure_length)
             
             self.structure = structure
 
             return structure
                 
     def place_house(self, structure):
-        house = House.House(structure)
+        house = House(structure)
         house.create_house(mc)
 
     def generate_path_connection(self):
