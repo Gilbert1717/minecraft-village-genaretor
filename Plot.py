@@ -30,38 +30,32 @@ class Plot:
 
         self.plot_length = self.plot_end.x - self.plot_start.x
         
-
-        print(self.plot_length)
         
         length_lower_bound = 10 if self.plot_length // 2 < 10 else self.plot_length // 2
 
         self.structure_length = randrange(length_lower_bound,   self.plot_length)
         self.structure_width  = randrange(9,                    self.structure_length)
 
-        print(self.structure_length, self.structure_width)
 
     def get_structure(self):
+            """contains complicated logic to randomise direction and the "frontleft" of a structure inside a plot"""
             if self.direction == 'x-':
                 structure_start = vec3.Vec3(randrange(self.plot_start.x, self.plot_end.x - self.structure_length),
                                             self.central_point.y,
                                             randrange(self.plot_start.z, self.plot_end.z - self.structure_width))
                 structure = Structure(structure_start, self.structure_width, self.structure_length)
 
-              
-
             elif self.direction =='x+':
                 structure_start = vec3.Vec3(randrange(self.plot_end.x, self.plot_start.x + self.structure_length, -1),
                                             self.central_point.y,
                                             randrange(self.plot_end.z, self.plot_start.z + self.structure_width, -1))
                 structure = Structure(structure_start, -self.structure_width, -self.structure_length)
-               
-                
+                   
             elif self.direction =='z-':
                 structure_start = vec3.Vec3(randrange(self.plot_end.x, self.plot_start.x + self.structure_width, -1),
                                             self.central_point.y,
                                             randrange(self.plot_start.z, self.plot_end.z - self.structure_length))
                 structure = Structure(structure_start, -self.structure_width, self.structure_length)
-                
 
             elif self.direction =='z+':
                 structure_start = vec3.Vec3(randrange(self.plot_start.x, self.plot_end.x - self.structure_width),
