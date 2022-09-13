@@ -7,36 +7,6 @@ import random
 
 rm = RandomiseMaterial()
 
-<<<<<<< HEAD
-def create_blocks(mc, start_point, end_point, material = rm.random_exterior()):
-    start_x = start_point.x
-    start_y = start_point.y
-    start_z = start_point.z
-    end_x = end_point.x
-    end_y = end_point.y
-    end_z = end_point.z
-    mc.setBlocks(start_x, start_y, start_z, end_x, end_y, end_z, material)
-
-def create_door(mc,vector1,vector2):
-    #  On horizontal wall
-    if vector1.x == vector2.x:
-        length = abs(vector2.z - vector1.z)
-        # print(vector1.x,vector2.x,vector2.z,vector1.z)
-        if vector2.z > vector1.z:
-            create_z = vector1.z + random.randint(2,length - 2)
-            # while mc.getBlock(create_vector + 1, vector1.y, vector1.z) != 0 or mc.getBlock(create_vector - 1, vector1.y, vector1.z) != 0:
-            #     create_vector = vector1.z + random.randint(2,length - 2)
-        else:
-            create_z = vector1.z - random.randint(2,length - 2)
-            # while mc.getBlock(create_vector + 1, vector1.y, vector1.z) != 0 or mc.getBlock(create_vector - 1, vector1.y, vector1.z) != 0:
-            #     create_vector = vector1.z - random.randint(2,length - 2)
-        mc.setBlock(vector1.x, vector1.y + 1, create_z, 0)
-        mc.setBlock(vector1.x, vector1.y + 2, create_z, 0)
-        mc.setBlock(vector1.x, vector1.y + 2, create_z,64,8)
-        mc.setBlock(vector1.x , vector1.y + 1, create_z,64,0)
-=======
-
->>>>>>> cdb2492d43d304586326d0fc77bf482161ff26f4
          
 
 
@@ -52,13 +22,8 @@ class House:
         colour = random.randint(1,3)
         for storey in range(self.stories):
             structure = self.structure
-<<<<<<< HEAD
             floor = Floor(structure,storey)
             create_blocks(mc, floor.frontleft, floor.backright, material)
-=======
-            floor = Floor(structure, storey)
-            create_blocks(mc, floor.frontleft, floor.backright, material, colour)
->>>>>>> cdb2492d43d304586326d0fc77bf482161ff26f4
             self.floors.append(floor)
 
     def create_rooms(self,mc):
