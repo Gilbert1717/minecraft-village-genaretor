@@ -31,6 +31,9 @@ class House:
     def create_rooms(self,mc):
         for floor in self.floors:
             floor.create_room(mc,floor)
+        for floor in self.floors:
+            if self.stories > 1 and floor.storey < self.stories - 1:
+                floor.create_stairs(mc)
             
 
     def create_roof(self,mc):
@@ -95,9 +98,10 @@ class House:
         window_width = window_y + 2
         mc.setBlocks(window_x, window_y, self.structure.z, window_width,window_height,self.structure.z,102)
 
-    def front(self,mc):
+    def front_side(self,mc):
         create_door(mc,self.structure.frontleft,self.structure.frontright)
         # self.front_window(mc)
+
 
     
 
@@ -106,7 +110,7 @@ class House:
         self.create_roof(mc)
         self.create_rooms(mc)
         self.create_walls(mc)
-        self.front(mc)
+        # self.front(mc)
         self.back_window(mc)
         self.side_window(mc,self.structure.frontleft)
         self.side_window(mc,self.structure.frontright)

@@ -1,7 +1,9 @@
-import imp
 from models.Structure import *
 from mcpi.vec3 import Vec3
-def create_blocks(mc, start_point, end_point, material = 1, color = 3):
+from mcpi import block
+
+
+def create_blocks(mc, start_point, end_point, material = block.STONE_BRICK, color = 3):
     start_x = start_point.x
     start_y = start_point.y
     start_z = start_point.z
@@ -129,3 +131,14 @@ class Floor:
                 if stop != 0:        
                     floor1.create_room(mc,floor1)
                     floor2.create_room(mc,floor2)
+
+    def create_stairs(self,mc):
+        stairs = block.STAIRS_WOOD.id
+        start_vector = create_vector(self.backleft, 1,  1, -1)
+        end_vector = create_vector(self.backleft,self.structure.height + 1, self.structure.height + 1, -2)
+        create_blocks(mc,start_vector,end_vector,block.AIR)
+        for x in range(self.structure.height):
+            vector1 = create_vector(self.backleft,self.structure.height - x + 1, x + 1 , -1)
+            vector2 = create_vector(self.backleft,self.structure.height - x + 1, x + 1, -2)
+            mc.setBlock(vector1.x,vector1.y,vector1.z,stairs,1)
+            mc.setBlock(vector2.x,vector2.y,vector2.z,stairs,1)
