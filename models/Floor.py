@@ -1,6 +1,5 @@
 import imp
 from models.Structure import *
-from models.House import *
 from mcpi.vec3 import Vec3
 def create_blocks(mc, start_point, end_point, material = 1, color = 3):
     start_x = start_point.x
@@ -50,7 +49,7 @@ def create_door(mc,vector1,vector2):
         
 
 class Floor:
-    def __init__ (self,structure,storey):
+    def __init__ (self, structure,storey):
         structure.position.y += structure.height * storey
         self.storey = storey
         self.structure = structure

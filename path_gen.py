@@ -6,8 +6,8 @@ from mcpi import block
 import random
 import math
 
-#from House import Structure
-#from House import McPosition
+from models import Structure
+
 
 from Plot import Plot
 
@@ -48,7 +48,7 @@ def get_random_coords(vil_start, vil_end, amount):
 def generate_plots(points, distance_dict):
     plots = []
     for point in points:
-        new_plot = Plot(point,distance_dict[point])
+        new_plot = Plot(point,distance_dict[(point.x,point.z)])
         plots.append(new_plot)
 
     return plots

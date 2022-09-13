@@ -11,13 +11,13 @@ class Plot:
 
         buffer_from_path = 2
 
-        self.plot_start = vec3.Vec3(self.central_point[0] - int(self.distance_from_path/2) + buffer_from_path,
+        self.plot_start = vec3.Vec3(self.central_point.x - int(self.distance_from_path/2) + buffer_from_path,
                                     0,
-                                    self.central_point[1] - int(self.distance_from_path/2) + buffer_from_path)
+                                    self.central_point.z - int(self.distance_from_path/2) + buffer_from_path)
           
-        self.plot_end   = vec3.Vec3(self.central_point[0] + int(self.distance_from_path/2) - buffer_from_path,
+        self.plot_end   = vec3.Vec3(self.central_point.x + int(self.distance_from_path/2) - buffer_from_path,
                                     0,
-                                    self.central_point[1] + int(self.distance_from_path/2) - buffer_from_path)
+                                    self.central_point.z + int(self.distance_from_path/2) - buffer_from_path)
 
         self.plot_length = self.plot_end.x - self.plot_start.x
         

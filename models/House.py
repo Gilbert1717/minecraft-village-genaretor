@@ -1,12 +1,13 @@
 from mcpi.minecraft import Minecraft
 from mcpi import block
-from models.Floor import Floor
+from models.Floor import *
 from mcpi import vec3
 from RandomiseMaterial import RandomiseMaterial
 import random 
 
 rm = RandomiseMaterial()
 
+<<<<<<< HEAD
 def create_blocks(mc, start_point, end_point, material = rm.random_exterior()):
     start_x = start_point.x
     start_y = start_point.y
@@ -33,26 +34,12 @@ def create_door(mc,vector1,vector2):
         mc.setBlock(vector1.x, vector1.y + 2, create_z, 0)
         mc.setBlock(vector1.x, vector1.y + 2, create_z,64,8)
         mc.setBlock(vector1.x , vector1.y + 1, create_z,64,0)
+=======
+
+>>>>>>> cdb2492d43d304586326d0fc77bf482161ff26f4
          
-    #  On vertical wall
-    elif vector1.z == vector2.z:
-        width = abs(vector2.x - vector1.x)
-        # print(width)
-        if vector2.x > vector1.x:
-            create_x = vector1.x + random.randint(2,width - 2)
-            # while mc.getBlock(create_vector, vector1.y, vector1.z + 1) == 0 or mc.getBlock(create_vector - 1, vector1.y, vector1.z) == 0:
-            #     create_vector = vector1.x + random.randint(2,width - 2)
-        else:
-            create_x = vector1.x - random.randint(2,width - 2)
-            # while mc.getBlock(create_vector, vector1.y, vector1.z + 1) == 0 or mc.getBlock(create_vector - 1, vector1.y, vector1.z) == 0:
-            #      create_vector = vector1.x - random.randint(2,width - 2)
-        mc.setBlock(create_x, vector1.y + 1, vector1.z, 0)
-        mc.setBlock(create_x, vector1.y + 2, vector1.z, 0)
-        mc.setBlock(create_x , vector1.y + 2, vector1.z,64,8)
-        mc.setBlock(create_x , vector1.y + 1, vector1.z,64,0)
 
 
-        
 class House:
     def __init__ (self,structure,stories = random.randint(0,2)):
         self.structure = structure
@@ -60,13 +47,18 @@ class House:
         self.floors = []
         
     
-    def create_floor(self,mc):
+    def create_floor(self, mc: Minecraft):
         material = random.randint(1,2)
         colour = random.randint(1,3)
         for storey in range(self.stories):
             structure = self.structure
+<<<<<<< HEAD
             floor = Floor(structure,storey)
             create_blocks(mc, floor.frontleft, floor.backright, material)
+=======
+            floor = Floor(structure, storey)
+            create_blocks(mc, floor.frontleft, floor.backright, material, colour)
+>>>>>>> cdb2492d43d304586326d0fc77bf482161ff26f4
             self.floors.append(floor)
 
     def create_rooms(self,mc):
