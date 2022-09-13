@@ -49,7 +49,7 @@ def create_door(mc,vector1,vector2):
         
 
 class Floor:
-    def __init__ (self, parent_house, structure,storey):
+    def __init__ (self, structure,storey):
         structure.position.y += structure.height * storey
         self.storey = storey
         self.structure = structure
