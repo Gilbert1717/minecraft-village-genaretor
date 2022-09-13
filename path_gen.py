@@ -6,8 +6,8 @@ from mcpi import block
 import random
 import math
 
-from House import Structure
-from House import McPosition
+#from House import Structure
+#from House import McPosition
 
 from Plot import Plot
 
@@ -123,7 +123,7 @@ def getBlockHeight(block_x, block_z):
         
         y = y - 1
         ground_block = mc.getBlock(block_x, y, block_z)
-        print(block_x, y, block_z, ground_block)
+        #print(block_x, y, block_z, ground_block)
 
     return y
     

@@ -1,7 +1,6 @@
 from random import randrange
 from mcpi import vec3
 from mcpi import minecraft
-import House
 
 mc = minecraft.Minecraft.create()
 
