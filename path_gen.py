@@ -113,22 +113,19 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
 
 
 def getBlockHeight(block_x, block_z):
-    
+    """DOES NOT WORK IF SETWORLDSPAWN HEIGHT IS NOT SET TO 0"""
     y = mc.getHeight(block_x, block_z)
     
     ground_block = mc.getBlock(block_x, y, block_z)
     
-    if ground_block == block.DIRT.id or ground_block == block.GRASS.id:
+    while (ground_block != block.GRASS.id and ground_block != block.DIRT.id and
+            ground_block !=block.WATER_STATIONARY.id and ground_block != block.SAND.id and ground_block != block.STONE.id):
         
-        return y
-    
-    else:
-        
-        while ground_block != block.DIRT.id or ground_block == block.GRASS.id:
-            y = y - 1
-            ground_block = mc.getBlock(block_x, y, block_z)
-            
-        return y
+        y = y - 1
+        ground_block = mc.getBlock(block_x, y, block_z)
+        print(block_x, y, block_z, ground_block)
+
+    return y
     
 
 if __name__ == '__main__':
