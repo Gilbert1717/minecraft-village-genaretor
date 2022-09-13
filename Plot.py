@@ -1,3 +1,4 @@
+from random import randrange
 from mcpi import vec3
 from mcpi import minecraft
 
@@ -10,18 +11,21 @@ class Plot:
 
         buffer_from_path = 2
 
-        plot_start = vec3.Vec3( self.central_point[0] - int(self.distance_from_path/2) + buffer_from_path,
-                                0,
-                                self.central_point[1] - int(self.distance_from_path/2) + buffer_from_path)
-                                    
-        plot_end   = vec3.Vec3( self.central_point[0] - int(self.distance_from_path/2) + buffer_from_path,
-                                0,
-                                self.central_point[1] - int(self.distance_from_path/2) + buffer_from_path)
+        self.plot_start = vec3.Vec3(self.central_point.x - int(self.distance_from_path/2) + buffer_from_path,
+                                    0,
+                                    self.central_point.z - int(self.distance_from_path/2) + buffer_from_path)
+          
+        self.plot_end   = vec3.Vec3(self.central_point.x + int(self.distance_from_path/2) - buffer_from_path,
+                                    0,
+                                    self.central_point.z + int(self.distance_from_path/2) - buffer_from_path)
 
-        mc.setBlock(    plot_start.x,   plot_start.y,   plot_start.z,
-                        plot_end.x,     plot_end.y,     plot_end.z, 17)
-        print(plot_start.x,   plot_start.y,   plot_start.z,
-                        plot_end.x,     plot_end.y,     plot_end.z, 17)
+        self.plot_length = self.plot_end.x - self.plot_start.x
+        
+        #TODO set up logic for determining directiond
+
+        print(self.plot_length)
     
-    def make_structure():
-        pass
+    def d_make_structure(self):
+        self.structure_length = randrange(10,self.plot_length)
+        self.structure_width = randrange(8,self.structure_length)
+        print(self.structure_length, self.structure_width)
