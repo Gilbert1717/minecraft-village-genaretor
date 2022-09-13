@@ -21,7 +21,7 @@ class House:
         colour = random.randint(1,3)
         for storey in range(self.stories):
             structure = self.structure
-            floor = Floor(structure,storey)
+            floor = Floor(structure, storey)
             create_blocks(mc, floor.frontleft, floor.backright, material, colour)
             self.floors.append(floor)
 
