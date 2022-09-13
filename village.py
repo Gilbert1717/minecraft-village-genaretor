@@ -6,9 +6,10 @@ from mcpi.minecraft import Minecraft
 from mcpi import block
 from mcpi import vec3
 import random
+
+
 from models.House import House
 from models.Structure import Structure
-
 
 
 import path_gen
@@ -44,7 +45,7 @@ if __name__ == "__main__":
     # mc.setBlocks(-200,-3,-200,0,200,2)
     # house1_location = McPosition(x,y,z)
     # mc.player.setPos(x,y,z)
-    # mc.player.getPos()
+
     # while mc.getBlock(x + 1,y,z + 1) is 0:
     #     y = y - 1
     # print(x,y,z)
@@ -52,7 +53,8 @@ if __name__ == "__main__":
     x = 0
     y = 0
     z = 0
-    position = vec3.Vec3(0,0,0)
+    position = mc.player.getPos()
+    #position = vec3.Vec3(0,0,0)
     mc.setBlocks(x,y - 1,z,x + 30, y + 20, z + 30, 0)
     mc.setBlocks(x + 10,y -1,z + 10,x - 30, y + 20, z - 30, 0)
     structure1 = Structure(position,16,18)
