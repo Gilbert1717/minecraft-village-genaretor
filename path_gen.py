@@ -6,8 +6,8 @@ from mcpi import block
 import random
 import math
 
-from House import Structure
-from House import McPosition
+from models import Structure
+
 
 from Plot import Plot
 
