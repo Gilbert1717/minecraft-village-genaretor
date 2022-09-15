@@ -16,34 +16,35 @@ from models.Structure import Structure, Vector
 import path_gen
 
 
-# def get_village_coords(mc):
-#     """checks for right clicks while holding a sword, returns the coordinate of the right clicked block in vec3"""
-#     blockevents = mc.events.pollBlockHits()
+def get_village_coords(mc):
+    """checks for right clicks while holding a sword, returns the coordinate of the right clicked block in vec3"""
+    blockevents = mc.events.pollBlockHits()
 
-#     mc.postToChat('right click on a block while holdling a sword to set village location')
-#     while blockevents == []:
-#         blockevents = mc.events.pollBlockHits()
+    mc.postToChat('right click on a block while holdling a sword to set village location')
+    while blockevents == []:
+        blockevents = mc.events.pollBlockHits()
     
-#     mc.postToChat('location set to ' + str(blockevents[0].pos))
-#     return blockevents[0].pos
+    mc.postToChat('location set to ' + str(blockevents[0].pos))
+    return blockevents[0].pos
 
 
 if __name__ == "__main__":
     mc = Minecraft.create()
 
-    # vil_length = 85
-    # num_points = 5
+    #vil_length = 85
+    #num_points = 5
 
-    # vil_start = get_village_coords(mc)
-    # vil_end = vec3.Vec3(vil_start.x + vil_length, 
-    #                    vil_start.y,
-    #                    vil_start.z + vil_length)
+    #vil_start = get_village_coords(mc)
+    #vil_end = vec3.Vec3(vil_start.x + vil_length, 
+                        #vil_start.y,
+                        #vil_start.z + vil_length)
 
-    # paths, plots = path_gen.generate_path_and_plots(vil_start, vil_end, num_points)
+    #paths, plots = path_gen.generate_path_and_plots(vil_start, vil_end, num_points)
     
-    # for plot in plots:
-    #     structure = plot.get_structure()
-    #     plot.place_house(structure)
+    #for plot in plots:
+        #structure = plot.get_structure()
+        #plot.terraform()
+        #plot.place_house(structure)
     
     
 

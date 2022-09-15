@@ -28,8 +28,8 @@ class Plot:
                                     self.central_point.y,
                                     self.central_point.z + int(self.distance_from_path/2) - buffer_from_path)
 
-        mc.setBlocks(   self.plot_start.x,  self.plot_start.y,  self.plot_start.z, 
-                        self.plot_end.x,    self.plot_end.y,    self.plot_end.z, block.DIAMOND_ORE)
+        mc.setBlocks(   self.plot_start.x,  self.plot_start.y - 1,  self.plot_start.z, 
+                        self.plot_end.x,    self.plot_end.y,    self.plot_end.z, block.GRASS.id)
 
         self.plot_length = self.plot_end.x - self.plot_start.x
         
@@ -84,86 +84,248 @@ class Plot:
             pass
         elif self.direction =='z+':
             pass
+    
+    def get_prev_corner(self,x,z,):
+        if self.is_corner(x,z):
+            if x < self.plot_start.x:
+                x += 1
+            else:
+                x -= 1
+
+            if z < self.plot_start.z:
+                z += 1
+            else:
+                z -= 1
+        return x,z
+
+    def is_corner(self,x,z):
+        if x < self.plot_start.x or x > self.plot_end.x:
+            if z < self.plot_start.z or z > self.plot_end.z:
+                return True
+        return False
+
+    def get_corner_prev(self,x,z,dict):
+        if x < self.plot_start.x:
+            x += 1
+        else:
+            x -= 1
+
+        if z < self.plot_start.z:
+            z += 1
+        else:
+            z -= 1
+        
+        return dict[(x,z)]
 
     def terraform(self):
+        y_and_noise = dict()
+        completed = []
+
         mc.setBlocks(   self.plot_start.x,  self.plot_start.y + 1,  self.plot_start.z,
                         self.plot_end.x,    100,                    self.plot_end.z, block.AIR.id)
         noise = 0
         for i in range(1,4):
-    
+            print(i)
             x = self.plot_start.x - i
             for z in range(self.plot_start.z - (i-1), self.plot_end.z + i + 1): 
+                
+                ###########################################################
+                if i == 1:
+                    if 1 == randint(1,10):
+                        if noise == 0:
+                            noise = 1
+                        else:
+                            noise = 0
+
+                if self.is_corner(x,z):
+                    if self.get_prev_corner(x,z) in completed:
+                        completed.append((x,z))
+                        print('completed',(x,z))
+                        continue
+                    if i == 1:
+                        prev_y = self.central_point.y
+                    else:
+                        prev_y, prev_noise = self.get_corner_prev(x,z,y_and_noise)
+                else:
+                    if (x+1,z) in completed:
+                        completed.append((x,z))
+                        print('completed',(x,z))
+                        continue
+                    if i == 1:
+                        prev_y = self.central_point.y
+                    else:
+                        prev_y, prev_noise = y_and_noise[(x + 1, z)]
+
                 y = path_gen.getBlockHeight(x,z)
-                if  i >= 2 and 5 == randint(0,10):
-                    noise += randint(-2,2)
-                    if noise > i:
-                        noise = i-1
-                    if noise < -i:
-                        nosie = -i + 1
-                if y < self.central_point.y - 0.5* (i ** 2) - 1 + noise: # dont do this, instead check if its higher or lower when compared to the previous layer within a certain margin
+
+                if y < prev_y : # dont do this, instead check if its higher or lower when compared to the previous layer within a certain margin
+                    curr_y = prev_y -1 - noise
                     mc.setBlocks(   x, 50, z,
-                                    x, self.central_point.y - int(0.5 * (i ** 2)) -1 + noise , z,block.GRASS.id)
-                elif y > self.central_point.y + 0.5 * (i ** 2) + 1 + noise:
-                    mc.setBlocks(   x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,
+                                    x, curr_y , z,block.GRASS.id) 
+
+                elif y > prev_y :
+                    curr_y = prev_y + 1 + noise
+                    mc.setBlocks(   x, curr_y, z,
                                     x, y, z,block.AIR.id)
                     mc.setBlocks(    x, 50, z,
-                                    x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,block.GRASS.id)
-                                    
+                                    x, curr_y, z,block.GRASS.id)
 
-        
+                else:
+                    curr_y = y
+                    completed.append((x,z))
+                
+                y_and_noise[(x,z)] = (curr_y,noise)
+                print('added',(x,z))
+                ###########################################################
 
             z = self.plot_end.z + i
             for x in range(self.plot_start.x - (i-1), self.plot_end.x + i + 1): 
+                ###########################################################
+                if i == 1:
+                    if 1 == randint(1,10):
+                        if noise == 0:
+                            noise = 1
+                        else:
+                            noise = 0
+
+                if self.is_corner(x,z):
+                    if self.get_prev_corner(x,z) in completed:
+                        completed.append((x,z))
+                        print('completed',(x,z))
+                        continue
+                    if i == 1:
+                        prev_y = self.central_point.y
+                    else:
+                        prev_y, prev_noise = self.get_corner_prev(x,z,y_and_noise)
+                else:
+                    if (x,z-1) in completed:
+                        completed.append((x ,z))
+                        print('completed',(x,z))
+                        continue
+                    if i == 1:
+                        prev_y = self.central_point.y
+                    else:
+                        prev_y, prev_noise = y_and_noise[(x , z-1)]
+
                 y = path_gen.getBlockHeight(x,z)
-                if  i >= 2 and 5 == randint(0,10):
-                    noise += randint(-2,2)
-                    if noise > i:
-                        noise = i-1
-                    if noise < -i:
-                        nosie = -i + 1
-                if y < self.central_point.y - 0.5* (i ** 2) - 1 + noise:
+
+                if y < prev_y : # dont do this, instead check if its higher or lower when compared to the previous layer within a certain margin
+                    curr_y = prev_y -1 - noise
                     mc.setBlocks(   x, 50, z,
-                                    x, self.central_point.y - int(0.5 * (i ** 2)) -1 + noise , z,block.GRASS.id)
-                elif y > self.central_point.y + 0.5 * (i ** 2) + 1 + noise:
-                    mc.setBlocks(   x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,
+                                    x, curr_y , z,block.GRASS.id) 
+
+                elif y > prev_y :
+                    curr_y = prev_y + 1+ noise
+                    mc.setBlocks(   x, curr_y, z,
                                     x, y, z,block.AIR.id)
                     mc.setBlocks(    x, 50, z,
-                                    x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,block.GRASS.id)
-
+                                    x, curr_y, z,block.GRASS.id)
+                else:
+                    curr_y = y
+                    completed.append((x,z))
+                
+                y_and_noise[(x,z)] = (curr_y,noise)
+                print('added', (x,z))
+                ###########################################################
 
             x = self.plot_end.x + i
-            
-            for z in range(self.plot_end.z + i,self.plot_start.z - i, -1): 
-                y = path_gen.getBlockHeight(x,z)
-                if  i >= 2 and 5 == randint(0,10):
-                    noise += randint(-2,2)
-                    if noise > i:
-                        noise = i-1
-                    if noise < -i:
-                        nosie = -i + 1
-                if y < self.central_point.y - 0.5* (i ** 2) - 1 + noise:
-                    mc.setBlocks(   x, 50, z,
-                                    x, self.central_point.y - int(0.5 * (i ** 2)) -1 + noise , z,block.GRASS.id)
-                elif y > self.central_point.y + 0.5 * (i ** 2) + 1 + noise:
-                    mc.setBlocks(   x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,
-                                    x, y, z,block.AIR.id)
-                    mc.setBlocks(    x, 50, z,
-                                    x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,block.GRASS.id)
+            for z in range(self.plot_end.z + i,self.plot_start.z - i, -1):
+                ###########################################################
+                if i == 1:
+                    if 1 == randint(1,10):
+                        if noise == 0:
+                            noise = 1
+                        else:
+                            noise = 0
 
-            z = self.plot_start.z - i
-            for x in range(self.plot_end.x + i, self.plot_start.x - (i + 1), -1): 
+                if self.is_corner(x,z):
+                    if self.get_prev_corner(x,z) in completed:
+                        completed.append((x,z))
+                        print('completed',(x,z))
+                        continue
+                    if i == 1:
+                        prev_y = self.central_point.y
+                    else:
+                        prev_y, prev_noise = self.get_corner_prev(x,z,y_and_noise)
+                else:
+                    if (x-1,z) in completed:
+                        completed.append((x,z))
+                        print('completed',(x,z))
+                        continue
+                    if i == 1:
+                        prev_y = self.central_point.y
+                    else:
+                        prev_y, prev_noise = y_and_noise[(x -1, z)]
+
                 y = path_gen.getBlockHeight(x,z)
-                if  i >= 2 and 5 == randint(0,10):
-                    noise += randint(-2,2)
-                    if noise > i:
-                        noise = i-1
-                    if noise < -i:
-                        nosie = -i + 1
-                if y < self.central_point.y - 0.5* (i ** 2) - 1 + noise:
+
+                if y < prev_y : # dont do this, instead check if its higher or lower when compared to the previous layer within a certain margin
+                    curr_y = prev_y -1 - noise
                     mc.setBlocks(   x, 50, z,
-                                    x, self.central_point.y - int(0.5 * (i ** 2)) -1 + noise , z,block.GRASS.id)
-                elif y > self.central_point.y + 0.5 * (i ** 2) + 1 + noise:
-                    mc.setBlocks(   x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,
+                                    x, curr_y , z,block.GRASS.id) 
+
+                elif y > prev_y :
+                    curr_y = prev_y + 1+ noise
+                    mc.setBlocks(   x, curr_y, z,
                                     x, y, z,block.AIR.id)
                     mc.setBlocks(    x, 50, z,
-                                    x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,block.GRASS.id)
+                                    x, curr_y, z,block.GRASS.id)
+                else:
+                    curr_y = y
+                    completed.append((x,z))
+                
+                y_and_noise[(x,z)] = (curr_y,noise)
+                print('added', (x,z))
+                ###########################################################
+            z = self.plot_start.z - i
+            for x in range(self.plot_end.x + i, self.plot_start.x - (i + 1), -1):
+                ###########################################################
+                if i == 1:
+                    if 1 == randint(1,10):
+                        if noise == 0:
+                            noise = 1
+                        else:
+                            noise = 0
+
+                if self.is_corner(x,z):
+                    if self.get_prev_corner(x,z) in completed:
+                        completed.append((x,z))
+                        print('completed',(x,z))
+                        continue
+                    if i == 1:
+                        prev_y = self.central_point.y
+                    else:
+                        prev_y, prev_noise = self.get_corner_prev(x,z,y_and_noise)
+                else:
+                    if (x,z + 1) in completed:
+                        completed.append((x ,z))
+                        print('completed',(x,z))
+                        continue
+                    if i == 1:
+                        prev_y = self.central_point.y
+                    else:
+                        prev_y, prev_noise = y_and_noise[(x, z+1)]
+
+                y = path_gen.getBlockHeight(x,z)
+
+                if y < prev_y : # dont do this, instead check if its higher or lower when compared to the previous layer within a certain margin
+                    curr_y = prev_y -1 - noise
+                    mc.setBlocks(   x, 50, z,
+                                    x, curr_y , z,block.GRASS.id) 
+
+                elif y > prev_y :
+                    curr_y = prev_y + 1 + noise
+                    mc.setBlocks(   x, curr_y, z,
+                                    x, y, z,block.AIR.id)
+                    mc.setBlocks(    x, 50, z,
+                                    x, curr_y, z,block.GRASS.id)
+                else:
+                    curr_y = y
+                    completed.append((x,z))
+                
+                y_and_noise[(x,z)] = (curr_y,noise)
+                print('added',(x,z))
+                ###########################################################
+if __name__ == '__main__':
+    test_plot = Plot(mc.player.getTilePos(),20,'z+')
+    test_plot.terraform()
