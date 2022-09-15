@@ -1,4 +1,5 @@
 from random import randrange
+import math
 
 from mcpi import vec3
 from mcpi import minecraft
@@ -11,6 +12,7 @@ from models.House import House
 mc = minecraft.Minecraft.create()
 
 class Plot:
+    """takes voronoi points in a village as its central point."""
     def __init__(self, central_point, distance_from_path, direction) -> None:
         self.central_point      = central_point
         self.distance_from_path = distance_from_path
@@ -38,7 +40,7 @@ class Plot:
 
 
     def get_structure(self):
-            """contains complicated logic to randomise direction and the "frontleft" of a structure inside a plot"""
+            """contains complicated logic to determine direction and the "frontleft" of a structure inside a plot"""
             if self.direction == 'x-':
                 structure_start = vec3.Vec3(randrange(self.plot_start.x, self.plot_end.x - self.structure_length),
                                             self.central_point.y,
@@ -81,3 +83,28 @@ class Plot:
             pass
         elif self.direction =='z+':
             pass
+
+    def terraform(self):
+        mc.setBlocks(   self.plot_start.x,  self.plot_start.y + 1,  self.plot_start.z,
+                        self.plot_end.x,    100,                    self.plot_end.z, block.AIR.id)
+        for i in range(1,4):
+            x = self.plot_start.x - i
+            for z in range(self.plot_start.z - (i-1), self.plot_end.z + i + 1): 
+                y = mc.getHeight(x,z)
+                mc.setBlock(x,y,z, block.COAL_ORE.id)
+
+            z = self.plot_end.z + i
+            for x in range(self.plot_start.x - (i-1), self.plot_end.x + i + 1): 
+                y = mc.getHeight(x,z)
+                mc.setBlock(x,y,z, block.COAL_ORE.id)
+
+            x = self.plot_end.x + i
+            
+            for z in range(self.plot_end.z + i,self.plot_start.z - i, -1): 
+                y = mc.getHeight(x,z)
+                mc.setBlock(x,y,z, block.COAL_ORE.id)
+
+            z = self.plot_start.z - i
+            for x in range(self.plot_end.x + i, self.plot_start.x - (i + 1), -1): 
+                y = mc.getHeight(x,z)
+                mc.setBlock(x,y,z, block.COAL_ORE.id)
