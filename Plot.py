@@ -128,8 +128,9 @@ class Plot:
             print(i)
             x = self.plot_start.x - i
             for z in range(self.plot_start.z - (i-1), self.plot_end.z + i + 1): 
-                
+                #almost identical code on the next few for loops
                 ###########################################################
+                #switch between noise levels
                 if i == 1:
                     if 1 == randint(1,10):
                         if noise == 0:
@@ -137,6 +138,7 @@ class Plot:
                         else:
                             noise = 0
 
+                #checks if the previous layer is completed. also gets previous layer's y and noise level
                 if self.is_corner(x,z):
                     if self.get_prev_corner(x,z) in completed:
                         completed.append((x,z))
@@ -158,7 +160,8 @@ class Plot:
 
                 y = path_gen.getBlockHeight(x,z)
 
-                if y < prev_y : # dont do this, instead check if its higher or lower when compared to the previous layer within a certain margin
+                #checks if y is higher or lower than the y in the previous layer
+                if y < prev_y : 
                     curr_y = prev_y -1 - noise
                     mc.setBlocks(   x, 50, z,
                                     x, curr_y , z,block.GRASS.id) 
@@ -209,7 +212,7 @@ class Plot:
 
                 y = path_gen.getBlockHeight(x,z)
 
-                if y < prev_y : # dont do this, instead check if its higher or lower when compared to the previous layer within a certain margin
+                if y < prev_y : 
                     curr_y = prev_y -1 - noise
                     mc.setBlocks(   x, 50, z,
                                     x, curr_y , z,block.GRASS.id) 
