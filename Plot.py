@@ -1,4 +1,4 @@
-from random import randrange
+from random import randint, randrange
 import math
 
 from mcpi import vec3
@@ -7,6 +7,7 @@ from mcpi import block
 
 from models.Structure import Structure
 from models.House import House
+import path_gen
 
 
 mc = minecraft.Minecraft.create()
@@ -87,24 +88,82 @@ class Plot:
     def terraform(self):
         mc.setBlocks(   self.plot_start.x,  self.plot_start.y + 1,  self.plot_start.z,
                         self.plot_end.x,    100,                    self.plot_end.z, block.AIR.id)
+        noise = 0
         for i in range(1,4):
+    
             x = self.plot_start.x - i
             for z in range(self.plot_start.z - (i-1), self.plot_end.z + i + 1): 
-                y = mc.getHeight(x,z)
-                mc.setBlock(x,y,z, block.COAL_ORE.id)
+                y = path_gen.getBlockHeight(x,z)
+                if  i >= 2 and 5 == randint(0,10):
+                    noise += randint(-2,2)
+                    if noise > i:
+                        noise = i-1
+                    if noise < -i:
+                        nosie = -i + 1
+                if y < self.central_point.y - 0.5* (i ** 2) - 1 + noise: # dont do this, instead check if its higher or lower when compared to the previous layer within a certain margin
+                    mc.setBlocks(   x, 50, z,
+                                    x, self.central_point.y - int(0.5 * (i ** 2)) -1 + noise , z,block.GRASS.id)
+                elif y > self.central_point.y + 0.5 * (i ** 2) + 1 + noise:
+                    mc.setBlocks(   x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,
+                                    x, y, z,block.AIR.id)
+                    mc.setBlocks(    x, 50, z,
+                                    x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,block.GRASS.id)
+                                    
+
+        
 
             z = self.plot_end.z + i
             for x in range(self.plot_start.x - (i-1), self.plot_end.x + i + 1): 
-                y = mc.getHeight(x,z)
-                mc.setBlock(x,y,z, block.COAL_ORE.id)
+                y = path_gen.getBlockHeight(x,z)
+                if  i >= 2 and 5 == randint(0,10):
+                    noise += randint(-2,2)
+                    if noise > i:
+                        noise = i-1
+                    if noise < -i:
+                        nosie = -i + 1
+                if y < self.central_point.y - 0.5* (i ** 2) - 1 + noise:
+                    mc.setBlocks(   x, 50, z,
+                                    x, self.central_point.y - int(0.5 * (i ** 2)) -1 + noise , z,block.GRASS.id)
+                elif y > self.central_point.y + 0.5 * (i ** 2) + 1 + noise:
+                    mc.setBlocks(   x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,
+                                    x, y, z,block.AIR.id)
+                    mc.setBlocks(    x, 50, z,
+                                    x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,block.GRASS.id)
+
 
             x = self.plot_end.x + i
             
             for z in range(self.plot_end.z + i,self.plot_start.z - i, -1): 
-                y = mc.getHeight(x,z)
-                mc.setBlock(x,y,z, block.COAL_ORE.id)
+                y = path_gen.getBlockHeight(x,z)
+                if  i >= 2 and 5 == randint(0,10):
+                    noise += randint(-2,2)
+                    if noise > i:
+                        noise = i-1
+                    if noise < -i:
+                        nosie = -i + 1
+                if y < self.central_point.y - 0.5* (i ** 2) - 1 + noise:
+                    mc.setBlocks(   x, 50, z,
+                                    x, self.central_point.y - int(0.5 * (i ** 2)) -1 + noise , z,block.GRASS.id)
+                elif y > self.central_point.y + 0.5 * (i ** 2) + 1 + noise:
+                    mc.setBlocks(   x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,
+                                    x, y, z,block.AIR.id)
+                    mc.setBlocks(    x, 50, z,
+                                    x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,block.GRASS.id)
 
             z = self.plot_start.z - i
             for x in range(self.plot_end.x + i, self.plot_start.x - (i + 1), -1): 
-                y = mc.getHeight(x,z)
-                mc.setBlock(x,y,z, block.COAL_ORE.id)
+                y = path_gen.getBlockHeight(x,z)
+                if  i >= 2 and 5 == randint(0,10):
+                    noise += randint(-2,2)
+                    if noise > i:
+                        noise = i-1
+                    if noise < -i:
+                        nosie = -i + 1
+                if y < self.central_point.y - 0.5* (i ** 2) - 1 + noise:
+                    mc.setBlocks(   x, 50, z,
+                                    x, self.central_point.y - int(0.5 * (i ** 2)) -1 + noise , z,block.GRASS.id)
+                elif y > self.central_point.y + 0.5 * (i ** 2) + 1 + noise:
+                    mc.setBlocks(   x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,
+                                    x, y, z,block.AIR.id)
+                    mc.setBlocks(    x, 50, z,
+                                    x, self.central_point.y + int(0.5 * (i ** 2)) + 1 + noise, z,block.GRASS.id)

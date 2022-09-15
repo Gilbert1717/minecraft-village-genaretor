@@ -20,19 +20,19 @@ def get_random_coords(vil_start, vil_end, amount):
 
     for i in range(amount):
         too_close = True
-        
+
         while too_close:
             x = random.randint(vil_start.x, vil_end.x)
             z = random.randint(vil_start.z, vil_end.z)
             too_close = False
-            
+
             for coord in coords:
                 # if math.fabs(coord[0] - x) + math.fabs(coord[1] - z) < min_distance_between_coords:
                 
                 if math.sqrt((coord.x - x) ** 2) + math.sqrt((coord.z - z)** 2) < min_distance_between_coords:
                     too_close = True
                     break
-            
+
         coords.append(vec3.Vec3(x, getBlockHeight(x,z), z))
         
         
@@ -78,15 +78,14 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
             distances = [] # list of distances from the current x,z iteration to all voronoi points
 
             for coord in voronoi_points:
-                distances.append([(coord.x, coord.z), math.fabs(coord.x - x) + math.fabs(coord.z - z)])
+                distances.append([(coord.x, coord.z), int(math.fabs(coord.x - x) + math.fabs(coord.z - z))])
             
             distances.sort(key = lambda list : list[1]) # sorts distances in order of ascending distance
 
             
             distance_sub = distances[0][1] - distances[1][1] # difference in distance between the 2 closest vornoi points
-
-            if distance_sub <= 1 and distance_sub >= -1:
-
+            
+            if distance_sub >= -1 and distance_sub <= 1:
                 path_coords.append(vec3.Vec3(x, 0, z)) # get the y coord later with getblockheight
         
                 ############ this code block populates voronoi_distances with a voronoi point's distance to the closest path.
@@ -111,12 +110,13 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
         print('getting block height for', coord.x, coord.z)
         coord.y = getBlockHeight(coord.x, coord.z)
 
-        mc.setBlock(coord.x, coord.y, coord.z, block.COBBLESTONE.id)
+    #    mc.setBlock(coord.x, coord.y, coord.z, block.COBBLESTONE.id)
     
-    #TODO: insert code to check and correct for steep paths
+    
     for coord in path_coords:
         mc.setBlocks(   coord.x-1,    coord.y,    coord.z-1, 
                         coord.x+1,    coord.y,    coord.z+1, block.COBBLESTONE.id)
+        #mc.setBlock(   coord.x,    100,    coord.z, block.GLOWING_OBSIDIAN)
         
     vil_center = vec3.Vec3( vil_start.x + (vil_end.x - vil_start.x)//2,
                             0,
@@ -154,5 +154,6 @@ if __name__ == '__main__':
                         vil_start.y,
                         vil_start.z + vil_length)
     
-    generate_path(vil_start, vil_end, num_points)
+    generate_path_and_plots(vil_start, vil_end, num_points)
+    
    
