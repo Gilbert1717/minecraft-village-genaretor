@@ -262,8 +262,7 @@ class Plot:
 
                 y = path_gen.getBlockHeight(x,z)
 
-                if y < prev_y : # dont do this, instead check if its higher or lower when compared to the previous layer within a certain margin
-                    curr_y = prev_y -1 - noise
+                if y < prev_y : 
                     mc.setBlocks(   x, 50, z,
                                     x, curr_y , z,block.GRASS.id) 
 
@@ -311,7 +310,7 @@ class Plot:
 
                 y = path_gen.getBlockHeight(x,z)
 
-                if y < prev_y : # dont do this, instead check if its higher or lower when compared to the previous layer within a certain margin
+                if y < prev_y : 
                     curr_y = prev_y -1 - noise
                     mc.setBlocks(   x, 50, z,
                                     x, curr_y , z,block.GRASS.id) 
