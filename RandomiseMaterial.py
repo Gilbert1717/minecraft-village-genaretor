@@ -6,13 +6,17 @@ class RandomiseMaterial:
     
     def random_exterior(mc): #Returns a block material to use for the exterior parts of the house
         
+        # ADDING BLOCKS THAT ARE NOT INCLUDED IN MCPI BLOCK MODULE
+        NETHER_BRICK = 112
+        
         exterior_blocks = [block.STONE_BRICK.withData(0),
-                          block.BRICK_BLOCK.id,
-                          block.WOOD_PLANKS.withData(0),
-                          block.WOOD_PLANKS.withData(1), # Creates a list of blocks, for the house exterior.
-                          block.WOOD_PLANKS.withData(2),
-                          block.WOOD_PLANKS.withData(3)
-                          ]
+                           block.STONE_BRICK.withData(3),
+                           block.BRICK_BLOCK.id,
+                           block.WOOD_PLANKS.withData(0),
+                           block.WOOD_PLANKS.withData(1), # Creates a list of blocks, for the house exterior.
+                           block.WOOD_PLANKS.withData(2),
+                           NETHER_BRICK
+                           ]
 
         # Returns random block in the list
         number = 0
@@ -26,13 +30,14 @@ class RandomiseMaterial:
     
     def random_floors(mc): #Returns a block material to use for the floors of the house
         
+        # ADDING A BLOCK THAT ISNT IN THE MCPI BLOCK MODULE
         floor_blocks = [block.COBBLESTONE.id,
                         block.SANDSTONE.id,
                         block.WOOL.withData(0),
                         block.WOOL.withData(14), # Creates a list of blocks for the house floors.
                         block.WOOL.withData(15),
                         block.SANDSTONE.withData(2),
-                        block.STONE_BRICK.withData(3)]
+                        block.STONE_BRICK.withData(2)]
         
         # Returns random block in the list
         number = 0
