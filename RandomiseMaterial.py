@@ -61,7 +61,7 @@ class RandomiseMaterial:
         
         return randomBlock
     
-    def outline_blocks(mc): # Returns blocks to use for the outline of the house.
+    def vertical_outline_blocks(mc): # Returns blocks to use for the outline of the house.
         
         outline_blocks = [block.WOOD.withData(0), # WOOD OAK, DIRECTIONALLY UP/DOWN
                           block.WOOD.withData(1), # SPRUCE OAK, DIRECTIONALLY UP/DOWN
@@ -75,6 +75,29 @@ class RandomiseMaterial:
         randomBlock = outline_blocks[number]
         
         return randomBlock
+    
+    def east_outline_blocks(mc, wood_block): # Returns the horizontal (east/west) version of vertical_outline_blocks
+        
+        if wood_block == block.WOOD.withData(0):
+            return block.WOOD.withData(4) # WOOD OAK, EAST/WEST
+        
+        elif wood_block == block.WOOD.withData(1):
+            return block.WOOD.withData(5) # SPRUCE OAK, EAST/WEST
+        
+        elif wood_block == block.WOOD.withData(2):
+            return block.WOOD.withData(6) # BIRCH OAK, EAST/WEST
+    
+    def north_outline_blocks(mc, wood_block): # Returns the horizontal (north/west) version of vertical_outline_blocks
+        
+        if wood_block == block.WOOD.withData(0):
+            return block.WOOD.withData(8) # WOOD OAK, NORTH/WEST
+        
+        elif wood_block == block.WOOD.withData(1):
+            return block.WOOD.withData(9) # SPRUCE OAK, NORTH/WEST
+        
+        elif wood_block == block.WOOD.withData(2):
+            return block.WOOD.withData(10) # BIRCH OAK, NORTH/WEST
+        
     #TODO create roof structures + randomize roofs
     #TODO create wall outer layer to add more aesthetic
     #TODO place a form of lighting, whether that be patterned glowstone floors or torches.
