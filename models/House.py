@@ -163,11 +163,11 @@ class House:
 
     def create_house(self,mc):
         self.create_floor(mc)
-        # self.create_roof(mc)
+        self.create_roof(mc)
         self.create_rooms(mc)
-        # self.create_walls(mc)
+        self.create_walls(mc)
         self.create_windows(mc)
-        # self.front_side(mc)
+        self.front_side(mc)
         # self.back_window(mc)
         # self.side_window(mc,self.structure.frontleft)
         # self.side_window(mc,self.structure.frontright)
