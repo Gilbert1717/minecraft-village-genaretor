@@ -2,8 +2,11 @@ from models.Structure import *
 from mcpi.vec3 import Vec3
 from mcpi import block
 
+from RandomiseMaterial import RandomiseMaterial
 
-def create_blocks(mc, start_point, end_point, material = block.STONE_BRICK, color = 3):
+rm = RandomiseMaterial()
+
+def create_blocks(mc, start_point, end_point, material = rm.random_exterior(), color = 3):
     start_x = start_point.x
     start_y = start_point.y
     start_z = start_point.z

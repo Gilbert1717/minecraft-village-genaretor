@@ -3,11 +3,10 @@ from mcpi import minecraft
 from mcpi import vec3
 from mcpi import block
 
+from mcpi_query_performance import query_blocks
+
 import random
 import math
-
-from models import Structure
-
 
 from Plot import Plot
 
@@ -78,7 +77,7 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
             distances = [] # list of distances from the current x,z iteration to all voronoi points
 
             for coord in voronoi_points:
-                distances.append([(coord.x, coord.z), int(math.fabs(coord.x - x) + math.fabs(coord.z - z))])
+                distances.append([(coord.x, coord.z), abs(coord.x - x) + abs(coord.z - z)])
             
             distances.sort(key = lambda list : list[1]) # sorts distances in order of ascending distance
 
@@ -106,16 +105,25 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
                 #mc.setBlocks(   x-1,    100,    z-1, 
                                 #x+1,    100,    z+1, 1)
     
+    path_coords_tuple = []
     for coord in path_coords:
-        print('getting block height for', coord.x, coord.z)
-        coord.y = getBlockHeight(coord.x, coord.z)
+        path_coords_tuple.append((coord.x,coord.z))
 
+    query_results = query_blocks(path_coords_tuple,'world.getHeight(%d,%d)',int)
+    #DOES NOT CHECK FOR LEAVES OR TREES OR WATER
+    for result in query_results:
+        mc.setBlocks(   result[0][0]-1,    result[1],    result[0][1]-1, 
+                        result[0][0]+1,    result[1],    result[0][1]+1, block.COBBLESTONE.id)
+
+    #for coord in path_coords:
+        #print('getting block height for', coord.x, coord.z)
+        #coord.y = getBlockHeight(coord.x, coord.z)
     #    mc.setBlock(coord.x, coord.y, coord.z, block.COBBLESTONE.id)
     
     
-    for coord in path_coords:
-        mc.setBlocks(   coord.x-1,    coord.y,    coord.z-1, 
-                        coord.x+1,    coord.y,    coord.z+1, block.COBBLESTONE.id)
+    #for coord in path_coords:
+    #    mc.setBlocks(   coord.x-1,    coord.y,    coord.z-1, 
+    #                    coord.x+1,    coord.y,    coord.z+1, block.COBBLESTONE.id)
         #mc.setBlock(   coord.x,    100,    coord.z, block.GLOWING_OBSIDIAN)
         
     vil_center = vec3.Vec3( vil_start.x + (vil_end.x - vil_start.x)//2,
@@ -144,6 +152,26 @@ def getBlockHeight(block_x, block_z):
 
     return y
     
+def checkSteepPath(path_coords): # Function to return a list of y-axis blocks that are one unit apart.
+    
+    check_neighbours = [] # Creates a list to append and check y-axis blocks
+    one_unit = 1
+    
+    for coord in path_coords: # Loops through x,z coords to find y-axis
+        coord.y = getBlockHeight(coord.x, coord.z)
+        
+        check_neighbours.append(coord.y)
+    
+    for index, block_y in enumerate(check_neighbours[:-1]): #Changes the next block to have a height difference of one unit max.
+    
+        difference = check_neighbours[index + 1] - check_neighbours[index]
+    
+        if difference > 1:
+            check_neighbours[index + 1] = check_neighbours[index + 1] - (difference - one_unit)
+    
+    #TODO: Do the reverse so that blocks can go down a steep hill, not only up.
+    #TODO: Place the path with these y-coords and set the blocks above them to air.
+    return check_neighbours
 
 if __name__ == '__main__':
     vil_length = 85
@@ -155,5 +183,5 @@ if __name__ == '__main__':
                         vil_start.z + vil_length)
     
     generate_path_and_plots(vil_start, vil_end, num_points)
-    
+
    
