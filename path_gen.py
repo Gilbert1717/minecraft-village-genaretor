@@ -77,7 +77,7 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
             distances = [] # list of distances from the current x,z iteration to all voronoi points
 
             for coord in voronoi_points:
-                distances.append([(coord.x, coord.z), int(math.fabs(coord.x - x) + math.fabs(coord.z - z))])
+                distances.append([(coord.x, coord.z), abs(coord.x - x) + abs(coord.z - z)])
             
             distances.sort(key = lambda list : list[1]) # sorts distances in order of ascending distance
 
@@ -110,7 +110,7 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
         path_coords_tuple.append((coord.x,coord.z))
 
     query_results = query_blocks(path_coords_tuple,'world.getHeight(%d,%d)',int)
-
+    #DOES NOT CHECK FOR LEAVES OR TREES OR WATER
     for result in query_results:
         mc.setBlocks(   result[0][0]-1,    result[1],    result[0][1]-1, 
                         result[0][0]+1,    result[1],    result[0][1]+1, block.COBBLESTONE.id)
