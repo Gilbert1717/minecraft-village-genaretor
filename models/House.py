@@ -51,7 +51,11 @@ class House:
         
     def create_walls(self,mc):
         
-        corner_block = rm.outline_blocks() # initialises the corner block material for the house outline.
+        #initialises the randomised outline blocks to place down for the house.
+        corner_block = rm.vertical_outline_blocks() 
+        east_block = rm.east_outline_blocks(corner_block) # passes wood type as a parameter, to get the horizontal version
+        north_block = rm.north_outline_blocks(corner_block) # passes wood type as a parameter, to get the horizontal version
+        
         
         for floor in self.floors:
             endpoint1 = vec3.Vec3(floor.backleft.x, floor.backleft.y + self.structure.height, floor.backleft.z)
@@ -61,20 +65,38 @@ class House:
             create_blocks(mc, floor.backright, endpoint2)
             create_blocks(mc, endpoint2, floor.frontleft)
         
-        
-            #finds the corner of the frontleft and places the outline block material in the frontleft corner.
+
+            """PLACES HORIZONTAL OUTLINE BLOCKS OF THE HOUSE"""
+            # finds the endpoint of the opposite side of the house, to place outline block material
+            horizontal_one = vec3.Vec3(floor.frontright.x, floor.frontleft.y, floor.frontleft.z)
+            create_blocks(mc, floor.frontleft, horizontal_one, east_block)
+            
+            # finds the endpoint of the opposite side of the house, to place outline block material
+            horizontal_two = vec3.Vec3(floor.frontleft.x, floor.frontleft.y, floor.frontleft.z)
+            create_blocks(mc, floor.backleft, horizontal_two, north_block)
+            
+            # finds the endpoint of the opposite side of the house, to place outline block material
+            horizontal_three = vec3.Vec3(floor.frontright.x, floor.frontright.y, floor.frontright.z)
+            create_blocks(mc, floor.backright, horizontal_three, north_block)
+            
+            # finds the endpoint of the opposite side of the house, to place outline block material
+            horizontal_four = vec3.Vec3(floor.backright.x, floor.frontright.y, floor.backleft.z)
+            create_blocks(mc, floor.backleft, horizontal_four, east_block)
+            
+            """PLACES VERITCAL OUTLINE BLOCKS OF THE HOUSE"""
+            # finds the corner of the frontleft and places the outline block material in the frontleft corner.
             corner_one = vec3.Vec3(floor.frontleft.x, floor.frontleft.y + self.structure.height, floor.frontleft.z)
             create_blocks(mc, floor.frontleft, corner_one, corner_block)
             
-            #finds the corner of the frontright and places the outline block material in the frontright corner.
+            # finds the corner of the frontright and places the outline block material in the frontright corner.
             corner_two = vec3.Vec3(floor.frontright.x, floor.frontright.y + self.structure.height, floor.frontright.z)
             create_blocks(mc, floor.frontright, corner_two, corner_block)
             
-            #finds the corner of the backleft and places the outline block material in the backleft corner.
+            # finds the corner of the backleft and places the outline block material in the backleft corner.
             corner_three = vec3.Vec3(floor.backleft.x, floor.backleft.y + self.structure.height, floor.backleft.z)
             create_blocks(mc, floor.backleft, corner_three, corner_block)
             
-            #finds the corner of the backright and places the outline block material in the backright corner.
+            # finds the corner of the backright and places the outline block material in the backright corner.
             corner_four = vec3.Vec3(floor.backright.x, floor.backright.y + self.structure.height, floor.backright.z)
             create_blocks(mc, floor.backright, corner_four, corner_block)
             
