@@ -19,7 +19,7 @@ class House:
         
     
     def create_floor(self, mc: Minecraft):
-        material = random.randint(1,2)
+        material = rm.random_floors()
         colour = random.randint(1,3)
         for storey in range(self.stories):
             structure = self.structure
@@ -50,6 +50,9 @@ class House:
    
         
     def create_walls(self,mc):
+        
+        corner_block = rm.outline_blocks() # initialises the corner block material for the house outline.
+        
         for floor in self.floors:
             endpoint1 = vec3.Vec3(floor.backleft.x, floor.backleft.y + self.structure.height, floor.backleft.z)
             endpoint2 = vec3.Vec3(floor.frontright.x, floor.frontright.y + self.structure.height, floor.frontright.z)
@@ -57,8 +60,25 @@ class House:
             create_blocks(mc, endpoint1, floor.backright)
             create_blocks(mc, floor.backright, endpoint2)
             create_blocks(mc, endpoint2, floor.frontleft)
+        
+        
+            #finds the corner of the frontleft and places the outline block material in the frontleft corner.
+            corner_one = vec3.Vec3(floor.frontleft.x, floor.frontleft.y + self.structure.height, floor.frontleft.z)
+            create_blocks(mc, floor.frontleft, corner_one, corner_block)
             
-    
+            #finds the corner of the frontright and places the outline block material in the frontright corner.
+            corner_two = vec3.Vec3(floor.frontright.x, floor.frontright.y + self.structure.height, floor.frontright.z)
+            create_blocks(mc, floor.frontright, corner_two, corner_block)
+            
+            #finds the corner of the backleft and places the outline block material in the backleft corner.
+            corner_three = vec3.Vec3(floor.backleft.x, floor.backleft.y + self.structure.height, floor.backleft.z)
+            create_blocks(mc, floor.backleft, corner_three, corner_block)
+            
+            #finds the corner of the backright and places the outline block material in the backright corner.
+            corner_four = vec3.Vec3(floor.backright.x, floor.backright.y + self.structure.height, floor.backright.z)
+            create_blocks(mc, floor.backright, corner_four, corner_block)
+            
+            
     def back_window(self,mc):
         x_offset = 3
         window_height = 3
