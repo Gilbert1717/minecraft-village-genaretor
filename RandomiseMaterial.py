@@ -28,7 +28,8 @@ class RandomiseMaterial:
                         block.SANDSTONE.id,
                         block.LEAVES.id,
                         block.SANDSTONE.withData(2),
-                        block.STONE_BRICK.withData(2)]
+                        block.STONE_BRICK.withData(2),
+                        block.QUARTZ_BLOCK.id]
         
         number = 0
         number = random.randrange(0, len(floor_blocks))
@@ -38,4 +39,23 @@ class RandomiseMaterial:
         
         return randomBlock
     
-    #TODO colorID + randomize roofs 
+    def random_furniture(mc):
+        
+        furniture_blocks = [block.BOOKSHELF.id,
+                            block.CHEST.id,
+                            block.FURNACE_ACTIVE.id,
+                            block.CRAFTING_TABLE.id
+                            ]
+        
+        number = 0
+        number = random.randrange(0, len(furniture_blocks))
+        
+        randomBlock = block.DIRT.id
+        randomBlock = furniture_blocks[number]
+        
+        return randomBlock
+        
+    #TODO create roof structures + randomize roofs
+    #TODO create wall outer layer to add more aesthetic
+    #TODO place a form of lighting, whether that be patterned glowstone floors or torches.
+    #TODO room decorations/furniture
