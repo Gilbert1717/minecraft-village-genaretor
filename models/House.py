@@ -11,10 +11,10 @@ rm = RandomiseMaterial()
 
 
 class House:
-    def __init__ (self,structure,stories = random.randint(0,2)):
+    def __init__ (self,structure,):
         self.structure = structure
-        self.stories = stories
-        self.height = structure.height * stories
+        self.stories = random.randint(0,2)
+        self.height = structure.height * self.stories
         self.floors = []
         
     
