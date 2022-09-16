@@ -63,14 +63,14 @@ if __name__ == "__main__":
     # position = vec3.Vec3(0,0,0)
     # mc.setBlocks(x,y - 1,z,x + 30, y + 50, z + 30, 0)
     # mc.setBlocks(x + 10,y -1,z + 10,x - 30, y + 50, z - 30, 0)
-    position = mc.player.getTilePos()
-    weith = random.randint(8,12)
-    length = random.randint(12,16)
-    structure1 = Structure(position,weith,length)
-    print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
-    stories = random.randint(1,3)
-    house1 = House(structure1,3)
-    house1.create_house(mc)
+    # position = mc.player.getTilePos()
+    # weith = random.randint(8,12)
+    # length = random.randint(12,16)
+    # structure1 = Structure(position,weith,length)
+    # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
+    # stories = random.randint(1,3)
+    # house1 = House(structure1,3)
+    # house1.create_house(mc)
     
     
     
