@@ -11,10 +11,10 @@ rm = RandomiseMaterial()
 
 
 class House:
-    def __init__ (self,structure,stories = random.randint(0,2)):
+    def __init__ (self,structure,):
         self.structure = structure
-        self.stories = stories
-        self.height = structure.height * stories
+        self.stories = random.randint(0,2)
+        self.height = structure.height * self.stories
         self.floors = []
         
     
@@ -74,7 +74,18 @@ class House:
         
         i = random.randint(1,3)
         window_height = 1
-        window_width = random.randint(3,self.structure.length//(i + 1) - 1)
+        if self.structure.length > 0:
+            try:
+                window_width = random.randint(3,self.structure.length//(i + 1) - 1)
+            except:
+                i = random.randint(1,2)
+                window_width = random.randint(3,self.structure.length//(i + 1) - 1)
+        elif self.structure.length < 0:
+            try:
+                window_width = random.randint(self.structure.length//(i + 1) - 1,-3)
+            except:
+                i = random.randint(1,2)
+                window_width = random.randint(self.structure.length//(i + 1) - 1,-3)
         
 
         window_x = vector.x 
@@ -83,7 +94,7 @@ class House:
          
         
         for x in range(i):
-            z_offset =  self.structure.length//(i + 1) + random.randint(1,3)
+            z_offset =  self.structure.length//(i + 1) + random.randint(1,2)
             window_z = window_z + z_offset
             mc.setBlocks(window_x, window_y, window_z + 1, window_x, window_y + window_height ,window_z + window_width - 1,102)
             x += 1
