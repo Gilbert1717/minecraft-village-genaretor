@@ -144,12 +144,22 @@ class Floor:
 
     def create_stairs(self,mc):
         stairs = block.STAIRS_WOOD.id
-        start_vector = create_vector(self.backleft, 1,  1, -1)
-        end_vector = create_vector(self.backleft,self.structure.height + 1, self.structure.height + 1, -2)
-        create_blocks(mc,start_vector,end_vector,block.AIR)
-        for x in range(self.structure.height):
-            vector1 = create_vector(self.backleft,self.structure.height - x + 1, x + 1 , -1)
-            vector2 = create_vector(self.backleft,self.structure.height - x + 1, x + 1, -2)
-            mc.setBlock(vector1.x,vector1.y,vector1.z,stairs,1)
-            mc.setBlock(vector2.x,vector2.y,vector2.z,stairs,1)
+        if self.structure.length > 0:
+            start_vector = create_vector(self.backleft, 1,  1, -1)
+            end_vector = create_vector(self.backleft,self.structure.height + 1, self.structure.height + 1, -2)
+            create_blocks(mc,start_vector,end_vector,block.AIR)
+            for x in range(self.structure.height):
+                vector1 = create_vector(self.backleft,self.structure.height - x + 1, x + 1 , -1)
+                vector2 = create_vector(self.backleft,self.structure.height - x + 1, x + 1, -2)
+                mc.setBlock(vector1.x,vector1.y,vector1.z,stairs,1)
+                mc.setBlock(vector2.x,vector2.y,vector2.z,stairs,1)
+        else:
+            start_vector = create_vector(self.backleft, 1,  1, 1)
+            end_vector = create_vector(self.backleft,self.structure.height + 1, self.structure.height + 1, 2)
+            create_blocks(mc,start_vector,end_vector,block.AIR)
+            for x in range(self.structure.height):
+                vector1 = create_vector(self.backleft,self.structure.height - x + 1, x + 1 , 1)
+                vector2 = create_vector(self.backleft,self.structure.height - x + 1, x + 1, 2)
+                mc.setBlock(vector1.x,vector1.y,vector1.z,stairs,1)
+                mc.setBlock(vector2.x,vector2.y,vector2.z,stairs,1)
 
