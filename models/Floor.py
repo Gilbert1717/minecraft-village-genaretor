@@ -72,6 +72,9 @@ class Floor:
                                 structure.backright.z)
 
     def split_horizontal(self,split_point):
+        """
+        Use this method to ...
+        """
         width = split_point - 1
         structure1 = Structure(self.structure.position, width, self.structure.length)
         structure2_position = create_vector(self.structure.position,split_point,0,0)
@@ -90,9 +93,9 @@ class Floor:
         structure2_position = create_vector(self.structure.position,0,0,split_point)
         structure2 = Structure(structure2_position, self.structure.width, self.structure.length - split_point)
         floor1 = Floor(structure1,self.storey)
-        print('floor1 z',floor1.frontleft.z,floor1.frontright.z,floor1.backleft.z,floor1.backright.z)
+        # print('floor1 z',floor1.frontleft.z,floor1.frontright.z,floor1.backleft.z,floor1.backright.z)
         floor2 = Floor(structure2,self.storey)
-        print('floor2 z',floor2.frontleft.z,floor2.frontright.z,floor2.backleft.z,floor2.backright.z)
+        # print('floor2 z',floor2.frontleft.z,floor2.frontright.z,floor2.backleft.z,floor2.backright.z)
         return floor1, floor2
 
     
@@ -100,11 +103,15 @@ class Floor:
 
 
     def create_room(self,mc,floor,material = 1,color = 1): 
+        """
+            - Why would i use this function?
+            - What is the general process (if it is important)
+        """
         min_room_length = 6
         min_room_width = 6
-        print('outside',floor.structure.width,floor.structure.length)
+        # print('outside',floor.structure.width,floor.structure.length)
         if floor.structure.width > min_room_length and floor.structure.length > min_room_length:
-            print('if1',floor.structure.width,floor.structure.length)
+            # print('if1',floor.structure.width,floor.structure.length)
             if floor.structure.width >= floor.structure.length:
                 # print('if2',floor.structure.width,floor.structure.length)
                 split = random.randrange(int(floor.structure.width/2),floor.structure.width - min_room_width//2,1) 
@@ -120,7 +127,7 @@ class Floor:
                     floor1.create_room(mc,floor1)
                     floor2.create_room(mc,floor2)
             else:
-                print('else',floor.structure.width,floor.structure.length)
+                # print('else',floor.structure.width,floor.structure.length)
                 split = random.randrange(int(floor.structure.length/2),floor.structure.length - min_room_length//2,1)
                 floor1,floor2 = floor.split_vertical(split)
                 diagonal_point = create_vector(floor1.backleft, floor.structure.width, floor.structure.height, 0)
@@ -130,7 +137,7 @@ class Floor:
                 McPosition2 = floor1.backright
                 create_door(mc,McPosition1,McPosition2)
                 stop = random.randint(0,3)
-                stop = 1
+                # stop = 1
                 if stop != 0:        
                     floor1.create_room(mc,floor1)
                     floor2.create_room(mc,floor2)
@@ -145,3 +152,4 @@ class Floor:
             vector2 = create_vector(self.backleft,self.structure.height - x + 1, x + 1, -2)
             mc.setBlock(vector1.x,vector1.y,vector1.z,stairs,1)
             mc.setBlock(vector2.x,vector2.y,vector2.z,stairs,1)
+
