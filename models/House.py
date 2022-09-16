@@ -11,7 +11,7 @@ rm = RandomiseMaterial()
 
 
 class House:
-    def __init__ (self,structure,):
+    def __init__ (self,structure):
         self.structure = structure
         self.stories = random.randint(0,2)
         self.height = structure.height * self.stories
