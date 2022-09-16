@@ -19,7 +19,7 @@ class House:
         
     
     def create_floor(self, mc: Minecraft):
-        material = random.randint(1,2)
+        material = rm.random_floors()
         colour = random.randint(1,3)
         for storey in range(self.stories):
             structure = self.structure
