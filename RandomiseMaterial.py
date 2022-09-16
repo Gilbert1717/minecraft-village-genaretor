@@ -6,7 +6,7 @@ class RandomiseMaterial:
     
     def random_exterior(mc):
         
-        exterior_blocks = [block.STONE_BRICK.id,
+        exterior_blocks = [block.STONE_BRICK.withData(0),
                           block.BRICK_BLOCK.id,
                           block.WOOD_PLANKS.withData(0),
                           block.WOOD_PLANKS.withData(1),
@@ -20,16 +20,19 @@ class RandomiseMaterial:
         randomBlock = block.DIRT.id
 
         randomBlock = exterior_blocks[number]
+        
+        # print(f"exterior block: {randomBlock}")
         return randomBlock
     
     def random_floors(mc):
         
         floor_blocks = [block.COBBLESTONE.id,
                         block.SANDSTONE.id,
-                        block.LEAVES.id,
+                        block.WOOL.withData(0),
+                        block.WOOL.withData(14),
+                        block.WOOL.withData(15),
                         block.SANDSTONE.withData(2),
-                        block.STONE_BRICK.withData(2),
-                        block.QUARTZ_BLOCK.id]
+                        block.STONE_BRICK.withData(3)]
         
         number = 0
         number = random.randrange(0, len(floor_blocks))
