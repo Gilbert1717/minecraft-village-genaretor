@@ -11,9 +11,9 @@ rm = RandomiseMaterial()
 
 
 class House:
-    def __init__ (self,structure):
+    def __init__ (self,structure,stories = random.randint(0,2)):
         self.structure = structure
-        self.stories = random.randint(0,2)
+        self.stories = stories
         self.height = structure.height * self.stories
         self.floors = []
         
@@ -24,7 +24,6 @@ class House:
         for storey in range(self.stories):
             structure = self.structure
             floor = Floor(structure, storey)
-            print(floor.frontleft.y)
             create_blocks(mc, floor.frontleft, floor.backright, material, colour)
             self.floors.append(floor)
 
@@ -43,7 +42,6 @@ class House:
         end_point = vec3.Vec3(self.structure.backright.x,
                                 self.structure.backright.y + self.structure.height * self.stories, 
                                 self.structure.backright.z)
-        print(end_point.y)
         create_blocks(mc, start_point, end_point)
 
             
@@ -100,56 +98,61 @@ class House:
             corner_four = vec3.Vec3(floor.backright.x, floor.backright.y + self.structure.height, floor.backright.z)
             create_blocks(mc, floor.backright, corner_four, corner_block)
             
-            
-    def back_window(self,mc):
-        x_offset = 3
-        window_height = 3
-        window_width = 6
+    def create_windows(self,mc):
+        for floor in self.floors:
+            for room in floor.rooms:
+                floor.create_window(mc,room)   
+                print(floor.frontleft.x,floor.frontleft.y,floor.frontleft.z)
+                print(room.frontleft.x,room.frontleft.y,room.frontleft.z)  
+    # def back_window(self,mc):
+    #     x_offset = 3
+    #     window_height = 3
+    #     window_width = 6
 
-        window_x = self.structure.position.x + x_offset
-        window_y = self.structure.position.y + 1
-        window_z = self.structure.position.z + self.structure.length 
+    #     window_x = self.structure.position.x + x_offset
+    #     window_y = self.structure.position.y + 1
+    #     window_z = self.structure.position.z + self.structure.length 
         
-        mc.setBlocks(window_x, window_y, window_z, window_x + window_width, window_y + window_height,window_z,102)
+    #     mc.setBlocks(window_x, window_y, window_z, window_x + window_width, window_y + window_height,window_z,102)
     
-    def side_window(self,mc,vector):
+    # def side_window(self,mc,vector):
         
-        i = random.randint(1,3)
-        window_height = 1
-        if self.structure.length > 0:
-            try:
-                window_width = random.randint(3,self.structure.length//(i + 1) - 1)
-            except:
-                i = random.randint(1,2)
-                window_width = random.randint(3,self.structure.length//(i + 1) - 1)
-        elif self.structure.length < 0:
-            try:
-                window_width = random.randint(self.structure.length//(i + 1) - 1,-3)
-            except:
-                i = random.randint(1,2)
-                window_width = random.randint(self.structure.length//(i + 1) - 1,-3)
+    #     i = random.randint(1,3)
+    #     window_height = 1
+    #     if self.structure.length > 0:
+    #         try:
+    #             window_width = random.randint(3,self.structure.length//(i + 1) - 1)
+    #         except:
+    #             i = random.randint(1,2)
+    #             window_width = random.randint(3,self.structure.length//(i + 1) - 1)
+    #     elif self.structure.length < 0:
+    #         try:
+    #             window_width = random.randint(self.structure.length//(i + 1) - 1,-3)
+    #         except:
+    #             i = random.randint(1,2)
+    #             window_width = random.randint(self.structure.length//(i + 1) - 1,-3)
         
 
-        window_x = vector.x 
-        window_y = vector.y + 2
-        window_z = vector.z - window_width
+    #     window_x = vector.x 
+    #     window_y = vector.y + 2
+    #     window_z = vector.z - window_width
          
         
-        for x in range(i):
-            z_offset =  self.structure.length//(i + 1) + random.randint(1,2)
-            window_z = window_z + z_offset
-            mc.setBlocks(window_x, window_y, window_z + 1, window_x, window_y + window_height ,window_z + window_width - 1,102)
-            x += 1
+    #     for x in range(i):
+    #         z_offset =  self.structure.length//(i + 1) + random.randint(1,2)
+    #         window_z = window_z + z_offset
+    #         mc.setBlocks(window_x, window_y, window_z + 1, window_x, window_y + window_height ,window_z + window_width - 1,102)
+    #         x += 1
             
     
         
 
-    def front_window(self,mc):
-        window_x = self.structure.x + 3
-        window_y = self.structure.y + 3
-        window_height = window_x + 2
-        window_width = window_y + 2
-        mc.setBlocks(window_x, window_y, self.structure.z, window_width,window_height,self.structure.z,102)
+    # def front_window(self,mc):
+    #     window_x = self.structure.x + 3
+    #     window_y = self.structure.y + 3
+    #     window_height = window_x + 2
+    #     window_width = window_y + 2
+    #     mc.setBlocks(window_x, window_y, self.structure.z, window_width,window_height,self.structure.z,102)
 
     def front_side(self,mc):
         create_door(mc,self.structure.frontleft,self.structure.frontright)
@@ -160,13 +163,14 @@ class House:
 
     def create_house(self,mc):
         self.create_floor(mc)
-        self.create_roof(mc)
+        # self.create_roof(mc)
         self.create_rooms(mc)
-        self.create_walls(mc)
-        # self.front(mc)
-        self.back_window(mc)
-        self.side_window(mc,self.structure.frontleft)
-        self.side_window(mc,self.structure.frontright)
+        # self.create_walls(mc)
+        self.create_windows(mc)
+        # self.front_side(mc)
+        # self.back_window(mc)
+        # self.side_window(mc,self.structure.frontleft)
+        # self.side_window(mc,self.structure.frontright)
         
 
 
