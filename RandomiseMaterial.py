@@ -68,6 +68,13 @@ class RandomiseMaterial:
                           block.WOOD.withData(2), # BIRCH OAK, DIRECTIONALLY UP/DOWN
                           ]
         
+        number = 0
+        number = random.randrange(0, len(outline_blocks))
+        
+        randomBlock = block.DIRT.id
+        randomBlock = outline_blocks[number]
+        
+        return randomBlock
     #TODO create roof structures + randomize roofs
     #TODO create wall outer layer to add more aesthetic
     #TODO place a form of lighting, whether that be patterned glowstone floors or torches.
