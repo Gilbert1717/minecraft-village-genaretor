@@ -3,11 +3,10 @@ from mcpi import minecraft
 from mcpi import vec3
 from mcpi import block
 
+from mcpi_query_performance import query_blocks
+
 import random
 import math
-
-from models import Structure
-
 
 from Plot import Plot
 
@@ -106,16 +105,25 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
                 #mc.setBlocks(   x-1,    100,    z-1, 
                                 #x+1,    100,    z+1, 1)
     
+    path_coords_tuple = []
     for coord in path_coords:
-        print('getting block height for', coord.x, coord.z)
-        coord.y = getBlockHeight(coord.x, coord.z)
+        path_coords_tuple.append((coord.x,coord.z))
 
+    query_results = query_blocks(path_coords_tuple,'world.getHeight(%d,%d)',int)
+
+    for result in query_results:
+        mc.setBlocks(   result[0][0]-1,    result[1],    result[0][1]-1, 
+                        result[0][0]+1,    result[1],    result[0][1]+1, block.COBBLESTONE.id)
+
+    #for coord in path_coords:
+        #print('getting block height for', coord.x, coord.z)
+        #coord.y = getBlockHeight(coord.x, coord.z)
     #    mc.setBlock(coord.x, coord.y, coord.z, block.COBBLESTONE.id)
     
     
-    for coord in path_coords:
-        mc.setBlocks(   coord.x-1,    coord.y,    coord.z-1, 
-                        coord.x+1,    coord.y,    coord.z+1, block.COBBLESTONE.id)
+    #for coord in path_coords:
+    #    mc.setBlocks(   coord.x-1,    coord.y,    coord.z-1, 
+    #                    coord.x+1,    coord.y,    coord.z+1, block.COBBLESTONE.id)
         #mc.setBlock(   coord.x,    100,    coord.z, block.GLOWING_OBSIDIAN)
         
     vil_center = vec3.Vec3( vil_start.x + (vil_end.x - vil_start.x)//2,

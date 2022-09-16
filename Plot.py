@@ -7,7 +7,23 @@ from mcpi import block
 
 from models.Structure import Structure
 from models.House import House
-import path_gen
+
+### copy pasted from path_gen.py to circumvent circular dependency issues
+def getBlockHeight(block_x, block_z):
+    """DOES NOT WORK IF SETWORLDSPAWN HEIGHT IS NOT SET TO 0"""
+    y = mc.getHeight(block_x, block_z)
+    
+    ground_block = mc.getBlock(block_x, y, block_z)
+    
+    while (ground_block != block.GRASS.id and ground_block != block.DIRT.id and
+            ground_block !=block.WATER_STATIONARY.id and ground_block != block.WATER_FLOWING.id 
+            and ground_block != block.SAND.id and ground_block != block.STONE.id):
+        
+        y = y - 1
+        ground_block = mc.getBlock(block_x, y, block_z)
+        #print(block_x, y, block_z, ground_block)
+
+    return y
 
 
 mc = minecraft.Minecraft.create()
@@ -34,7 +50,7 @@ class Plot:
         self.plot_length = self.plot_end.x - self.plot_start.x
         
         
-        length_lower_bound = 10 if self.plot_length // 2 < 10 else self.plot_length // 2
+        length_lower_bound = 12 if self.plot_length // 2 < 12 else self.plot_length // 2
 
         self.structure_length = randrange(length_lower_bound,   self.plot_length)
         self.structure_width  = randrange(9,                    self.structure_length)
@@ -159,8 +175,8 @@ class Plot:
                     else:
                         prev_y, prev_noise = y_and_noise[(x + 1, z)]
 
-                y = path_gen.getBlockHeight(x,z)
-
+                y = getBlockHeight(x,z)
+    
                 #checks if y is higher or lower than the y in the previous layer
                 if y < prev_y : 
                     curr_y = prev_y -1 - noise
@@ -211,7 +227,7 @@ class Plot:
                     else:
                         prev_y, prev_noise = y_and_noise[(x , z-1)]
 
-                y = path_gen.getBlockHeight(x,z)
+                y = getBlockHeight(x,z)
 
                 if y < prev_y : 
                     curr_y = prev_y -1 - noise
@@ -261,7 +277,7 @@ class Plot:
                     else:
                         prev_y, prev_noise = y_and_noise[(x -1, z)]
 
-                y = path_gen.getBlockHeight(x,z)
+                y = getBlockHeight(x,z)
 
                 if y < prev_y : 
                     mc.setBlocks(   x, 50, z,
@@ -309,7 +325,7 @@ class Plot:
                     else:
                         prev_y, prev_noise = y_and_noise[(x, z+1)]
 
-                y = path_gen.getBlockHeight(x,z)
+                y = getBlockHeight(x,z)
 
                 if y < prev_y : 
                     curr_y = prev_y -1 - noise
@@ -332,3 +348,4 @@ class Plot:
 if __name__ == '__main__':
     test_plot = Plot(mc.player.getTilePos(),20,'z+')
     test_plot.terraform()
+    test_plot.place_house(test_plot.get_structure())
