@@ -72,6 +72,7 @@ class Plot:
                 
     def place_house(self, structure):
         house = House(structure)
+        print(house.stories)
         house.create_house(mc)
 
     def generate_path_connection(self):

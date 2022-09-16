@@ -31,32 +31,32 @@ def get_village_coords(mc):
 if __name__ == "__main__":
     mc = Minecraft.create()
 
-    #vil_length = 85
-    #num_points = 5
+    vil_length = 85
+    num_points = 5
 
-    #vil_start = get_village_coords(mc)
-    #vil_end = vec3.Vec3(vil_start.x + vil_length, 
-                        #vil_start.y,
-                        #vil_start.z + vil_length)
+    vil_start = get_village_coords(mc)
+    vil_end = vec3.Vec3(vil_start.x + vil_length, 
+                        vil_start.y,
+                        vil_start.z + vil_length)
 
-    #paths, plots = path_gen.generate_path_and_plots(vil_start, vil_end, num_points)
+    paths, plots = path_gen.generate_path_and_plots(vil_start, vil_end, num_points)
     
-    #for plot in plots:
-        #structure = plot.get_structure()
-        #plot.terraform()
-        #plot.place_house(structure)
+    for plot in plots:
+        structure = plot.get_structure()
+        plot.terraform()
+        plot.place_house(structure)
     
     
 
-    # mc.setBlocks(-200,0,-200,100,200,0)
-    # mc.setBlocks(-200,-3,-200,0,200,2)
-    # house1_location = McPosition(x,y,z)
-    # mc.player.setPos(x,y,z)
+    #mc.setBlocks(-200,0,-200,100,200,0)
+    #mc.setBlocks(-200,-3,-200,0,200,2)
+    #house1_location = McPosition(x,y,z)
+    #mc.player.setPos(x,y,z)
 
-    # while mc.getBlock(x + 1,y,z + 1) is 0:
-    #     y = y - 1
-    # print(x,y,z)
-    # mc.setBlock(x + 1,y + 1,z + 1, 1) 
+    #while mc.getBlock(x + 1,y,z + 1) is 0:
+       # y = y - 1
+    #print(x,y,z)
+    #mc.setBlock(x + 1,y + 1,z + 1, 1) 
     # x = 0
     # y = 0
     # z = 0
