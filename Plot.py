@@ -8,13 +8,14 @@ from mcpi_query_performance import query_blocks
 
 from models.Structure import Structure
 from models.House import House
+from interpolation import sigmoid
 
 mc = minecraft.Minecraft.create()
 
 ### copy pasted from path_gen.py to circumvent circular dependency issues
-def getBlockHeight(block_x, block_z):
+def getBlockHeight(block_x, block_z, y):
     """DOES NOT WORK IF SETWORLDSPAWN HEIGHT IS NOT SET TO 0"""
-    y = mc.getHeight(block_x, block_z)
+    
     
     ground_block = mc.getBlock(block_x, y, block_z)
     
@@ -26,7 +27,7 @@ def getBlockHeight(block_x, block_z):
         ground_block = mc.getBlock(block_x, y, block_z)
         #print(block_x, y, block_z, ground_block)
 
-    return y
+    return y, ground_block
 
 
 mc = minecraft.Minecraft.create()
@@ -56,12 +57,18 @@ class Plot:
 
         self.structure_length = randrange(length_lower_bound,   self.plot_length)
         self.structure_width  = randrange(9,                    self.structure_length)
+        
+        self.create_terrain_dict()
 
-        self.terrain_dict = dict()
+
+    def create_terrain_dict(self):
+        self.height_dict = dict()
+        self.block_dict = dict()
         terrain_coords = []
         ground_blocks =[]
 
-        for x in range(self.plot_start.x - 5, self.plot_end.x + 6):
+        
+        for x in range(self.plot_start.x - 5, self.plot_end.x + 6): # extra 5 blocks of buffer/padding/margin for use in terraforming
             for z in range(self.plot_start.z - 5, self.plot_end.z + 6):
                 terrain_coords.append((x,z))
         
@@ -71,16 +78,26 @@ class Plot:
             x = query_result[0][0]
             z = query_result[0][1]
             y = query_result[1]
-            self.terrain_dict[(x,z)] = y
+            
+            self.height_dict[(x,z)] = y
             ground_blocks.append((x,y,z))
         
-        ground_block_queries = query_blocks(ground_blocks,'world.getHeight(%d,%d)',int)
+        ground_block_queries = query_blocks(ground_blocks,'world.getBlock(%d,%d,%d)',int)
+
+        stop_blocks =  [  block.GRASS.id,         block.DIRT.id, block.WATER_STATIONARY.id, 
+                            block.WATER_FLOWING.id, block.SAND.id, block.STONE.id]
 
         for query_result in ground_block_queries:
             x = query_result[0][0]
             y = query_result[0][1]
             z = query_result[0][2]
             block_id = query_result[1]
+
+            #if block_id not in stop_blocks:
+            #    y, block_id = getBlockHeight(x,z, y)
+
+            self.block_dict[(x,z)] = block_id
+
 
     def get_structure(self):
             """contains complicated logic to determine direction and the "frontleft" of a structure inside a plot"""
@@ -114,15 +131,20 @@ class Plot:
                 
 
     def terraform_new_wip(self):
-        terrain_coords = []
-        for x in range(self.plot_start.x - 5, self.plot_end.x + 6):
-            for z in range(self.plot_start.z - 5, self.plot_end.z + 6):
-                terrain_coords.append((x,z))
-        
+        x = self.plot_start.x
+        for z in range(self.plot_start.z , self.plot_end.z + 1):
+            y_diff = self.height_dict[(x-5,z)] - self.central_point.y
+            
+            interpolated = [] 
+            for scaler in sigmoid(0.5 ,0.5, 6):
+                interpolated.append(int(scaler * y_diff))
+            
+            for x_interp in range(self.plot_start.x, self.plot_start.x - 5, -1):
+                y = interpolated.pop(0) + self.central_point.y
+                mc.setBlocks(   x_interp, self.height_dict[(x,z)] - 10,z,
+                                x_interp, y, z, self.block_dict[(x,z)])
+                print('placing',x,y,z)
 
-        query_results = query_blocks(terrain_coords,'world.getHeight(%d,%d)',int)
-        for result in query_results:
-            print(result)
 
     def place_house(self, structure):
         house = House(structure)
@@ -390,4 +412,4 @@ class Plot:
 if __name__ == '__main__':
     test_plot = Plot(mc.player.getTilePos(),20,'z+')
     test_plot.terraform_new_wip()
-    test_plot.place_house(test_plot.get_structure())
+    #test_plot.place_house(test_plot.get_structure())
