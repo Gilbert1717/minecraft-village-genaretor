@@ -17,39 +17,51 @@ def create_blocks(mc, start_point, end_point, material = rm.random_exterior(), c
 
 
 def create_door(mc,vector1,vector2):
+    Air = 0
+    Glass_pane = 102
+    door = 64
     #  On horizontal wall
     if vector1.x == vector2.x:
         length = abs(vector2.z - vector1.z)
-        # print(vector1.x,vector2.x,vector2.z,vector1.z)
         if vector2.z > vector1.z:
             create_z = vector1.z + random.randint(2,length - 2)
-            # while mc.getBlock(create_vector + 1, vector1.y, vector1.z) != 0 or mc.getBlock(create_vector - 1, vector1.y, vector1.z) != 0:
-            #     create_vector = vector1.z + random.randint(2,length - 2)
+            while (mc.getBlock(vector1.x + 1, vector1.y + 1, create_z + 1) != Air or
+                    mc.getBlock(vector1.x - 1, vector1.y + 1, create_z ) != Air or
+                    mc.getBlock(vector1.x, vector1.y + 2, create_z) == Glass_pane):
+                create_z = vector1.z + random.randint(2,length - 2)
+            
         else:
             create_z = vector1.z - random.randint(2,length - 2)
-            # while mc.getBlock(create_vector + 1, vector1.y, vector1.z) != 0 or mc.getBlock(create_vector - 1, vector1.y, vector1.z) != 0:
-            #     create_vector = vector1.z - random.randint(2,length - 2)
-        mc.setBlock(vector1.x, vector1.y + 1, create_z, 0)
-        mc.setBlock(vector1.x, vector1.y + 2, create_z, 0)
-        mc.setBlock(vector1.x, vector1.y + 2, create_z,64,8)
-        mc.setBlock(vector1.x , vector1.y + 1, create_z,64,0)
+            while (mc.getBlock(vector1.x + 1, vector1.y + 1, create_z) != Air or
+                    mc.getBlock(vector1.x - 1, vector1.y + 1, create_z) != Air or
+                    mc.getBlock(vector1.x, vector1.y + 2, create_z) == Glass_pane):
+                create_z = vector1.z - random.randint(2,length - 2)
+        mc.setBlock(vector1.x, vector1.y + 1, create_z, block.AIR)
+        mc.setBlock(vector1.x, vector1.y + 2, create_z, block.AIR)
+        mc.setBlock(vector1.x, vector1.y + 2, create_z,door,8)
+        mc.setBlock(vector1.x , vector1.y + 1, create_z,door,0)
          
     #  On vertical wall
     elif vector1.z == vector2.z:
         width = abs(vector2.x - vector1.x)
-        # print(width)
         if vector2.x > vector1.x:
             create_x = vector1.x + random.randint(2,width - 2)
-            # while mc.getBlock(create_vector, vector1.y, vector1.z + 1) == 0 or mc.getBlock(create_vector - 1, vector1.y, vector1.z) == 0:
-            #     create_vector = vector1.x + random.randint(2,width - 2)
+            while (mc.getBlock(create_x, vector1.y + 1, vector1.z + 1) != Air or
+                    mc.getBlock(create_x, vector1.y + 1, vector1.z - 1) != Air or 
+                    mc.getBlock(create_x, vector1.y + 2, vector1.z) == Glass_pane):
+                create_x = vector1.x + random.randint(2,width - 2)
+               
+            
         else:
             create_x = vector1.x - random.randint(2,width - 2)
-            # while mc.getBlock(create_vector, vector1.y, vector1.z + 1) == 0 or mc.getBlock(create_vector - 1, vector1.y, vector1.z) == 0:
-            #      create_vector = vector1.x - random.randint(2,width - 2)
-        mc.setBlock(create_x, vector1.y + 1, vector1.z, 0)
-        mc.setBlock(create_x, vector1.y + 2, vector1.z, 0)
-        mc.setBlock(create_x , vector1.y + 2, vector1.z,64,8)
-        mc.setBlock(create_x , vector1.y + 1, vector1.z,64,0)
+            while (mc.getBlock(create_x, vector1.y + 1, vector1.z + 1) != Air or
+                    mc.getBlock(create_x, vector1.y + 1, vector1.z - 1) != Air or
+                    mc.getBlock(create_x, vector1.y + 2, vector1.z) != Glass_pane):
+                create_x = vector1.x - random.randint(2,width - 2)
+        mc.setBlock(create_x, vector1.y + 1, vector1.z, block.AIR)
+        mc.setBlock(create_x, vector1.y + 2, vector1.z, block.AIR)
+        mc.setBlock(create_x , vector1.y + 2, vector1.z,door,8)
+        mc.setBlock(create_x , vector1.y + 1, vector1.z,door,0)
         
         
 
@@ -58,6 +70,7 @@ class Floor:
         y = structure.position.y + structure.height * storey
         self.storey = storey
         self.structure = structure
+        self.rooms = []
         self.frontleft = Vec3(structure.frontleft.x,
                                 y,
                                 structure.frontleft.z)
@@ -71,77 +84,153 @@ class Floor:
                                 y,
                                 structure.backright.z)
 
+    # split the floor into 2 small floors by choosing a position on x-axis
     def split_horizontal(self,split_point):
+        """
+        Use this method to ...
+        """
         width = split_point - 1
         structure1 = Structure(self.structure.position, width, self.structure.length)
         structure2_position = create_vector(self.structure.position,split_point,0,0)
         structure2 = Structure(structure2_position, self.structure.width - split_point, self.structure.length)
         floor1 = Floor(structure1,self.storey)
-        # print('floor1 x',floor1.frontleft.x,floor1.frontright.x,floor1.backleft.x,floor1.backright.x)
-        # print('floor1 z',floor1.frontleft.z,floor1.frontright.z,floor1.backleft.z,floor1.backright.z)
-        
         floor2 = Floor(structure2,self.storey)
-        # print('floor2 x',floor2.frontleft.x,floor2.frontright.x,floor2.backleft.x,floor2.backright.x)
         return floor1, floor2
 
+    # split the floor into 2 small floors by choosing a position on z-axis
     def split_vertical(self,split_point):
         length = split_point - 1
         structure1 = Structure(self.structure.position, self.structure.width, length)
         structure2_position = create_vector(self.structure.position,0,0,split_point)
         structure2 = Structure(structure2_position, self.structure.width, self.structure.length - split_point)
         floor1 = Floor(structure1,self.storey)
-        print('floor1 z',floor1.frontleft.z,floor1.frontright.z,floor1.backleft.z,floor1.backright.z)
         floor2 = Floor(structure2,self.storey)
-        print('floor2 z',floor2.frontleft.z,floor2.frontright.z,floor2.backleft.z,floor2.backright.z)
         return floor1, floor2
 
     
 
 
-
-    def create_room(self,mc,floor,material = 1,color = 1): 
+    # waiting to fix --- could not add room into self.rooms properly
+    def create_room(self,mc,floor,rooms = None, material = 1,color = 1): 
+        """
+           keep spliting the floor until room length or width less than 6(or random stop number == 0 to stop the function) 
+            add the small floors into the list self.rooms
+        """
         min_room_length = 6
         min_room_width = 6
-        print('outside',floor.structure.width,floor.structure.length)
-        if floor.structure.width > min_room_length and floor.structure.length > min_room_length:
-            print('if1',floor.structure.width,floor.structure.length)
+        if rooms is None:
+            rooms = self.rooms
+        if floor.structure.width > min_room_length and floor.structure.length > min_room_length:           
             if floor.structure.width >= floor.structure.length:
-                # print('if2',floor.structure.width,floor.structure.length)
                 split = random.randrange(int(floor.structure.width/2),floor.structure.width - min_room_width//2,1) 
                 floor1,floor2 = floor.split_horizontal(split)
                 diagonal_point = create_vector(floor1.frontright, 0, floor.structure.height, floor.structure.length)
                 create_blocks(mc, floor1.frontright, diagonal_point)
                 McPosition1 = floor1.frontright
                 McPosition2 = floor1.backright
-                create_door(mc,McPosition1,McPosition2)
                 stop = 1
                 random.randint(0,3)
                 if stop != 0:
-                    floor1.create_room(mc,floor1)
-                    floor2.create_room(mc,floor2)
+                    floor1.create_room(mc,floor1,rooms)
+                    floor2.create_room(mc,floor2,rooms)
+                else:
+                    rooms.append(floor1)
+                    rooms.append(floor2)
+                create_door(mc,McPosition1,McPosition2)
             else:
-                print('else',floor.structure.width,floor.structure.length)
                 split = random.randrange(int(floor.structure.length/2),floor.structure.length - min_room_length//2,1)
                 floor1,floor2 = floor.split_vertical(split)
                 diagonal_point = create_vector(floor1.backleft, floor.structure.width, floor.structure.height, 0)
                 create_blocks(mc, floor1.backleft, diagonal_point)
-                # print("floorv",floor1.frontleft.x,floor1.frontleft.y,floor1.frontleft.z)
                 McPosition1 = floor1.backleft
                 McPosition2 = floor1.backright
-                create_door(mc,McPosition1,McPosition2)
                 stop = random.randint(0,3)
-                stop = 1
                 if stop != 0:        
-                    floor1.create_room(mc,floor1)
-                    floor2.create_room(mc,floor2)
+                    floor1.create_room(mc,floor1,rooms)
+                    floor2.create_room(mc,floor2,rooms)
+                else:
+                    rooms.append(floor1)
+                    rooms.append(floor2)
+                create_door(mc,McPosition1,McPosition2)
+        else:
+            rooms.append(floor)
+            print(len(self.rooms))
+        
+    
+    def create_window(self,mc,floor):
+        # create window on front wall
+        if floor.frontleft.z == self.frontleft.z:
+            x_offset = abs(floor.frontright.z - floor.backright.z)//2 - 1
+            window_x = floor.frontleft.x + x_offset
+            window_y = floor.frontright.y + 2
+            window_z = floor.frontleft.z
+            window_width = window_x + 1
+            window_height = window_y + 1
+            window = 102
+            mc.setBlocks (window_x,window_y,window_z,
+                        window_width,window_height,window_z,
+                        window)
+
+        # create window on back wall
+        if floor.backleft.z == self.backleft.z:
+            x_offset = abs(floor.frontright.z - floor.backright.z)//2 - 1
+            window_x = floor.backleft.x + x_offset
+            window_y = floor.backleft.y + 2
+            window_z = floor.backleft.z   
+            window_width = window_x + 1
+            window_height = window_y + 1
+            window = 102
+            mc.setBlocks (window_x,window_y,window_z,
+                        window_width,window_height,window_z,
+                        window)
+        
+        # create window on left-side wall
+        elif floor.frontleft.x == self.frontleft.x:
+            z_offset = abs(floor.frontright.z - floor.backright.z)//2 - 1
+            window_x = floor.frontleft.x
+            window_y = floor.frontleft.y + 2
+            window_z = floor.frontleft.z + z_offset
+            window_width = window_z + 1
+            window_height = window_y + 1
+            window = 102
+            mc.setBlocks (window_x,window_y,window_z,
+                            window_x,window_height,window_width,
+                            window)
+
+        # create window on right-side wall
+        if floor.frontright.x == self.frontright.x:
+            z_offset = abs(floor.frontright.z - floor.backright.z)//2 - 1
+            window_x = floor.frontright.x
+            window_y = floor.frontright.y + 2
+            window_z = floor.frontright.z + z_offset
+            window_width = window_z + 1
+            window_height = window_y + 1
+            window = 102
+            mc.setBlocks (window_x,window_y,window_z,
+                            window_x,window_height,window_width,
+                            window)
+
+
+       
 
     def create_stairs(self,mc):
         stairs = block.STAIRS_WOOD.id
-        start_vector = create_vector(self.backleft, 1,  1, -1)
-        end_vector = create_vector(self.backleft,self.structure.height + 1, self.structure.height + 1, -2)
-        create_blocks(mc,start_vector,end_vector,block.AIR)
-        for x in range(self.structure.height):
-            vector1 = create_vector(self.backleft,self.structure.height - x + 1, x + 1 , -1)
-            vector2 = create_vector(self.backleft,self.structure.height - x + 1, x + 1, -2)
-            mc.setBlock(vector1.x,vector1.y,vector1.z,stairs,1)
-            mc.setBlock(vector2.x,vector2.y,vector2.z,stairs,1)
+        if self.structure.length > 0:
+            start_vector = create_vector(self.backleft, 2,  1, -1)
+            end_vector = create_vector(self.backleft,self.structure.height, self.structure.height + 1, -2)
+            create_blocks(mc,start_vector,end_vector,block.AIR)
+            for x in range(self.structure.height):
+                vector1 = create_vector(self.backleft,self.structure.height - x + 1, x + 1 , -1)
+                vector2 = create_vector(self.backleft,self.structure.height - x + 1, x + 1, -2)
+                mc.setBlock(vector1.x,vector1.y,vector1.z,stairs,1)
+                mc.setBlock(vector2.x,vector2.y,vector2.z,stairs,1)
+        else:
+            start_vector = create_vector(self.backleft, 2,  1, 1)
+            end_vector = create_vector(self.backleft,self.structure.height, self.structure.height + 1, 2)
+            create_blocks(mc,start_vector,end_vector,block.AIR)
+            for x in range(self.structure.height):
+                vector1 = create_vector(self.backleft,self.structure.height - x + 1, x + 1 , 1)
+                vector2 = create_vector(self.backleft,self.structure.height - x + 1, x + 1, 2)
+                mc.setBlock(vector1.x,vector1.y,vector1.z,stairs,1)
+                mc.setBlock(vector2.x,vector2.y,vector2.z,stairs,1)
+
