@@ -4,9 +4,12 @@ import math
 from mcpi import vec3
 from mcpi import minecraft
 from mcpi import block
+from mcpi_query_performance import query_blocks
 
 from models.Structure import Structure
 from models.House import House
+
+mc = minecraft.Minecraft.create()
 
 ### copy pasted from path_gen.py to circumvent circular dependency issues
 def getBlockHeight(block_x, block_z):
@@ -29,8 +32,9 @@ def getBlockHeight(block_x, block_z):
 mc = minecraft.Minecraft.create()
 
 class Plot:
-    """takes voronoi points in a village as its central point."""
+   
     def __init__(self, central_point, distance_from_path, direction) -> None:
+        """takes voronoi points in a village as its central point."""
         self.central_point      = central_point
         self.distance_from_path = distance_from_path
         self.direction          = direction
@@ -44,8 +48,6 @@ class Plot:
                                     self.central_point.y,
                                     self.central_point.z + int(self.distance_from_path/2) - buffer_from_path)
 
-        mc.setBlocks(   self.plot_start.x,  self.plot_start.y - 1,  self.plot_start.z, 
-                        self.plot_end.x,    self.plot_end.y,    self.plot_end.z, block.GRASS.id)
 
         self.plot_length = self.plot_end.x - self.plot_start.x
         
@@ -55,6 +57,30 @@ class Plot:
         self.structure_length = randrange(length_lower_bound,   self.plot_length)
         self.structure_width  = randrange(9,                    self.structure_length)
 
+        self.terrain_dict = dict()
+        terrain_coords = []
+        ground_blocks =[]
+
+        for x in range(self.plot_start.x - 5, self.plot_end.x + 6):
+            for z in range(self.plot_start.z - 5, self.plot_end.z + 6):
+                terrain_coords.append((x,z))
+        
+        terrain_height = query_blocks(terrain_coords,'world.getHeight(%d,%d)',int)
+
+        for query_result in terrain_height:
+            x = query_result[0][0]
+            z = query_result[0][1]
+            y = query_result[1]
+            self.terrain_dict[(x,z)] = y
+            ground_blocks.append((x,y,z))
+        
+        ground_block_queries = query_blocks(ground_blocks,'world.getHeight(%d,%d)',int)
+
+        for query_result in ground_block_queries:
+            x = query_result[0][0]
+            y = query_result[0][1]
+            z = query_result[0][2]
+            block_id = query_result[1]
 
     def get_structure(self):
             """contains complicated logic to determine direction and the "frontleft" of a structure inside a plot"""
@@ -86,6 +112,18 @@ class Plot:
 
             return structure
                 
+
+    def terraform_new_wip(self):
+        terrain_coords = []
+        for x in range(self.plot_start.x - 5, self.plot_end.x + 6):
+            for z in range(self.plot_start.z - 5, self.plot_end.z + 6):
+                terrain_coords.append((x,z))
+        
+
+        query_results = query_blocks(terrain_coords,'world.getHeight(%d,%d)',int)
+        for result in query_results:
+            print(result)
+
     def place_house(self, structure):
         house = House(structure)
         print(house.stories)
@@ -141,6 +179,8 @@ class Plot:
         mc.setBlocks(   self.plot_start.x,  self.plot_start.y + 1,  self.plot_start.z,
                         self.plot_end.x,    100,                    self.plot_end.z, block.AIR.id)
         noise = 0
+
+        #iterates circularly around the plot. i indicates layer
         for i in range(1,4):
             print(i)
             x = self.plot_start.x - i
@@ -345,7 +385,9 @@ class Plot:
                 y_and_noise[(x,z)] = (curr_y,noise)
                 print('added',(x,z))
                 ###########################################################
+    
+    
 if __name__ == '__main__':
     test_plot = Plot(mc.player.getTilePos(),20,'z+')
-    test_plot.terraform()
+    test_plot.terraform_new_wip()
     test_plot.place_house(test_plot.get_structure())
