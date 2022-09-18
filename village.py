@@ -6,6 +6,8 @@ from mcpi.minecraft import Minecraft
 
 from mcpi import block
 from mcpi import vec3
+import random
+from RandomiseMaterial import RandomiseMaterial
 
 import random
 
@@ -68,6 +70,11 @@ if __name__ == "__main__":
     length = random.randint(12,16)
     structure1 = Structure(position,weith,length)
     # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
+    # house1 = House(structure1,1)
+    # house1.create_house(mc)
+    ran = RandomiseMaterial()
+    ran.rooftop(mc,position.x,position.y,position.z)
+    
     stories = random.randint(1,3)
     house1 = House(structure1,3)
     house1.create_house(mc)
@@ -75,7 +82,7 @@ if __name__ == "__main__":
     # mc.setBlock(vector1.x + 1, vector1.y + 1, vector1.z,64,0)
     
     
-    
+
     
     
    
