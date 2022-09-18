@@ -3,7 +3,7 @@ from mcpi import block
 class Path_Objects:
     
     def lampPost(mc, x_coord, y_coord, z_coord): # Create lampPost for path_gen
-        
+        #TODO: Use getheight function, to ensure that it doesnt place into the ground, but ontop.
         lamp_height = 4
         one_unit = 1
         # Initialising trap door block and trap_door positions that aren't in the API.
@@ -24,8 +24,6 @@ class Path_Objects:
         mc.setBlock(x_coord - one_unit, y_coord + lamp_height, z_coord, trapdoor, trapdoor_west)
         mc.setBlock(x_coord + one_unit, y_coord + lamp_height, z_coord, trapdoor, trapdoor_east)
         
-                
-    
     def setFlowers(): # Lay out flowers near path_gen
         pass 
     
