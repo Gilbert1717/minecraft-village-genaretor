@@ -124,7 +124,7 @@ class Floor:
             if floor.structure.width >= floor.structure.length:
                 split = random.randrange(int(floor.structure.width/2),floor.structure.width - min_room_width//2,1) 
                 floor1,floor2 = floor.split_horizontal(split)
-                diagonal_point = create_vector(floor1.frontright, 0, floor.structure.height, floor.structure.length)
+                diagonal_point = create_vector(floor1.frontright, 0, floor.structure.height - 1, floor.structure.length)
                 create_blocks(mc, floor1.frontright, diagonal_point)
                 McPosition1 = floor1.frontright
                 McPosition2 = floor1.backright
@@ -140,7 +140,7 @@ class Floor:
             else:
                 split = random.randrange(int(floor.structure.length/2),floor.structure.length - min_room_length//2,1)
                 floor1,floor2 = floor.split_vertical(split)
-                diagonal_point = create_vector(floor1.backleft, floor.structure.width, floor.structure.height, 0)
+                diagonal_point = create_vector(floor1.backleft, floor.structure.width, floor.structure.height - 1, 0)
                 create_blocks(mc, floor1.backleft, diagonal_point)
                 McPosition1 = floor1.backleft
                 McPosition2 = floor1.backright
