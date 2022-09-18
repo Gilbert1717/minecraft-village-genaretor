@@ -18,5 +18,12 @@ def sigmoid(p, s, step):
     
     return result
 
+def scale_sigmoid(p,s,step,y_diff, initial_y):
+        interpolated = [] 
+        for scaler in sigmoid(p ,s, step):
+            interpolated.append(int(scaler * y_diff) + initial_y)
+        
+        return interpolated
+
 if __name__ == '__main__':
     print(sigmoid(0.5 ,0.5, 9))

@@ -1,3 +1,4 @@
+from inspect import CO_ASYNC_GENERATOR
 from random import randint, randrange
 import math
 
@@ -9,14 +10,15 @@ from mcpi_query_performance import query_blocks
 from models.Structure import Structure
 from models.House import House
 from interpolation import sigmoid
+from interpolation import scale_sigmoid
 
 mc = minecraft.Minecraft.create()
 
 ### copy pasted from path_gen.py to circumvent circular dependency issues
-def getBlockHeight(block_x, block_z, y):
+def getBlockHeight(block_x, block_z):
     """DOES NOT WORK IF SETWORLDSPAWN HEIGHT IS NOT SET TO 0"""
     
-    
+    y = mc.getHeight(block_x,block_z)
     ground_block = mc.getBlock(block_x, y, block_z)
     
     while (ground_block != block.GRASS.id and ground_block != block.DIRT.id and
@@ -94,13 +96,14 @@ class Plot:
             block_id = query_result[1]
 
             #if block_id not in stop_blocks:
-            #    y, block_id = getBlockHeight(x,z, y)
+            #    y, block_id = getBlockHeight(x,z)
 
             self.block_dict[(x,z)] = block_id
 
 
     def get_structure(self):
             """contains complicated logic to determine direction and the "frontleft" of a structure inside a plot"""
+            #TODO: redo this, houses can still sometimes go beyond the plot
             if self.direction == 'x-':
                 structure_start = vec3.Vec3(randrange(self.plot_start.x, self.plot_end.x - self.structure_length),
                                             self.central_point.y,
@@ -130,25 +133,377 @@ class Plot:
             return structure
                 
 
-    def terraform_new_wip(self):
+    def place_floor(self):
+        #clears the space anbove the plot
+        mc.setBlocks(   self.plot_start.x, self.plot_start.y, self.plot_start.z,
+                        self.plot_end.x, self.plot_end.y + 30, self.plot_end.z, block.AIR.id)
+        
+        #places floor
+        for x in range(self.plot_start.x, self.plot_end.x +1):
+            for z in range(self.plot_start.z, self.plot_end.z +1):
+                y = self.central_point.y
+                mc.setBlocks(   x,y-20,z,
+                                x,y,z, self.block_dict[(x,z)])
+    
+    
+                
+    def terraform(self):
+        self.place_floor()
+
+        # terraforms the "-x" side of the plot
         x = self.plot_start.x
         for z in range(self.plot_start.z , self.plot_end.z + 1):
             y_diff = self.height_dict[(x-5,z)] - self.central_point.y
             
-            interpolated = [] 
-            for scaler in sigmoid(0.5 ,0.5, 6):
-                interpolated.append(int(scaler * y_diff))
-            
+            interpolated = scale_sigmoid(0.5, 0.3, 6, y_diff, self.central_point.y)
+        
             for x_interp in range(self.plot_start.x, self.plot_start.x - 5, -1):
-                y = interpolated.pop(0) + self.central_point.y
-                mc.setBlocks(   x_interp, self.height_dict[(x,z)] - 10,z,
-                                x_interp, y, z, self.block_dict[(x,z)])
-                print('placing',x,y,z)
+                y = interpolated.pop(0)
+                
+                mc.setBlocks(   x_interp, y - 20,z,
+                                x_interp, y, z, self.block_dict[(x_interp,z)])
+                mc.setBlocks(   x_interp, y + 1, z,
+                                x_interp, y + 21, z, block.AIR.id)
+                
+        # terraforms the "+z" side of the plot
+        z = self.plot_end.z
+        for x in range(self.plot_start.x , self.plot_end.x + 1):
+            y_diff = self.height_dict[(x,z + 5)] - self.central_point.y
+            
+            interpolated = scale_sigmoid(0.5, 0.3, 6, y_diff, self.central_point.y)
+            
+            for z_interp in range(self.plot_end.z, self.plot_end.z + 6):
+                y = interpolated.pop(0)
+                
+                mc.setBlocks(   x, y - 20,z_interp,
+                                x, y, z_interp, self.block_dict[(x,z_interp)])
+                mc.setBlocks(   x, y + 1,z_interp,
+                                x, y + 21, z_interp, block.AIR.id)
+        
+        # terraforms the "+x" side of the plot
+        x = self.plot_end.x
+        for z in reversed(range(self.plot_start.z , self.plot_end.z + 1)):
+            y_diff = self.height_dict[(x+5,z)] - self.central_point.y
+            
+            interpolated = scale_sigmoid(0.5, 0.3, 6, y_diff, self.central_point.y)
+            
+            for x_interp in range(self.plot_end.x, self.plot_end.x + 6):
+                y = interpolated.pop(0)
+                mc.setBlocks(   x_interp, y - 20,z,
+                                x_interp, y, z, self.block_dict[(x_interp,z)])
+                mc.setBlocks(   x_interp, y + 1, z,
+                                x_interp, y + 21, z, block.AIR.id)
+        
+        # terraforms the "-z" side of the plot
+        z = self.plot_start.z
+        for x in reversed(range(self.plot_start.x , self.plot_end.x + 1)):
+            y_diff = self.height_dict[(x,z - 5)] - self.central_point.y
+            
+            interpolated = scale_sigmoid(0.5, 0.3, 6, y_diff, self.central_point.y)
+            
+            for z_interp in range(self.plot_start.z, self.plot_start.z - 6, -1):
+                y = interpolated.pop(0)
+                mc.setBlocks(   x, y - 20,z_interp,
+                                x, y, z_interp, self.block_dict[(x,z_interp)])
+                mc.setBlocks(   x, y + 1,z_interp,
+                                x, y + 21, z_interp, block.AIR.id)
+        
+        #interpolate corners
+        #corner1
+        #########
+            ########## interpolate diagonally from plot corner to outer corner 
+        xs = [x for x in reversed(range(self.plot_start.x - 3, self.plot_start.x + 2))]
+        zs = [z for z in reversed(range(self.plot_start.z - 3, self.plot_start.z + 2))]
+        corner_coords  = [(xs[i],zs[i]) for i in range(5)]
+
+        y_diff = self.height_dict[corner_coords[-1]] - self.central_point.y
+        
+        interpolated = scale_sigmoid(0.5, 0.5, 6, y_diff, self.central_point.y)
+        
+        ybase_1, ybase_2 = interpolated[1], interpolated[2] # used for interpolating the rest of the corner
+        
+        for x,z in corner_coords:
+            y = interpolated.pop(0)
+            mc.setBlocks(   x, y - 20,z,
+                            x, y, z, self.block_dict[(x,z_interp)])
+            mc.setBlocks(   x, y + 1,z,
+                            x, y + 21, z, block.AIR.id)
+            ##########
+
+
+        #interpolate from the corner diagonal to the corner sides
+        x,z = corner_coords[1]
+            #########
+        y_diff = self.height_dict[x,z-3] - ybase_1
+
+        interpolated = scale_sigmoid(0.5, 0.3, 5, y_diff, ybase_1)
+
+        for z_interp in range(z, z - 4, -1):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x, y - 20,z_interp,
+                            x, y, z_interp, self.block_dict[(x,z_interp)])
+            mc.setBlocks(   x, y + 1,z_interp,
+                            x, y + 21, z_interp, block.AIR.id)
+
+        y_diff = self.height_dict[x-3,z] - ybase_1
+
+        interpolated = scale_sigmoid(0.5, 0.3, 5    , y_diff, ybase_1)
+
+        for x_interp in range(x, x - 4, -1):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x_interp, y - 20,z,
+                            x_interp, y, z, self.block_dict[(x_interp,z)])
+            mc.setBlocks(   x_interp, y + 1,z,
+                            x_interp, y + 21, z, block.AIR.id)
+            ########
+        x,z = corner_coords[2]
+
+        y_diff = self.height_dict[x,z-2] - ybase_2
+
+        interpolated = scale_sigmoid(0.5, 0.3, 4, y_diff, ybase_2)
+
+        for z_interp in range(z, z - 3, -1):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x, y - 20,z_interp,
+                            x, y, z_interp, self.block_dict[(x,z_interp)])
+            mc.setBlocks(   x, y + 1,z_interp,
+                            x, y + 21, z_interp, block.AIR.id)
+
+        y_diff = self.height_dict[x-2,z] - ybase_2
+
+        interpolated = scale_sigmoid(0.5, 0.3, 4, y_diff, ybase_2)
+
+        for x_interp in range(x, x - 3, -1):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x_interp, y - 20,z,
+                            x_interp, y, z, self.block_dict[(x_interp,z)])
+            mc.setBlocks(   x_interp, y + 1,z,
+                            x_interp, y + 21, z, block.AIR.id)
+            ##########
+        ########
+
+        #corner2
+        #########
+            ########## interpolate diagonally from plot corner to outer corner 
+        xs = [x for x in range(self.plot_end.x - 1, self.plot_end.x + 4)]
+        zs = [z for z in reversed(range(self.plot_start.z - 3, self.plot_start.z + 2))]
+        corner_coords  = [(xs[i],zs[i]) for i in range(5)]
+
+        y_diff = self.height_dict[corner_coords[-1]] - self.central_point.y
+        
+        interpolated = scale_sigmoid(0.5, 0.5, 6, y_diff, self.central_point.y)
+        
+        ybase_1, ybase_2 = interpolated[1], interpolated[2] # used for interpolating the rest of the corner
+        
+        for x,z in corner_coords:
+            y = interpolated.pop(0)
+            mc.setBlocks(   x, y - 20,z,
+                            x, y, z, self.block_dict[(x,z_interp)])
+            mc.setBlocks(   x, y + 1,z,
+                            x, y + 21, z, block.AIR.id)
+            ##########
+
+
+        #interpolate from the corner diagonal to the corner sides
+        x,z = corner_coords[1]
+            #########
+        y_diff = self.height_dict[x,z-3] - ybase_1
+
+        interpolated = scale_sigmoid(0.5, 0.3, 5, y_diff, ybase_1)
+
+        for z_interp in range(z, z - 4, -1):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x, y - 20,z_interp,
+                            x, y, z_interp, self.block_dict[(x,z_interp)])
+            mc.setBlocks(   x, y + 1,z_interp,
+                            x, y + 21, z_interp, block.AIR.id)
+
+        y_diff = self.height_dict[x+3,z] - ybase_1
+
+        interpolated = scale_sigmoid(0.5, 0.3, 5    , y_diff, ybase_1)
+
+        for x_interp in range(x, x + 4):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x_interp, y - 20,z,
+                            x_interp, y, z, self.block_dict[(x_interp,z)])
+            mc.setBlocks(   x_interp, y + 1,z,
+                            x_interp, y + 21, z, block.AIR.id)
+            ########
+        x,z = corner_coords[2]
+
+        y_diff = self.height_dict[x,z-2] - ybase_2
+
+        interpolated = scale_sigmoid(0.5, 0.3, 4, y_diff, ybase_2)
+
+        for z_interp in range(z, z - 3, -1):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x, y - 20,z_interp,
+                            x, y, z_interp, self.block_dict[(x,z_interp)])
+            mc.setBlocks(   x, y + 1,z_interp,
+                            x, y + 21, z_interp, block.AIR.id)
+
+        y_diff = self.height_dict[x+2,z] - ybase_2
+
+        interpolated = scale_sigmoid(0.5, 0.3, 4, y_diff, ybase_2)
+
+        for x_interp in range(x, x + 3):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x_interp, y - 20,z,
+                            x_interp, y, z, self.block_dict[(x_interp,z)])
+            mc.setBlocks(   x_interp, y + 1,z,
+                            x_interp, y + 21, z, block.AIR.id)
+            ##########
+        ########
+    
+        #corner3
+        #########
+            ########## interpolate diagonally from plot corner to outer corner 
+        xs = [x for x in range(self.plot_end.x - 1, self.plot_end.x + 4)]
+        zs = [z for z in range(self.plot_end.z - 1, self.plot_end.z + 4)]
+        corner_coords  = [(xs[i],zs[i]) for i in range(5)]
+
+        y_diff = self.height_dict[corner_coords[-1]] - self.central_point.y
+        
+        interpolated = scale_sigmoid(0.5, 0.5, 6, y_diff, self.central_point.y)
+        
+        ybase_1, ybase_2 = interpolated[1], interpolated[2] # used for interpolating the rest of the corner
+        
+        for x,z in corner_coords:
+            y = interpolated.pop(0)
+            mc.setBlocks(   x, y - 20,z,
+                            x, y, z, self.block_dict[(x,z_interp)])
+            mc.setBlocks(   x, y + 1,z,
+                            x, y + 21, z, block.AIR.id)
+            ##########
+
+
+        #interpolate from the corner diagonal to the corner sides
+        x,z = corner_coords[1]
+            #########
+        y_diff = self.height_dict[x,z+3] - ybase_1
+
+        interpolated = scale_sigmoid(0.5, 0.3, 5, y_diff, ybase_1)
+
+        for z_interp in range(z, z + 4):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x, y - 20,z_interp,
+                            x, y, z_interp, self.block_dict[(x,z_interp)])
+            mc.setBlocks(   x, y + 1,z_interp,
+                            x, y + 21, z_interp, block.AIR.id)
+
+        y_diff = self.height_dict[x+3,z] - ybase_1
+
+        interpolated = scale_sigmoid(0.5, 0.3, 5    , y_diff, ybase_1)
+
+        for x_interp in range(x, x + 4):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x_interp, y - 20,z,
+                            x_interp, y, z, self.block_dict[(x_interp,z)])
+            mc.setBlocks(   x_interp, y + 1,z,
+                            x_interp, y + 21, z, block.AIR.id)
+            ########
+        x,z = corner_coords[2]
+
+        y_diff = self.height_dict[x,z+2] - ybase_2
+
+        interpolated = scale_sigmoid(0.5, 0.3, 4, y_diff, ybase_2)
+
+        for z_interp in range(z, z + 3):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x, y - 20,z_interp,
+                            x, y, z_interp, self.block_dict[(x,z_interp)])
+            mc.setBlocks(   x, y + 1,z_interp,
+                            x, y + 21, z_interp, block.AIR.id)
+
+        y_diff = self.height_dict[x+2,z] - ybase_2
+
+        interpolated = scale_sigmoid(0.5, 0.3, 4, y_diff, ybase_2)
+
+        for x_interp in range(x, x + 3):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x_interp, y - 20,z,
+                            x_interp, y, z, self.block_dict[(x_interp,z)])
+            mc.setBlocks(   x_interp, y + 1,z,
+                            x_interp, y + 21, z, block.AIR.id)
+            ##########
+        ########
+
+        #corner4
+        #########
+            ########## interpolate diagonally from plot corner to outer corner 
+        xs = [x for x in reversed(range(self.plot_start.x - 3, self.plot_start.x + 2))]
+        zs = [z for z in range(self.plot_end.z - 1, self.plot_end.z + 4)]
+        corner_coords  = [(xs[i],zs[i]) for i in range(5)]
+
+        y_diff = self.height_dict[corner_coords[-1]] - self.central_point.y
+        
+        interpolated = scale_sigmoid(0.5, 0.5, 6, y_diff, self.central_point.y)
+        
+        ybase_1, ybase_2 = interpolated[1], interpolated[2] # used for interpolating the rest of the corner
+        
+        for x,z in corner_coords:
+            y = interpolated.pop(0)
+            mc.setBlocks(   x, y - 20,z,
+                            x, y, z, self.block_dict[(x,z_interp)])
+            mc.setBlocks(   x, y + 1,z,
+                            x, y + 21, z, block.AIR.id)
+            ##########
+
+
+        #interpolate from the corner diagonal to the corner sides
+        x,z = corner_coords[1]
+            #########
+        y_diff = self.height_dict[x,z+3] - ybase_1
+
+        interpolated = scale_sigmoid(0.5, 0.3, 5, y_diff, ybase_1)
+
+        for z_interp in range(z, z + 4):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x, y - 20,z_interp,
+                            x, y, z_interp, self.block_dict[(x,z_interp)])
+            mc.setBlocks(   x, y + 1,z_interp,
+                            x, y + 21, z_interp, block.AIR.id)
+
+        y_diff = self.height_dict[x-3,z] - ybase_1
+
+        interpolated = scale_sigmoid(0.5, 0.3, 5    , y_diff, ybase_1)
+
+        for x_interp in range(x, x - 4, -1):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x_interp, y - 20,z,
+                            x_interp, y, z, self.block_dict[(x_interp,z)])
+            mc.setBlocks(   x_interp, y + 1,z,
+                            x_interp, y + 21, z, block.AIR.id)
+            ########
+        x,z = corner_coords[2]
+
+        y_diff = self.height_dict[x,z+2] - ybase_2
+
+        interpolated = scale_sigmoid(0.5, 0.3, 4, y_diff, ybase_2)
+
+        for z_interp in range(z, z + 3):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x, y - 20,z_interp,
+                            x, y, z_interp, self.block_dict[(x,z_interp)])
+            mc.setBlocks(   x, y + 1,z_interp,
+                            x, y + 21, z_interp, block.AIR.id)
+
+        y_diff = self.height_dict[x-2,z] - ybase_2
+
+        interpolated = scale_sigmoid(0.5, 0.3, 4, y_diff, ybase_2)
+
+        for x_interp in range(x, x - 3, -1):
+            y = interpolated.pop(0)
+            mc.setBlocks(   x_interp, y - 20,z,
+                            x_interp, y, z, self.block_dict[(x_interp,z)])
+            mc.setBlocks(   x_interp, y + 1,z,
+                            x_interp, y + 21, z, block.AIR.id)
+            ##########
+        ########
 
 
     def place_house(self, structure):
         house = House(structure)
-        print(house.stories)
         house.create_house(mc)
 
     def generate_path_connection(self):
@@ -162,254 +517,11 @@ class Plot:
         elif self.direction =='z+':
             pass
     
-    def get_prev_corner(self,x,z,):
-        if self.is_corner(x,z):
-            if x < self.plot_start.x:
-                x += 1
-            else:
-                x -= 1
 
-            if z < self.plot_start.z:
-                z += 1
-            else:
-                z -= 1
-        return x,z
 
-    def is_corner(self,x,z):
-        if x < self.plot_start.x or x > self.plot_end.x:
-            if z < self.plot_start.z or z > self.plot_end.z:
-                return True
-        return False
-
-    def get_corner_prev(self,x,z,dict):
-        if x < self.plot_start.x:
-            x += 1
-        else:
-            x -= 1
-
-        if z < self.plot_start.z:
-            z += 1
-        else:
-            z -= 1
-        
-        return dict[(x,z)]
-
-    def terraform(self):
-        y_and_noise = dict()
-        completed = []
-
-        mc.setBlocks(   self.plot_start.x,  self.plot_start.y + 1,  self.plot_start.z,
-                        self.plot_end.x,    100,                    self.plot_end.z, block.AIR.id)
-        noise = 0
-
-        #iterates circularly around the plot. i indicates layer
-        for i in range(1,4):
-            print(i)
-            x = self.plot_start.x - i
-            for z in range(self.plot_start.z - (i-1), self.plot_end.z + i + 1): 
-                #almost identical code on the next few for loops
-                ###########################################################
-                #switch between noise levels
-                if i == 1:
-                    if 1 == randint(1,10):
-                        if noise == 0:
-                            noise = 1
-                        else:
-                            noise = 0
-
-                #checks if the previous layer is completed. also gets previous layer's y and noise level
-                if self.is_corner(x,z):
-                    if self.get_prev_corner(x,z) in completed:
-                        completed.append((x,z))
-                        print('completed',(x,z))
-                        continue
-                    if i == 1:
-                        prev_y = self.central_point.y
-                    else:
-                        prev_y, prev_noise = self.get_corner_prev(x,z,y_and_noise)
-                else:
-                    if (x+1,z) in completed:
-                        completed.append((x,z))
-                        print('completed',(x,z))
-                        continue
-                    if i == 1:
-                        prev_y = self.central_point.y
-                    else:
-                        prev_y, prev_noise = y_and_noise[(x + 1, z)]
-
-                y = getBlockHeight(x,z)
-    
-                #checks if y is higher or lower than the y in the previous layer
-                if y < prev_y : 
-                    curr_y = prev_y -1 - noise
-                    mc.setBlocks(   x, 50, z,
-                                    x, curr_y , z,block.GRASS.id) 
-
-                elif y > prev_y :
-                    curr_y = prev_y + 1 + noise
-                    mc.setBlocks(   x, curr_y, z,
-                                    x, y, z,block.AIR.id)
-                    mc.setBlocks(    x, 50, z,
-                                    x, curr_y, z,block.GRASS.id)
-
-                else:
-                    curr_y = y
-                    completed.append((x,z))
-                
-                y_and_noise[(x,z)] = (curr_y,noise)
-                print('added',(x,z))
-                ###########################################################
-
-            z = self.plot_end.z + i
-            for x in range(self.plot_start.x - (i-1), self.plot_end.x + i + 1): 
-                ###########################################################
-                if i == 1:
-                    if 1 == randint(1,10):
-                        if noise == 0:
-                            noise = 1
-                        else:
-                            noise = 0
-
-                if self.is_corner(x,z):
-                    if self.get_prev_corner(x,z) in completed:
-                        completed.append((x,z))
-                        print('completed',(x,z))
-                        continue
-                    if i == 1:
-                        prev_y = self.central_point.y
-                    else:
-                        prev_y, prev_noise = self.get_corner_prev(x,z,y_and_noise)
-                else:
-                    if (x,z-1) in completed:
-                        completed.append((x ,z))
-                        print('completed',(x,z))
-                        continue
-                    if i == 1:
-                        prev_y = self.central_point.y
-                    else:
-                        prev_y, prev_noise = y_and_noise[(x , z-1)]
-
-                y = getBlockHeight(x,z)
-
-                if y < prev_y : 
-                    curr_y = prev_y -1 - noise
-                    mc.setBlocks(   x, 50, z,
-                                    x, curr_y , z,block.GRASS.id) 
-
-                elif y > prev_y :
-                    curr_y = prev_y + 1+ noise
-                    mc.setBlocks(   x, curr_y, z,
-                                    x, y, z,block.AIR.id)
-                    mc.setBlocks(    x, 50, z,
-                                    x, curr_y, z,block.GRASS.id)
-                else:
-                    curr_y = y
-                    completed.append((x,z))
-                
-                y_and_noise[(x,z)] = (curr_y,noise)
-                print('added', (x,z))
-                ###########################################################
-
-            x = self.plot_end.x + i
-            for z in range(self.plot_end.z + i,self.plot_start.z - i, -1):
-                ###########################################################
-                if i == 1:
-                    if 1 == randint(1,10):
-                        if noise == 0:
-                            noise = 1
-                        else:
-                            noise = 0
-
-                if self.is_corner(x,z):
-                    if self.get_prev_corner(x,z) in completed:
-                        completed.append((x,z))
-                        print('completed',(x,z))
-                        continue
-                    if i == 1:
-                        prev_y = self.central_point.y
-                    else:
-                        prev_y, prev_noise = self.get_corner_prev(x,z,y_and_noise)
-                else:
-                    if (x-1,z) in completed:
-                        completed.append((x,z))
-                        print('completed',(x,z))
-                        continue
-                    if i == 1:
-                        prev_y = self.central_point.y
-                    else:
-                        prev_y, prev_noise = y_and_noise[(x -1, z)]
-
-                y = getBlockHeight(x,z)
-
-                if y < prev_y : 
-                    mc.setBlocks(   x, 50, z,
-                                    x, curr_y , z,block.GRASS.id) 
-
-                elif y > prev_y :
-                    curr_y = prev_y + 1+ noise
-                    mc.setBlocks(   x, curr_y, z,
-                                    x, y, z,block.AIR.id)
-                    mc.setBlocks(    x, 50, z,
-                                    x, curr_y, z,block.GRASS.id)
-                else:
-                    curr_y = y
-                    completed.append((x,z))
-                
-                y_and_noise[(x,z)] = (curr_y,noise)
-                print('added', (x,z))
-                ###########################################################
-            z = self.plot_start.z - i
-            for x in range(self.plot_end.x + i, self.plot_start.x - (i + 1), -1):
-                ###########################################################
-                if i == 1:
-                    if 1 == randint(1,10):
-                        if noise == 0:
-                            noise = 1
-                        else:
-                            noise = 0
-
-                if self.is_corner(x,z):
-                    if self.get_prev_corner(x,z) in completed:
-                        completed.append((x,z))
-                        print('completed',(x,z))
-                        continue
-                    if i == 1:
-                        prev_y = self.central_point.y
-                    else:
-                        prev_y, prev_noise = self.get_corner_prev(x,z,y_and_noise)
-                else:
-                    if (x,z + 1) in completed:
-                        completed.append((x ,z))
-                        print('completed',(x,z))
-                        continue
-                    if i == 1:
-                        prev_y = self.central_point.y
-                    else:
-                        prev_y, prev_noise = y_and_noise[(x, z+1)]
-
-                y = getBlockHeight(x,z)
-
-                if y < prev_y : 
-                    curr_y = prev_y -1 - noise
-                    mc.setBlocks(   x, 50, z,
-                                    x, curr_y , z,block.GRASS.id) 
-
-                elif y > prev_y :
-                    curr_y = prev_y + 1 + noise
-                    mc.setBlocks(   x, curr_y, z,
-                                    x, y, z,block.AIR.id)
-                    mc.setBlocks(    x, 50, z,
-                                    x, curr_y, z,block.GRASS.id)
-                else:
-                    curr_y = y
-                    completed.append((x,z))
-                
-                y_and_noise[(x,z)] = (curr_y,noise)
-                print('added',(x,z))
-                ###########################################################
     
     
 if __name__ == '__main__':
     test_plot = Plot(mc.player.getTilePos(),20,'z+')
-    test_plot.terraform_new_wip()
+    test_plot.terraform()
     #test_plot.place_house(test_plot.get_structure())
