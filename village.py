@@ -6,6 +6,7 @@ from mcpi.minecraft import Minecraft
 from mcpi import block
 from mcpi import vec3
 import random
+from RandomiseMaterial import RandomiseMaterial
 
 
 from models.House import House
@@ -59,8 +60,10 @@ if __name__ == "__main__":
     mc.setBlocks(x + 10,y -1,z + 10,x - 30, y + 20, z - 30, 0)
     structure1 = Structure(position,16,18)
     # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
-    house1 = House(structure1,1)
-    house1.create_house(mc)
+    # house1 = House(structure1,1)
+    # house1.create_house(mc)
+    ran = RandomiseMaterial()
+    ran.rooftop(mc,position.x,position.y,position.z)
     
     
     
