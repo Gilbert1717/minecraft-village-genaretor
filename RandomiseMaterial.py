@@ -7,18 +7,6 @@ import random
 class RandomiseMaterial:
     def __init__(self) -> None:
          pass
-    
-    def random_exterior(mc):
-       #block ID simplification  
-        exterior_blocks = [block.STONE_BRICK.id,
-                          block.BRICK_BLOCK.id,
-                          block.COBBLESTONE.id,
-                          block.MOSS_STONE.id,
-                          block.WOOD_PLANKS.withData(0),
-                          block.WOOD_PLANKS.withData(1),
-                          block.WOOD_PLANKS.withData(2),
-                          block.WOOD_PLANKS.withData(3)
-                          ]
 
     def random_exterior(mc): #Returns a block material to use for the exterior parts of the house
         
