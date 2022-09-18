@@ -8,7 +8,7 @@ from mcpi_query_performance import query_blocks
 import random
 import math
 
-from Plot import Plot
+from Plot_and_terraforming.Plot import Plot
 
 mc = minecraft.Minecraft.create()
 

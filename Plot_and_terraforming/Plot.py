@@ -1,7 +1,3 @@
-from inspect import CO_ASYNC_GENERATOR
-from random import randint, randrange
-import math
-
 from mcpi import vec3
 from mcpi import minecraft
 from mcpi import block
@@ -94,7 +90,7 @@ class Plot:
             y = query_result[0][1]
             z = query_result[0][2]
             block_id = query_result[1]
-
+            #TODO: filter out trees and leaves
             #if block_id not in stop_blocks:
             #    y, block_id = getBlockHeight(x,z)
 
