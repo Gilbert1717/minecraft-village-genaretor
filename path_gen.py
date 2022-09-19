@@ -3,12 +3,12 @@ from mcpi import minecraft
 from mcpi import vec3
 from mcpi import block
 
-from mcpi_query_performance import query_blocks
+from fast_query_and_interpolation.mcpi_query_performance import query_blocks
 
 import random
 import math
 
-from Plot_and_terraforming.Plot import Plot
+from Plot import Plot
 
 mc = minecraft.Minecraft.create()
 

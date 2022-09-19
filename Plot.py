@@ -1,12 +1,12 @@
 from mcpi import vec3
 from mcpi import minecraft
 from mcpi import block
-from mcpi_query_performance import query_blocks
+from fast_query_and_interpolation.mcpi_query_performance import query_blocks
 
 from models.Structure import Structure
 from models.House import House
-from interpolation import sigmoid
-from interpolation import scale_sigmoid
+from fast_query_and_interpolation.interpolation import sigmoid
+from fast_query_and_interpolation.interpolation import scale_sigmoid
 
 mc = minecraft.Minecraft.create()
 
@@ -520,4 +520,4 @@ class Plot:
 if __name__ == '__main__':
     test_plot = Plot(mc.player.getTilePos(),20,'z+')
     test_plot.terraform()
-    #test_plot.place_house(test_plot.get_structure())
+    test_plot.place_house(test_plot.get_structure())

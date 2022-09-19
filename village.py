@@ -41,7 +41,8 @@ if __name__ == "__main__":
     #                     vil_start.y,
     #                     vil_start.z + vil_length)
 
-    # paths, plots = path_gen.generate_path_and_plots(vil_start, vil_end, num_points)
+    
+    # paths, plots = path_gen.generate_path_and_plots(vil_start, vil_end, num_points) #TODO: terraform plots before generating roads
     
     # for plot in plots:
     #     structure = plot.get_structure()
