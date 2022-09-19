@@ -15,7 +15,10 @@ class House:
         self.structure = structure
         self.stories = stories
         self.height = structure.height * self.stories
+        # Floor list restore all the floor instance in the house
         self.floors = []
+        self.front_door = None
+
         
     
     def create_floor(self, mc: Minecraft):
@@ -166,8 +169,8 @@ class House:
     #     mc.setBlocks(window_x, window_y, self.structure.z, window_width,window_height,self.structure.z,102)
 
     def front_side(self,mc):
-        create_door(mc,self.structure.frontleft,self.structure.frontright)
-        # self.front_window(mc)
+        self.front_door = create_door(mc,self.structure.frontleft,self.structure.frontright)
+        
 
 
     
