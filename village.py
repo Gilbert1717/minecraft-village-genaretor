@@ -19,7 +19,8 @@ import path_gen
 
 
 def get_village_coords(mc):
-    """checks for right clicks while holding a sword, returns the coordinate of the right clicked block in vec3"""
+    """checks for right clicks while holding a sword, returns the coordinate of the right clicked block in vec3
+        checks does not work with netherite sword"""
     blockevents = mc.events.pollBlockHits()
 
     mc.postToChat('right click on a block while holdling a sword to set village location')
@@ -33,24 +34,36 @@ def get_village_coords(mc):
 if __name__ == "__main__":
     mc = Minecraft.create()
 
-    # vil_length = 85
-    # num_points = 5
+    vil_length = 85
+    num_points = 5
 
-    # vil_start = get_village_coords(mc)
-    # vil_end = vec3.Vec3(vil_start.x + vil_length, 
-    #                     vil_start.y,
-    #                     vil_start.z + vil_length)
+    vil_start = get_village_coords(mc)
+    vil_end = vec3.Vec3(vil_start.x + vil_length, 
+                        vil_start.y,
+                        vil_start.z + vil_length)
+    
+    vil_center = vec3.Vec3( vil_start.x + (vil_end.x - vil_start.x)//2,
+                            0,
+                            vil_start.z + (vil_end.z - vil_start.z)//2)
 
     
-    # paths, plots = path_gen.generate_path_and_plots(vil_start, vil_end, num_points) #TODO: terraform plots before generating roads
+    paths,intersections, bordering_paths, plots = path_gen.generate_path_and_plots(vil_start, vil_end, vil_center, num_points)
+    orig_paths = paths[:]
+    #sort the plots by distance from village center. in descending order.
+    plots.sort( key = lambda plot: ((plot.central_point.x - vil_center.x)**2 + (plot.central_point.z - vil_center.z)**2)** 0.5,
+                reverse= True) #IMPORTANT!!! OR ELSE ROADS MAY BE DISCONNECTED
     
-    # for plot in plots:
-    #     structure = plot.get_structure()
-    #     plot.terraform()
-    #     plot.place_house(structure)
+    for plot in plots:
+        plot.terraform()
+        plot.place_house(plot.get_structure())
+        plot.connect_with_paths(paths,intersections,bordering_paths,vil_start, vil_end)
     
+    print(orig_paths == paths)
+    path_gen.get_path_height(paths)
     
 
+    for blocks in intersections:
+        mc.setBlock(blocks.x, 100, blocks.z, block.BRICK_BLOCK.id)
     # mc.setBlocks(-200,0,-200,100,200,0)
     # mc.setBlocks(-200,-3,-200,0,200,2)
     # house1_location = McPosition(x,y,z)

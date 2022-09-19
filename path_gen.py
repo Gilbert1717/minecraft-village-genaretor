@@ -51,28 +51,41 @@ def generate_plots(vil_center,points, distance_dict):
                 direction ='x-'
             else:
                 direction = 'x+'
+            
+            if point.z- vil_center.z > 0:
+                away = 'z+'
+            else:
+                away = 'z-'
 
         else:
             if point.z- vil_center.z > 0:
-                direction ='z-'
+                direction = 'z-'
             else:
                 direction = 'z+'
-
-        new_plot = Plot(point,distance_dict[(point.x,point.z)], direction)
+            
+            if point.x - vil_center.x > 0:
+                away = 'x+'
+            else:
+                away = 'x+'
+        # away is used later on to connect the plots with the voronoi path
+        
+        new_plot = Plot(point,distance_dict[(point.x,point.z)], direction, away)
         plots.append(new_plot)
     
     return plots
 
 # https://en.wikipedia.org/wiki/Voronoi_diagram
-def generate_path_and_plots(vil_start, vil_end, vor_amount):
+def generate_path_and_plots(vil_start, vil_end, vil_center, vor_amount):
     
     voronoi_points = get_random_coords(vil_start, vil_end, vor_amount)
     voronoi_distances = dict()
     path_coords = []
+    intersection_coords = []
+    bordering_paths = []
 
 
-    for x in range(vil_start.x, vil_end.x):
-        for z in range(vil_start.z, vil_end.z):
+    for x in range(vil_start.x, vil_end.x + 1):
+        for z in range(vil_start.z, vil_end.z + 1):
 
             distances = [] # list of distances from the current x,z iteration to all voronoi points
 
@@ -100,20 +113,18 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
                     voronoi_distances[distances[1][0]] = distances[1][1]
                 ###########
 
-                
-                #mc.setBlock(   x,    getBlockHeight(x, z),    z, 1)
-                #mc.setBlocks(   x-1,    100,    z-1, 
-                                #x+1,    100,    z+1, 1)
+                distance_sub2 = distances[1][1] - distances[2][1] #difference in distance between the 2nd and 3rd closest points
+                if distance_sub2 >= -1 and distance_sub2 <= 1:
+                        intersection_coords.append(vec3.Vec3(x,0,z)) 
+
+                if (x == vil_start.x or x == vil_end.x) and (z == vil_start.z or z == vil_end.z):
+                    bordering_paths.append(vec3.Vec3(x,0,z))
     
-    
-    
-    vil_center = vec3.Vec3( vil_start.x + (vil_end.x - vil_start.x)//2,
-                            0,
-                            vil_start.z + (vil_end.z - vil_start.z)//2)
+
     
     plots = generate_plots(vil_center, voronoi_points, voronoi_distances)
 
-    return path_coords, plots
+    return path_coords,intersection_coords,bordering_paths, plots
 
 def get_path_height(path_coords):
     path_coords_tuple = []
@@ -122,6 +133,7 @@ def get_path_height(path_coords):
 
     query_results = query_blocks(path_coords_tuple,'world.getHeight(%d,%d)',int)
     #DOES NOT CHECK FOR LEAVES OR TREES OR WATER
+    #TODO: MAKE IT CHECK LEAVES AND OTHER STUFF
     for result in query_results:
         mc.setBlocks(   result[0][0]-1,    result[1],    result[0][1]-1, 
                         result[0][0]+1,    result[1],    result[0][1]+1, block.COBBLESTONE.id)
