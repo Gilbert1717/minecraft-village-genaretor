@@ -15,7 +15,7 @@ from models.House import House
 from models.Structure import Structure, Vector
 
 
-import path_gen
+#import path_gen
 
 
 def get_village_coords(mc):
@@ -65,21 +65,47 @@ if __name__ == "__main__":
     # position = vec3.Vec3(0,0,0)
     # mc.setBlocks(x,y - 1,z,x + 30, y + 50, z + 30, 0)
     # mc.setBlocks(x + 10,y -1,z + 10,x - 30, y + 50, z - 30, 0)
-    position = mc.player.getTilePos()
-    weith = random.randint(8,12)
-    length = random.randint(12,16)
-    structure1 = Structure(position,weith,length)
+    # position = mc.player.getTilePos()
+    # vecPos = vec3.Vec3(position)
+    # weith = random.randint(8,12)
+    # length = random.randint(12,16)
+    # structure1 = Structure(position,weith,length)
     # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
-    # house1 = House(structure1,1)
+    # house1 = House(structure1,3)
     # house1.create_house(mc)
-    ran = RandomiseMaterial()
-    ran.rooftop(mc,position.x,position.y,position.z)
+    #ran = RandomiseMaterial()
+    #ran.rooftop(mc,position .x,position.y,position.z)
     
-    stories = random.randint(1,3)
-    house1 = House(structure1,3)
-    house1.create_house(mc)
+    #stories = random.randint(1,3)
+    #house1 = House(structure1,3)
+    #house1.create_house(mc)
+    
+    #material = ran.random_furniture()
+    
+    #mc.setBlock(position.x, position.y, position.z, material)
     # mc.setBlock(vector1.x + 1, vector1.y + 2, vector1.z,64,8)
     # mc.setBlock(vector1.x + 1, vector1.y + 1, vector1.z,64,0)
+    
+    quit = False
+    
+    while not quit:
+        chatEvents = mc.events.pollChatPosts()
+        
+        for chatEvent in chatEvents:
+            
+            if chatEvent.message.upper() == "QUIT":
+                quit = True
+                
+            elif chatEvent.message.upper() == "HOUSE":
+                
+                position = mc.player.getTilePos()
+                vecPos = vec3.Vec3(position)
+                weith = random.randint(8,12)
+                length = random.randint(12,16)
+                structure1 = Structure(position,weith,length)
+                print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
+                house1 = House(structure1,3)
+                house1.create_house(mc)
     
     
 
