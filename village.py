@@ -51,15 +51,15 @@ if __name__ == "__main__":
     
     
 
-    #mc.setBlocks(-200,0,-200,100,200,0)
-    #mc.setBlocks(-200,-3,-200,0,200,2)
-    #house1_location = McPosition(x,y,z)
-    #mc.player.setPos(x,y,z)
+    # mc.setBlocks(-200,0,-200,100,200,0)
+    # mc.setBlocks(-200,-3,-200,0,200,2)
+    # house1_location = McPosition(x,y,z)
+    # mc.player.setPos(x,y,z)
 
-    #while mc.getBlock(x + 1,y,z + 1) is 0:
+     #while mc.getBlock(x + 1,y,z + 1) is 0:
        # y = y - 1
-    #print(x,y,z)
-    #mc.setBlock(x + 1,y + 1,z + 1, 1) 
+    # print(x,y,z)
+    # mc.setBlock(x + 1,y + 1,z + 1, 1) 
     # x = 0
     # y = 0
     # z = 0
