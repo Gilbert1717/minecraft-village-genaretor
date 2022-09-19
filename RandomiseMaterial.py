@@ -54,11 +54,20 @@ class RandomiseMaterial:
     
     def random_furniture(mc): # Returns furniture blocks to randomly place in the house.
         
+        # ADDING MORE FURNITURE BLOCK OPTIONS THAT ARENT INCLUDED IN MCPI
+        
+        JUKEBOX = 84
+        ENCHANTING_TABLE = 116
+        CAULDRON = 118
+        FLOWER_POT = 140
+        
         furniture_blocks = [block.BOOKSHELF.id,
-                            block.CHEST.id, 
-                            block.FURNACE_ACTIVE.id, # Creates a list of blocks for the furnitures in house.
+                            block.CHEST.id,  
                             block.CRAFTING_TABLE.id,
-                            block.COBWEB.id
+                            JUKEBOX, # Creates a list of blocks for the furnitures in house.
+                            ENCHANTING_TABLE,
+                            CAULDRON,
+                            FLOWER_POT
                             ]
         
         # Returns random block in the list

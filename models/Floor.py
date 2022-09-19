@@ -3,6 +3,7 @@ from mcpi.vec3 import Vec3
 from mcpi import block
 
 from RandomiseMaterial import RandomiseMaterial
+import random
 
 rm = RandomiseMaterial()
 
@@ -236,4 +237,16 @@ class Floor:
                 vector2 = create_vector(self.backleft,self.structure.height - x + 1, x + 1, 2)
                 mc.setBlock(vector1.x,vector1.y,vector1.z,stairs,1)
                 mc.setBlock(vector2.x,vector2.y,vector2.z,stairs,1)
+                
+    def place_furniture(self, mc, floor):
+        furniture = rm.random_furniture()
+            
+        place_frontwall = random.randrange(floor.frontleft.x + 1, floor.frontright.x - 1)
+        
+        check_block = mc.getBlock(place_frontwall + 1, floor.frontleft.y + 1, floor.frontleft.z)
+        
+        mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z + 1, furniture)
+            
+            
+            
 
