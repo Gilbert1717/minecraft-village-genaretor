@@ -3,12 +3,12 @@ from mcpi import minecraft
 from mcpi import vec3
 from mcpi import block
 
-from mcpi_query_performance import query_blocks
+from fast_query_and_interpolation.mcpi_query_performance import query_blocks
 
 import random
 import math
 
-from Plot_and_terraforming.Plot import Plot
+from Plot import Plot
 
 mc = minecraft.Minecraft.create()
 
@@ -105,6 +105,17 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
                 #mc.setBlocks(   x-1,    100,    z-1, 
                                 #x+1,    100,    z+1, 1)
     
+    
+    
+    vil_center = vec3.Vec3( vil_start.x + (vil_end.x - vil_start.x)//2,
+                            0,
+                            vil_start.z + (vil_end.z - vil_start.z)//2)
+    
+    plots = generate_plots(vil_center, voronoi_points, voronoi_distances)
+
+    return path_coords, plots
+
+def get_path_height(path_coords):
     path_coords_tuple = []
     for coord in path_coords:
         path_coords_tuple.append((coord.x,coord.z))
@@ -125,15 +136,9 @@ def generate_path_and_plots(vil_start, vil_end, vor_amount):
     #    mc.setBlocks(   coord.x-1,    coord.y,    coord.z-1, 
     #                    coord.x+1,    coord.y,    coord.z+1, block.COBBLESTONE.id)
         #mc.setBlock(   coord.x,    100,    coord.z, block.GLOWING_OBSIDIAN)
-        
-    vil_center = vec3.Vec3( vil_start.x + (vil_end.x - vil_start.x)//2,
-                            0,
-                            vil_start.z + (vil_end.z - vil_start.z)//2)
+
+
     
-    plots = generate_plots(vil_center, voronoi_points, voronoi_distances) 
-
-
-    return path_coords, plots
 
 
 def getBlockHeight(block_x, block_z):

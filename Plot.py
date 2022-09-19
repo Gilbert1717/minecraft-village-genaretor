@@ -1,12 +1,15 @@
+
 from mcpi import vec3
 from mcpi import minecraft
 from mcpi import block
-from mcpi_query_performance import query_blocks
+from fast_query_and_interpolation.mcpi_query_performance import query_blocks
+
+from random import randrange
 
 from models.Structure import Structure
 from models.House import House
-from interpolation import sigmoid
-from interpolation import scale_sigmoid
+from fast_query_and_interpolation.interpolation import sigmoid
+from fast_query_and_interpolation.interpolation import scale_sigmoid
 
 mc = minecraft.Minecraft.create()
 
@@ -62,41 +65,67 @@ class Plot:
     def create_terrain_dict(self):
         self.height_dict = dict()
         self.block_dict = dict()
-        terrain_coords = []
-        ground_blocks =[]
-
+        terrain_coords = set()
+        ground =  [ block.GRASS.id, block.DIRT.id, block.WATER_STATIONARY.id, block.SAND.id, block.WATER_FLOWING.id,
+                    block.STONE.id, block.CLAY.id, block.MYCELIUM.id, block.SANDSTONE.id]
         
         for x in range(self.plot_start.x - 5, self.plot_end.x + 6): # extra 5 blocks of buffer/padding/margin for use in terraforming
             for z in range(self.plot_start.z - 5, self.plot_end.z + 6):
-                terrain_coords.append((x,z))
+                terrain_coords.add((x,z))
         
-        terrain_height = query_blocks(terrain_coords,'world.getHeight(%d,%d)',int)
-
-        for query_result in terrain_height:
-            x = query_result[0][0]
-            z = query_result[0][1]
-            y = query_result[1]
+        terrain_coords = list(terrain_coords)
+        Done = False
+        while not Done:
+            Done = True
+            redo = set()
+            ground_blocks =[]
             
-            self.height_dict[(x,z)] = y
-            ground_blocks.append((x,y,z))
+            terrain_height = query_blocks(terrain_coords,'world.getHeight(%d,%d)',int)
+
+            for query_result in terrain_height:
+                x = query_result[0][0]
+                z = query_result[0][1]
+                y = query_result[1]
+                
+                self.height_dict[(x,z)] = y
+                ground_blocks.append((x,y,z))
+            
+            del terrain_height
+            ground_block_queries = query_blocks(ground_blocks,'world.getBlock(%d,%d,%d)',int)
         
-        ground_block_queries = query_blocks(ground_blocks,'world.getBlock(%d,%d,%d)',int)
+            for query_result in ground_block_queries:
+                x,y,z = query_result[0]
+                block_id = query_result[1]
 
-        stop_blocks =  [  block.GRASS.id,         block.DIRT.id, block.WATER_STATIONARY.id, 
-                            block.WATER_FLOWING.id, block.SAND.id, block.STONE.id]
+                if block_id not in ground:
+                    Done = False
+                    redo.add((x,y,z))
 
-        for query_result in ground_block_queries:
-            x = query_result[0][0]
-            y = query_result[0][1]
-            z = query_result[0][2]
-            block_id = query_result[1]
-            #TODO: filter out trees and leaves
-            #if block_id not in stop_blocks:
-            #    y, block_id = getBlockHeight(x,z)
+                self.height_dict[(x,z)] = y
 
-            self.block_dict[(x,z)] = block_id
+                self.block_dict[(x,z)] = block_id
+
+            del ground_block_queries
+            del ground_blocks
+            
+            if Done:
+                break
+            else:
+                for x,y,z in redo:
+                    mc.setBlock(x,y,z,block.AIR.id)
+
+                #re-assign terrain cords for the next iteration
+                terrain_coords = []
+                for x,y,z in redo:
+                    terrain_coords.append((x,z))
+                
+                
+
+                
 
 
+            
+            
     def get_structure(self):
             """contains complicated logic to determine direction and the "frontleft" of a structure inside a plot"""
             #TODO: redo this, houses can still sometimes go beyond the plot
@@ -130,7 +159,7 @@ class Plot:
                 
 
     def place_floor(self):
-        #clears the space anbove the plot
+        #clears the space above the plot
         mc.setBlocks(   self.plot_start.x, self.plot_start.y, self.plot_start.z,
                         self.plot_end.x, self.plot_end.y + 30, self.plot_end.z, block.AIR.id)
         
@@ -519,5 +548,5 @@ class Plot:
     
 if __name__ == '__main__':
     test_plot = Plot(mc.player.getTilePos(),20,'z+')
-    test_plot.terraform()
+    #test_plot.terraform()
     #test_plot.place_house(test_plot.get_structure())

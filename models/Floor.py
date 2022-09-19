@@ -41,6 +41,7 @@ def create_door(mc,vector1,vector2):
         mc.setBlock(vector1.x, vector1.y + 2, create_z, block.AIR)
         mc.setBlock(vector1.x, vector1.y + 2, create_z,door,8)
         mc.setBlock(vector1.x , vector1.y + 1, create_z,door,0)
+        return Vec3(vector1.x,vector1.y,create_z)
          
     #  On vertical wall
     elif vector1.z == vector2.z:
@@ -63,6 +64,7 @@ def create_door(mc,vector1,vector2):
         mc.setBlock(create_x, vector1.y + 2, vector1.z, block.AIR)
         mc.setBlock(create_x , vector1.y + 2, vector1.z,door,8)
         mc.setBlock(create_x , vector1.y + 1, vector1.z,door,0)
+        return Vec3(create_x,vector1.y,vector1.z)
         
         
 
@@ -71,6 +73,7 @@ class Floor:
         y = structure.position.y + structure.height * storey
         self.storey = storey
         self.structure = structure
+        # Room list restore all the floor instance created in the create_rooms function
         self.rooms = []
         self.frontleft = Vec3(structure.frontleft.x,
                                 y,
