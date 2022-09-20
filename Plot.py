@@ -559,7 +559,7 @@ class Plot:
             connection.append(new_path)
             if Plot.out_of_range(new_path, vil_start, vil_end):
                 nearest = Plot.find_nearest_bordering_paths(new_path,
-                                    [coord for coord in bordering_paths if coord.z == vil_end.z or coord.z == vil_start.z])
+                                    [coord for coord in bordering_paths if coord.z > vil_end.z - 2 or coord.z < vil_start.z + 2])
 
                 while new_path.x != nearest.x:
                     new_path = Vec3(new_path.x - 1, 0, new_path.z)
@@ -620,7 +620,7 @@ class Plot:
             connection.append(new_path)
             if Plot.out_of_range(new_path, vil_start, vil_end):
                 nearest = Plot.find_nearest_bordering_paths(new_path,
-                                    [coord for coord in bordering_paths if coord.z == vil_end.z or coord.z == vil_start.z])
+                                    [coord for coord in bordering_paths if coord.z > vil_end.z - 2 or coord.z < vil_start.z + 2])
 
                 while new_path.x != nearest.x:
                     new_path = Vec3(new_path.x + 1, 0, new_path.z)
