@@ -592,7 +592,6 @@ class Plot:
                         n = 1
                     
                     curr_block = new_path
-                    traversed.append(curr_block)
 
                     while curr_block not in intersection_coords:
                         blocks_in_path_coords = False
@@ -611,12 +610,70 @@ class Plot:
                             for block in traversed:
                                 if block in path_coords:
                                     path_coords.remove(block)
+                            break
                     
                     intersection_coords.append(append_to_intersection_coords_later)
                     
 
         elif self.direction =='x+':
-            pass
+            new_path = Vec3(self.house_door.x, 0, self.house_door.z + 2) # starting point
+            connection.append(new_path)
+            if Plot.out_of_range(new_path, vil_start, vil_end):
+                nearest = Plot.find_nearest_bordering_paths(new_path,
+                                    [coord for coord in bordering_paths if coord.z == vil_end.z or coord.z == vil_start.z])
+
+                while new_path.x != nearest.x:
+                    new_path = Vec3(new_path.x + 1, 0, new_path.z)
+                    connection.append(new_path)
+
+                if nearest.z > new_path.z:
+                    for z in range(new_path.z, nearest.z):
+                        connection.append(Vec3(new_path.x, 0, z))
+                    intersection_coords.append(new_path.x,0,z+ 1)
+
+                else:
+                    for z in range(nearest.z, new_path.z):
+                        connection.append(Vec3(new_path.x, 0, z))
+                    intersection_coords.append(new_path.x,0,z + 1)
+                
+                print(connection)
+            else:
+                while new_path not in path_coords:
+                    new_path = Vec3(new_path.x + 1, 0,  new_path.z)
+                    connection.append(new_path)
+                else:
+                    append_to_intersection_coords_later = new_path # to prevent it from intervering with the next while loop
+
+                    #traverse the path away from the village centre
+                    traversed = []
+
+                    if self.away == 'z-':
+                        n = -1
+                    else:
+                        n = 1
+                    
+                    curr_block = new_path
+
+                    while curr_block not in intersection_coords:
+                        blocks_in_path_coords = False
+                        potential_next_blocks = [   Vec3(curr_block.x + 1, 0, curr_block.z + n),
+                                                    Vec3(curr_block.x    , 0, curr_block.z + n),
+                                                    Vec3(curr_block.x - 1, 0, curr_block.z + n),]
+
+                        for block in potential_next_blocks:
+                            if block in path_coords:
+                                curr_block = block
+                                traversed.append(curr_block)
+                                blocks_in_path_coords = True
+                                continue
+                        
+                        if not blocks_in_path_coords:
+                            for block in traversed:
+                                if block in path_coords:
+                                    path_coords.remove(block)
+                            break
+                    
+                    intersection_coords.append(append_to_intersection_coords_later)
         elif self.direction =='z-':
             pass
         elif self.direction =='z+':
@@ -628,10 +685,10 @@ class Plot:
 
     def out_of_range(starting_point, vil_start, vil_end):
         """function for connect_with_paths()"""
-        x_out_of_range = starting_point.x <= vil_start.x - 3 or starting_point.x >= vil_end.x + 3
+        x_out_of_range = starting_point.x <= vil_start.x - 3 or starting_point.x >= vil_end.x + 3 #3 block buffer to protect from false negatives
         z_out_of_range = starting_point.z <= vil_start.z - 3 or starting_point.z >= vil_end.z + 3
 
-        if x_out_of_range and z_out_of_range:
+        if x_out_of_range or z_out_of_range:
             return True
         else:
             return False
