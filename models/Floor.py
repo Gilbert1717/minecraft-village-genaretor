@@ -168,10 +168,14 @@ class Floor:
     
     def create_window(self,mc,floor):
         # create window on front wall
+        window = 95
         if floor.frontleft.z == self.frontleft.z:
             wall_width = abs(floor.frontright.z - floor.backright.z)
-            x_offset = math.floor(wall_width/2)
-            window_x = floor.frontleft.x + x_offset
+            x_offset = math.ceil(wall_width/2)
+            if floor.structure.length < 0:
+                window_x = floor.frontleft.x - x_offset
+            else:
+                window_x = floor.frontleft.x + x_offset
             window_y = floor.frontright.y + 2
             window_z = floor.frontleft.z
             # validate the width 
@@ -182,7 +186,6 @@ class Floor:
                 # if the width is long enough, window_width will be 2 blocks
                 window_width = window_x + 1
             window_height = window_y + 1
-            window = 102
             mc.setBlocks (window_x,window_y,window_z,
                         window_width,window_height,window_z,
                         window)
@@ -190,8 +193,11 @@ class Floor:
         # create window on back wall
         if floor.backleft.z == self.backleft.z:
             wall_width = abs(floor.frontright.z - floor.backright.z)
-            x_offset = math.floor(abs(floor.frontright.z - floor.backright.z)/2)
-            window_x = floor.backleft.x + x_offset
+            x_offset = math.ceil(wall_width/2)
+            if floor.structure.length < 0:
+                window_x = floor.frontleft.x - x_offset
+            else:
+                window_x = floor.frontleft.x + x_offset
             window_y = floor.backleft.y + 2
             window_z = floor.backleft.z   
             if wall_width < 3:
@@ -201,7 +207,6 @@ class Floor:
                 # if the width is enought, window_width will be 2 blocks
                 window_width = window_x + 1
             window_height = window_y + 1
-            window = 102
             mc.setBlocks (window_x,window_y,window_z,
                         window_width,window_height,window_z,
                         window)
@@ -209,7 +214,7 @@ class Floor:
         # create window on left-side wall
         elif floor.frontleft.x == self.frontleft.x:
             wall_width = abs(floor.frontright.z - floor.backright.z)/2
-            z_offset = math.floor(wall_width)
+            z_offset = math.ceil(wall_width/2)
             window_x = floor.frontleft.x
             window_y = floor.frontleft.y + 2
             window_z = floor.frontleft.z + z_offset
@@ -221,7 +226,6 @@ class Floor:
                 window_width = window_z + 1
            
             window_height = window_y + 1
-            window = 102
             mc.setBlocks (window_x,window_y,window_z,
                             window_x,window_height,window_width,
                             window)
@@ -229,7 +233,7 @@ class Floor:
         # create window on right-side wall
         if floor.frontright.x == self.frontright.x:
             wall_width = abs(floor.frontright.z - floor.backright.z)/2
-            z_offset = math.floor(wall_width)
+            z_offset = math.ceil(wall_width/2)
             window_x = floor.frontright.x
             window_y = floor.frontright.y + 2
             window_z = floor.frontright.z + z_offset
@@ -240,7 +244,6 @@ class Floor:
                 # if the width is enought, window_width will be 2 blocks
                 window_width = window_z + 1
             window_height = window_y + 1
-            window = 102
             mc.setBlocks (window_x,window_y,window_z,
                             window_x,window_height,window_width,
                             window)
