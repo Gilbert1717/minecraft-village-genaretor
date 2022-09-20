@@ -6,7 +6,6 @@ from mcpi.minecraft import Minecraft
 
 from mcpi import block
 from mcpi import vec3
-import random
 from RandomiseMaterial import RandomiseMaterial
 
 import random
@@ -15,7 +14,7 @@ from models.House import House
 from models.Structure import Structure, Vector
 
 
-#import path_gen
+import path_gen
 
 
 def get_village_coords(mc):
@@ -48,7 +47,7 @@ if __name__ == "__main__":
 
     
     paths,intersections, bordering_paths, plots = path_gen.generate_path_and_plots(vil_start, vil_end, vil_center, num_points)
-    orig_paths = paths[:]
+    
     #sort the plots by distance from village center. in descending order.
     plots.sort( key = lambda plot: ((plot.central_point.x - vil_center.x)**2 + (plot.central_point.z - vil_center.z)**2)** 0.5,
                 reverse= True) #IMPORTANT!!! OR ELSE ROADS MAY BE DISCONNECTED
@@ -56,9 +55,15 @@ if __name__ == "__main__":
     for plot in plots:
         plot.terraform()
         plot.place_house(plot.get_structure())
+
+    #sort the plots by distance from village center. in descending order.
+    plots.sort( key = lambda plot: ((plot.house_door.x - vil_center.x)**2 + (plot.house_door.z - vil_center.z)**2)** 0.5,
+                reverse= True) #IMPORTANT!!! OR ELSE ROADS MAY BE DISCONNECTED
+    
+    for plot in plots:
         plot.connect_with_paths(paths,intersections,bordering_paths,vil_start, vil_end)
     
-    print(orig_paths == paths)
+    
     path_gen.get_path_height(paths)
     
 

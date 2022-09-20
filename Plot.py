@@ -701,7 +701,8 @@ class Plot:
             distances.append((coord, abs(coord.x - new_path.x) + abs(coord.z - new_path.z)))
             
         distances.sort(key = lambda list : list[1]) 
-
+        print(distances)
+        print(bordering_paths)
         return distances[0][0]
 
     
