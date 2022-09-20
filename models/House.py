@@ -68,16 +68,20 @@ class House:
         
         create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
         
+        print(f"frontleft.x = {self.structure.frontleft.x}, frontleft.z = {self.structure.frontleft.z}")
+        print(f"backright.x = {self.structure.backright.x}, backright.z = {self.structure.backright.z}")
+        
+        mc.setBlock(self.structure.frontleft.x, self.structure.frontleft.y + 1, self.structure.frontleft.z, 1)
         # Creating the roof top ontop of the base.
         for x in range(0, 5):
             
             start_point.x += 1
             start_point.y += 1
-            start_point.z += 1
+            start_point.z -= 1
             
             end_point.x -= 1
             end_point.y += 1
-            end_point.z -= 1
+            end_point.z += 1
             
             create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
             
