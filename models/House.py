@@ -24,8 +24,10 @@ class House:
     def create_floor(self, mc: Minecraft):
         material = rm.random_floors()
         colour = random.randint(1,3)
-        lightBlock_offset_z = random.randint(2, 4)
+        lightBlock_offset_z = random.randint(2, 3)
         lightBlock_offset_x = random.randint(3, 4)
+        
+        
         for storey in range(self.stories):
             structure = self.structure
             floor = Floor(structure, storey)
@@ -68,14 +70,17 @@ class House:
         east_block = rm.east_outline_blocks(corner_block) # passes wood type as a parameter, to get the horizontal version
         north_block = rm.north_outline_blocks(corner_block) # passes wood type as a parameter, to get the horizontal version
         
+        #initialises the randomised exterior block to place down for the walls
+        exterior_block = rm.random_exterior()
+        
         
         for floor in self.floors:
             endpoint1 = vec3.Vec3(floor.backleft.x, floor.backleft.y + self.structure.height, floor.backleft.z)
             endpoint2 = vec3.Vec3(floor.frontright.x, floor.frontright.y + self.structure.height, floor.frontright.z)
-            create_blocks(mc, floor.frontleft, endpoint1)
-            create_blocks(mc, endpoint1, floor.backright)
-            create_blocks(mc, floor.backright, endpoint2)
-            create_blocks(mc, endpoint2, floor.frontleft)
+            create_blocks(mc, floor.frontleft, endpoint1, exterior_block)
+            create_blocks(mc, endpoint1, floor.backright, exterior_block)
+            create_blocks(mc, floor.backright, endpoint2, exterior_block)
+            create_blocks(mc, endpoint2, floor.frontleft, exterior_block)
         
 
             """PLACES HORIZONTAL OUTLINE BLOCKS OF THE HOUSE"""
