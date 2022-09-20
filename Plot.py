@@ -574,21 +574,19 @@ class Plot:
                     for z in range(nearest.z, new_path.z):
                         connection.append(Vec3(new_path.x, 0, z))
                     intersection_coords.append(Vec3(new_path.x,0,z + 1))
-                
-                print(connection)
+    
             else:
                 while new_path not in path_coords:
                     new_path = Vec3(new_path.x - 1, 0,  new_path.z)
                     connection.append(new_path)
                 else:
-                    append_to_intersection_coords_later = new_path # to prevent it from intervering with the next while loop
-                    
-                    
-                    intersection_coords.append(append_to_intersection_coords_later)
+                    while new_path not in path_coords:
+                        intersection_coords.append(new_path)
+                        new_path = Vec3(new_path.x - 1, 0,  new_path.z)
                     
 
         elif self.direction =='x+':
-            new_path = Vec3(self.house_door.x, 0, self.house_door.z + 2) # starting point
+            new_path = Vec3(self.house_door.x, 0, self.house_door.z +2) # starting point
             connection.append(new_path)
             if Plot.out_of_range(new_path, vil_start, vil_end):
                 nearest = Plot.find_nearest_bordering_paths(new_path,
@@ -601,22 +599,21 @@ class Plot:
                 if nearest.z > new_path.z:
                     for z in range(new_path.z, nearest.z):
                         connection.append(Vec3(new_path.x, 0, z))
-                    intersection_coords.append(Vec3(new_path.x,0,z+ 1))
+                    intersection_coords.append(Vec3(new_path.x,0,z + 1))
 
                 else:
                     for z in range(nearest.z, new_path.z):
                         connection.append(Vec3(new_path.x, 0, z))
                     intersection_coords.append(Vec3(new_path.x,0,z + 1))
-                
-                print(connection)
+    
             else:
                 while new_path not in path_coords:
                     new_path = Vec3(new_path.x + 1, 0,  new_path.z)
                     connection.append(new_path)
                 else:
-                    append_to_intersection_coords_later = new_path # to prevent it from intervering with the next while loop
-
-                    intersection_coords.append(append_to_intersection_coords_later)
+                    while new_path not in path_coords:
+                        intersection_coords.append(new_path)
+                        new_path = Vec3(new_path.x + 1, 0,  new_path.z)
         elif self.direction =='z-':
             pass
         elif self.direction =='z+':
