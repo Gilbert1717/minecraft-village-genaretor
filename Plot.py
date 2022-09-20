@@ -151,7 +151,7 @@ class Plot:
                 structure_start = Vec3(randrange(self.plot_end.x, self.plot_start.x + self.structure_length, -1) -self.structure_width,
                                             self.central_point.y,
                                             randrange(self.plot_end.z, self.plot_start.z + self.structure_width, -1))
-                structure = Structure(structure_start, -1, self.structure_width, self.structure_length)
+                structure = Structure(structure_start, -1, self.structure_width, -self.structure_length)
                    
             elif self.direction =='z-':
                 structure_start = Vec3(randrange(self.plot_end.x, self.plot_start.x + self.structure_width, -1) - self.structure_width,
@@ -163,7 +163,7 @@ class Plot:
                 structure_start = Vec3(randrange(self.plot_start.x, self.plot_end.x - self.structure_width),
                                             self.central_point.y,
                                             randrange(self.plot_end.z, self.plot_start.z + self.structure_length, -1))
-                structure = Structure(structure_start, -1, self.structure_width, self.structure_length)
+                structure = Structure(structure_start, -1, self.structure_width, -self.structure_length)
             
             self.structure = structure
 
@@ -568,12 +568,12 @@ class Plot:
                 if nearest.z > new_path.z:
                     for z in range(new_path.z, nearest.z):
                         connection.append(Vec3(new_path.x, 0, z))
-                    intersection_coords.append(new_path.x,0,z+ 1)
+                    intersection_coords.append(Vec3(new_path.x,0,z+ 1))
 
                 else:
                     for z in range(nearest.z, new_path.z):
                         connection.append(Vec3(new_path.x, 0, z))
-                    intersection_coords.append(new_path.x,0,z + 1)
+                    intersection_coords.append(Vec3(new_path.x,0,z + 1))
                 
                 print(connection)
             else:
@@ -582,35 +582,7 @@ class Plot:
                     connection.append(new_path)
                 else:
                     append_to_intersection_coords_later = new_path # to prevent it from intervering with the next while loop
-
-                    #traverse the path away from the village centre
-                    traversed = []
-
-                    if self.away == 'z-':
-                        n = -1
-                    else:
-                        n = 1
                     
-                    curr_block = new_path
-
-                    while curr_block not in intersection_coords:
-                        blocks_in_path_coords = False
-                        potential_next_blocks = [   Vec3(curr_block.x + 1, 0, curr_block.z + n),
-                                                    Vec3(curr_block.x    , 0, curr_block.z + n),
-                                                    Vec3(curr_block.x - 1, 0, curr_block.z + n),]
-
-                        for block in potential_next_blocks:
-                            if block in path_coords:
-                                curr_block = block
-                                traversed.append(curr_block)
-                                blocks_in_path_coords = True
-                                continue
-                        
-                        if not blocks_in_path_coords:
-                            for block in traversed:
-                                if block in path_coords:
-                                    path_coords.remove(block)
-                            break
                     
                     intersection_coords.append(append_to_intersection_coords_later)
                     
@@ -629,12 +601,12 @@ class Plot:
                 if nearest.z > new_path.z:
                     for z in range(new_path.z, nearest.z):
                         connection.append(Vec3(new_path.x, 0, z))
-                    intersection_coords.append(new_path.x,0,z+ 1)
+                    intersection_coords.append(Vec3(new_path.x,0,z+ 1))
 
                 else:
                     for z in range(nearest.z, new_path.z):
                         connection.append(Vec3(new_path.x, 0, z))
-                    intersection_coords.append(new_path.x,0,z + 1)
+                    intersection_coords.append(Vec3(new_path.x,0,z + 1))
                 
                 print(connection)
             else:
@@ -644,35 +616,6 @@ class Plot:
                 else:
                     append_to_intersection_coords_later = new_path # to prevent it from intervering with the next while loop
 
-                    #traverse the path away from the village centre
-                    traversed = []
-
-                    if self.away == 'z-':
-                        n = -1
-                    else:
-                        n = 1
-                    
-                    curr_block = new_path
-
-                    while curr_block not in intersection_coords:
-                        blocks_in_path_coords = False
-                        potential_next_blocks = [   Vec3(curr_block.x + 1, 0, curr_block.z + n),
-                                                    Vec3(curr_block.x    , 0, curr_block.z + n),
-                                                    Vec3(curr_block.x - 1, 0, curr_block.z + n),]
-
-                        for block in potential_next_blocks:
-                            if block in path_coords:
-                                curr_block = block
-                                traversed.append(curr_block)
-                                blocks_in_path_coords = True
-                                continue
-                        
-                        if not blocks_in_path_coords:
-                            for block in traversed:
-                                if block in path_coords:
-                                    path_coords.remove(block)
-                            break
-                    
                     intersection_coords.append(append_to_intersection_coords_later)
         elif self.direction =='z-':
             pass
@@ -710,4 +653,4 @@ class Plot:
 if __name__ == '__main__':
     test_plot = Plot(mc.player.getTilePos(),20,'z+', 'x+')
     test_plot.terraform()
-    #test_plot.place_house(test_plot.get_structure())
+    test_plot.place_house(test_plot.get_structure())
