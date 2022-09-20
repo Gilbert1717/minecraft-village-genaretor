@@ -25,7 +25,7 @@ class House:
         material = rm.random_floors()
         colour = random.randint(1,3)
         lightBlock_offset_z = random.randint(2, 3)
-        lightBlock_offset_x = random.randint(3, 4)
+        lightBlock_offset_x = random.randint(2, 3)
         
         
         for storey in range(self.stories):
@@ -52,6 +52,8 @@ class House:
             
 
     def create_roof(self,mc):
+        
+        # Creates the ceiling for the final floor of the house and initialises the two opposite corners.
         start_point = vec3.Vec3(self.structure.frontleft.x,
                                 self.structure.frontleft.y + self.structure.height * self.stories, 
                                 self.structure.frontleft.z)
@@ -59,7 +61,25 @@ class House:
                                 self.structure.backright.y + self.structure.height * self.stories, 
                                 self.structure.backright.z)
         create_blocks(mc, start_point, end_point)
-
+        
+        """CREATE TWO TYPES OF ROOF. ONE WITH BLOCKS AND ONE WITH STAIRS."""
+        # Creating the base of the roof
+        start_point.y += 1
+        
+        create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
+        
+        # Creating the roof top ontop of the base.
+        for x in range(0, 5):
+            
+            start_point.x += 1
+            start_point.y += 1
+            start_point.z += 1
+            
+            end_point.x -= 1
+            end_point.y += 1
+            end_point.z -= 1
+            
+            create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
             
    
         
