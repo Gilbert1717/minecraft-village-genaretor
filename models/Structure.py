@@ -7,10 +7,11 @@ def create_vector(vector,x,y,z):
     return new_vector
 
 class Structure:
-    def __init__ (self,vector,width = random.randrange(8,16),length = random.randrange(10,20),height = 5,):
+    def __init__ (self,vector,direction,width = random.randrange(8,16),length = random.randrange(10,20),height = 5,):
         self.height = height
         self.width = width
         self.length = length
+        self.direction = direction
         self.position = Vec3(vector.x, vector.y,vector.z)
         self.frontleft = Vec3(vector.x, vector.y, vector.z)
         self.frontright = Vec3(vector.x + self.width, vector.y, vector.z)
