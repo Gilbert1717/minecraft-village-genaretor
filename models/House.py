@@ -38,7 +38,7 @@ class House:
                 block_difference_x = i - floor.frontleft.x # Setting the offset position to place glowstone on the row
                 for z in range(floor.frontleft.z, floor.backright.z, lightBlock_offset_z): 
                     block_difference_z = z - floor.frontleft.z # Setting the offset position to place glowstone on column
-                    mc.setBlock(floor.frontleft.x + block_difference_x, floor.frontleft.y,
+                    mc.setBlock(floor.frontleft.x + block_difference_x, floor.frontleft.y + self.structure.height,
                                 floor.frontleft.z + block_difference_z, block.GLOWSTONE_BLOCK.id)
                 
             self.floors.append(floor)
@@ -68,8 +68,8 @@ class House:
         
         create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
         
-        print(f"frontleft.x = {self.structure.frontleft.x}, frontleft.z = {self.structure.frontleft.z}")
-        print(f"backright.x = {self.structure.backright.x}, backright.z = {self.structure.backright.z}")
+        # print(f"frontleft.x = {self.structure.frontleft.x}, frontleft.z = {self.structure.frontleft.z}")
+        # print(f"backright.x = {self.structure.backright.x}, backright.z = {self.structure.backright.z}")
         
         mc.setBlock(self.structure.frontleft.x, self.structure.frontleft.y + 1, self.structure.frontleft.z, 1)
         # Creating the roof top ontop of the base.
@@ -145,8 +145,8 @@ class House:
         for floor in self.floors:
             for room in floor.rooms:
                 floor.create_window(mc,room)   
-                print(floor.frontleft.x,floor.frontleft.y,floor.frontleft.z)
-                print(room.frontleft.x,room.frontleft.y,room.frontleft.z)  
+                # print(floor.frontleft.x,floor.frontleft.y,floor.frontleft.z)
+                # print(room.frontleft.x,room.frontleft.y,room.frontleft.z)  
     
 
     def front_side(self,mc):
@@ -158,7 +158,7 @@ class House:
         for floor in self.floors:
             for room in floor.rooms:
                 floor.place_furniture(mc, room)
-                print("placing furniture")
+                # print("placing furniture")
 
     def create_house(self,mc):
         self.create_floor(mc)
