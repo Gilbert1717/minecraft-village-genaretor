@@ -117,7 +117,7 @@ def generate_path_and_plots(vil_start, vil_end, vil_center, vor_amount):
                 if distance_sub2 >= -1 and distance_sub2 <= 1:
                         intersection_coords.append(vec3.Vec3(x,0,z)) 
 
-                if (x == vil_start.x or x == vil_end.x) and (z == vil_start.z or z == vil_end.z):
+                if (x == vil_start.x or x == vil_end.x) or (z == vil_start.z or z == vil_end.z):
                     bordering_paths.append(vec3.Vec3(x,0,z))
     
 
