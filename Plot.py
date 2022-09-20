@@ -145,25 +145,25 @@ class Plot:
                 structure_start = Vec3(randrange(self.plot_start.x, self.plot_end.x - self.structure_length),
                                             self.central_point.y,
                                             randrange(self.plot_start.z, self.plot_end.z - self.structure_width))
-                structure = Structure(structure_start, 1, self.structure_width, self.structure_length)
+                structure = Structure(structure_start, self.structure_width, self.structure_length)
 
             elif self.direction =='x+':
                 structure_start = Vec3(randrange(self.plot_end.x, self.plot_start.x + self.structure_length, -1) -self.structure_width,
                                             self.central_point.y,
                                             randrange(self.plot_end.z, self.plot_start.z + self.structure_width, -1))
-                structure = Structure(structure_start, -1, self.structure_width, self.structure_length)
+                structure = Structure(structure_start, self.structure_width, - self.structure_length)
                    
             elif self.direction =='z-':
                 structure_start = Vec3(randrange(self.plot_end.x, self.plot_start.x + self.structure_width, -1) - self.structure_width,
                                             self.central_point.y,
                                             randrange(self.plot_start.z, self.plot_end.z - self.structure_length))
-                structure = Structure(structure_start, 1, self.structure_width, self.structure_length)
+                structure = Structure(structure_start, self.structure_width, self.structure_length)
 
             elif self.direction =='z+':
                 structure_start = Vec3(randrange(self.plot_start.x, self.plot_end.x - self.structure_width),
                                             self.central_point.y,
                                             randrange(self.plot_end.z, self.plot_start.z + self.structure_length, -1))
-                structure = Structure(structure_start, -1, self.structure_width, self.structure_length)
+                structure = Structure(structure_start, self.structure_width, - self.structure_length)
             
             self.structure = structure
 
