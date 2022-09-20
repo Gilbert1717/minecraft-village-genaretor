@@ -26,18 +26,18 @@ def create_door(mc,vector1,vector2):
     if vector1.x == vector2.x:
         length = abs(vector2.z - vector1.z)
         if vector2.z > vector1.z:
-            create_z = vector1.z + random.randint(2,length - 2)
-            while (mc.getBlock(vector1.x + 1, vector1.y + 1, create_z + 1) != Air or
+            create_z = vector1.z + random.randint(3,length - 3)
+            while (mc.getBlock(vector1.x + 1, vector1.y + 1, create_z) != Air or
                     mc.getBlock(vector1.x - 1, vector1.y + 1, create_z ) != Air or
                     mc.getBlock(vector1.x, vector1.y + 2, create_z) == window_block):
-                create_z = vector1.z + random.randint(2,length - 2)
+                create_z = vector1.z + random.randint(3,length - 3)
             
         else:
-            create_z = vector1.z - random.randint(2,length - 2)
+            create_z = vector1.z - random.randint(3,length - 3)
             while (mc.getBlock(vector1.x + 1, vector1.y + 1, create_z) != Air or
                     mc.getBlock(vector1.x - 1, vector1.y + 1, create_z) != Air or
                     mc.getBlock(vector1.x, vector1.y + 2, create_z) == window_block):
-                create_z = vector1.z - random.randint(2,length - 2)
+                create_z = vector1.z - random.randint(3,length - 3)
         mc.setBlock(vector1.x, vector1.y + 1, create_z, block.AIR)
         mc.setBlock(vector1.x, vector1.y + 2, create_z, block.AIR)
         mc.setBlock(vector1.x, vector1.y + 2, create_z,door,8)
@@ -53,6 +53,7 @@ def create_door(mc,vector1,vector2):
                     mc.getBlock(create_x, vector1.y + 1, vector1.z - 1) != Air or 
                     mc.getBlock(create_x, vector1.y + 2, vector1.z) == window_block):
                 create_x = vector1.x + random.randint(2,width - 2)
+                
                
             
         else:
@@ -61,6 +62,8 @@ def create_door(mc,vector1,vector2):
                     mc.getBlock(create_x, vector1.y + 1, vector1.z - 1) != Air or
                     mc.getBlock(create_x, vector1.y + 2, vector1.z) != window_block):
                 create_x = vector1.x - random.randint(2,width - 2)
+               
+                
         mc.setBlock(create_x, vector1.y + 1, vector1.z, block.AIR)
         mc.setBlock(create_x, vector1.y + 2, vector1.z, block.AIR)
         mc.setBlock(create_x , vector1.y + 2, vector1.z,door,8)
@@ -263,13 +266,18 @@ class Floor:
 
        
 
-    def create_stairs(self,mc):
+    def create_stair(self,mc):
         stairs = block.STAIRS_WOOD.id
         support = block.STONE.id
         if self.structure.length > 0:
-            start_vector = create_vector(self.backleft, 2,  1, 1)
-            end_vector = create_vector(self.backleft,self.structure.height + 1, self.structure.height + 1, -2)
+            
+
+            # clear the blocks right in front of stairs
+            start_vector = create_vector(self.backleft, self.structure.height + 2,  1, -1)
+            end_vector = create_vector(start_vector, 0, self.structure.height - 2, -1)
             create_blocks(mc,start_vector,end_vector,block.AIR)
+
+            # create stairs
             for x in range(self.structure.height):
                 vector1 = create_vector(self.backleft,self.structure.height - x + 1, x + 1 , -1)
                 vector2 = create_vector(self.backleft,self.structure.height - x + 1, x + 1, -2)
@@ -278,9 +286,13 @@ class Floor:
                 mc.setBlock(vector2.x,vector2.y,vector2.z,stairs,1)
                 mc.setBlock(vector2.x,vector2.y - 1,vector2.z,support,1)
         else:
-            start_vector = create_vector(self.backleft, 2,  1, 1)
-            end_vector = create_vector(self.backleft,self.structure.height, self.structure.height + 1, 2)
+
+            # clear the blocks right in front of stairs
+            start_vector = create_vector(self.backleft, self.structure.height + 2,  1, 1)
+            end_vector = create_vector(start_vector, 0, self.structure.height - 2, 1)
             create_blocks(mc,start_vector,end_vector,block.AIR)
+            
+
             for x in range(self.structure.height):
                 vector1 = create_vector(self.backleft,self.structure.height - x + 1, x + 1 , 1)
                 vector2 = create_vector(self.backleft,self.structure.height - x + 1, x + 1, 2)

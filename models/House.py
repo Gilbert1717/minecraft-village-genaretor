@@ -11,9 +11,10 @@ rm = RandomiseMaterial()
 
 
 class House:
-    def __init__ (self,structure,stories = random.randint(0,2)):
+    def __init__ (self,structure):
         self.structure = structure
-        self.stories = stories
+        self.stories = 5
+        # random.randint(0,10)
         self.height = structure.height * self.stories
         # Floor list restore all the floor instance in the house
         self.floors = []
@@ -46,9 +47,19 @@ class House:
     def create_rooms(self,mc):
         for floor in self.floors:
             floor.create_room(mc,floor)
+    
+    def create_stairs(self,mc):
+        if self.structure.length < 0:
+            start_vector = create_vector(self.structure.backleft, 2,  1, 1)
+            end_vector = create_vector(self.structure.backleft,self.structure.height + 1, self.height - 1, 2)
+            create_blocks(mc,start_vector, end_vector, block.AIR)
+        else:
+            start_vector = create_vector(self.structure.backleft, 2,  1, -1)
+            end_vector = create_vector(self.structure.backleft,self.structure.height + 1, self.height - 1, -2)
+            create_blocks(mc,start_vector, end_vector, block.AIR)
         for floor in self.floors:
             if self.stories > 1 and floor.storey < self.stories - 1:
-                floor.create_stairs(mc)
+                floor.create_stair(mc)
             
 
     def create_roof(self,mc):
@@ -164,6 +175,7 @@ class House:
         self.create_floor(mc)
         self.create_roof(mc)
         self.create_rooms(mc)
+        self.create_stairs(mc)
         self.create_walls(mc)
         self.create_windows(mc)
         self.front_side(mc)
