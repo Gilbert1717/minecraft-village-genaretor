@@ -4,6 +4,7 @@ from mcpi import block
 
 from RandomiseMaterial import RandomiseMaterial
 import random
+import math
 
 rm = RandomiseMaterial()
 
@@ -132,8 +133,8 @@ class Floor:
                 create_blocks(mc, floor1.frontright, diagonal_point)
                 McPosition1 = floor1.frontright
                 McPosition2 = floor1.backright
-                stop = 1
-                random.randint(0,3)
+                # resurion will randomly stop if stop equals 0 so house will contain some big rooms
+                stop = random.randint(0,3)
                 if stop != 0:
                     floor1.create_room(mc,floor1,rooms)
                     floor2.create_room(mc,floor2,rooms)
@@ -142,12 +143,16 @@ class Floor:
                     rooms.append(floor2)
                 create_door(mc,McPosition1,McPosition2)
             else:
-                split = random.randrange(int(floor.structure.length/2),floor.structure.length - min_room_length//2,1)
+                if floor.structure.length < 0:
+                    split = random.randrange(floor.structure.length - min_room_length//2, math.floor(floor.structure.length/2), 1)
+                else:
+                    split = random.randrange(math.floor(floor.structure.length/2),floor.structure.length - min_room_length//2,1)
                 floor1,floor2 = floor.split_vertical(split)
                 diagonal_point = create_vector(floor1.backleft, floor.structure.width, floor.structure.height - 1, 0)
                 create_blocks(mc, floor1.backleft, diagonal_point)
                 McPosition1 = floor1.backleft
                 McPosition2 = floor1.backright
+                # resurion will randomly stop if stop equals 0 so house will contain some big rooms
                 stop = random.randint(0,3)
                 if stop != 0:        
                     floor1.create_room(mc,floor1,rooms)
@@ -164,11 +169,18 @@ class Floor:
     def create_window(self,mc,floor):
         # create window on front wall
         if floor.frontleft.z == self.frontleft.z:
-            x_offset = abs(floor.frontright.z - floor.backright.z)//2 - 1
+            wall_width = abs(floor.frontright.z - floor.backright.z)
+            x_offset = math.floor(wall_width/2)
             window_x = floor.frontleft.x + x_offset
             window_y = floor.frontright.y + 2
             window_z = floor.frontleft.z
-            window_width = window_x + 1
+            # validate the width 
+            if wall_width < 3:
+                # if the width is not long enough, window_width will be 1 block
+                window_width = window_x
+            else:
+                # if the width is long enough, window_width will be 2 blocks
+                window_width = window_x + 1
             window_height = window_y + 1
             window = 102
             mc.setBlocks (window_x,window_y,window_z,
@@ -177,11 +189,17 @@ class Floor:
 
         # create window on back wall
         if floor.backleft.z == self.backleft.z:
-            x_offset = abs(floor.frontright.z - floor.backright.z)//2 - 1
+            wall_width = abs(floor.frontright.z - floor.backright.z)
+            x_offset = math.floor(abs(floor.frontright.z - floor.backright.z)/2)
             window_x = floor.backleft.x + x_offset
             window_y = floor.backleft.y + 2
             window_z = floor.backleft.z   
-            window_width = window_x + 1
+            if wall_width < 3:
+                # if the width is not long enought, window_width will be 1 block
+                window_width = window_x
+            else:
+                # if the width is enought, window_width will be 2 blocks
+                window_width = window_x + 1
             window_height = window_y + 1
             window = 102
             mc.setBlocks (window_x,window_y,window_z,
@@ -190,11 +208,18 @@ class Floor:
         
         # create window on left-side wall
         elif floor.frontleft.x == self.frontleft.x:
-            z_offset = abs(floor.frontright.z - floor.backright.z)//2 - 1
+            wall_width = abs(floor.frontright.z - floor.backright.z)/2
+            z_offset = math.floor(wall_width)
             window_x = floor.frontleft.x
             window_y = floor.frontleft.y + 2
             window_z = floor.frontleft.z + z_offset
-            window_width = window_z + 1
+            if wall_width < 3:
+                # if the width is not long enought, window_width will be 1 block
+                 window_width = window_z
+            else:
+                # if the width is enought, window_width will be 2 blocks
+                window_width = window_z + 1
+           
             window_height = window_y + 1
             window = 102
             mc.setBlocks (window_x,window_y,window_z,
@@ -203,11 +228,17 @@ class Floor:
 
         # create window on right-side wall
         if floor.frontright.x == self.frontright.x:
-            z_offset = abs(floor.frontright.z - floor.backright.z)//2 - 1
+            wall_width = abs(floor.frontright.z - floor.backright.z)/2
+            z_offset = math.floor(wall_width)
             window_x = floor.frontright.x
             window_y = floor.frontright.y + 2
             window_z = floor.frontright.z + z_offset
-            window_width = window_z + 1
+            if wall_width < 3:
+                # if the width is not long enought, window_width will be 1 block
+                 window_width = window_z
+            else:
+                # if the width is enought, window_width will be 2 blocks
+                window_width = window_z + 1
             window_height = window_y + 1
             window = 102
             mc.setBlocks (window_x,window_y,window_z,
@@ -220,7 +251,7 @@ class Floor:
     def create_stairs(self,mc):
         stairs = block.STAIRS_WOOD.id
         if self.structure.length > 0:
-            start_vector = create_vector(self.backleft, 2,  1, -1)
+            start_vector = create_vector(self.backleft, 2,  1, 1)
             end_vector = create_vector(self.backleft,self.structure.height, self.structure.height + 1, -2)
             create_blocks(mc,start_vector,end_vector,block.AIR)
             for x in range(self.structure.height):

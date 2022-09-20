@@ -10,7 +10,7 @@ class Structure:
     def __init__ (self,vector,direction,width = random.randrange(8,16),length = random.randrange(10,20),height = 5,):
         self.height = height
         self.width = width
-        self.length = length
+        self.length = length * direction
         self.direction = direction
         self.position = Vec3(vector.x, vector.y,vector.z)
         self.frontleft = Vec3(vector.x, vector.y, vector.z)

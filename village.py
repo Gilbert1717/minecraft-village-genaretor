@@ -118,7 +118,8 @@ if __name__ == "__main__":
             elif chatEvent.message.upper() == "HOUSE":
                 
                 position = mc.player.getTilePos()
-                vecPos = vec3.Vec3(position)
+                # vecPos = vec3.Vec3(position)
+                vecPos = position
                 weith = random.randint(8,12)
                 length = random.randint(12,16)
                 structure1 = Structure(position,weith,length)
