@@ -117,7 +117,7 @@ def generate_path_and_plots(vil_start, vil_end, vil_center, vor_amount):
                 if distance_sub2 >= -1 and distance_sub2 <= 1:
                         intersection_coords.append(vec3.Vec3(x,0,z)) 
 
-                if (x == vil_start.x or x == vil_end.x) and (z == vil_start.z or z == vil_end.z):
+                if (x == vil_start.x or x == vil_end.x) or (z == vil_start.z or z == vil_end.z):
                     bordering_paths.append(vec3.Vec3(x,0,z))
     
 
@@ -190,6 +190,31 @@ def checkSteepPath(path_coords): # Function to return a list of y-axis blocks th
     #TODO: Place the path with these y-coords and set the blocks above them to air.
     return check_neighbours
 
+def remove_dead_ends(path_coords, intersections):
+    #traverse the path away from the village centre
+    traversed = []
+                    
+    curr_block = new_path
+
+    while curr_block not in intersection_coords:
+        blocks_in_path_coords = False
+        potential_next_blocks = [   Vec3(curr_block.x + 1, 0, curr_block.z + n),
+                                    Vec3(curr_block.x    , 0, curr_block.z + n),
+                                    Vec3(curr_block.x - 1, 0, curr_block.z + n),]
+
+        for block in potential_next_blocks:
+             if block in path_coords:
+                curr_block = block
+                traversed.append(curr_block)
+                blocks_in_path_coords = True
+                continue
+                        
+        if not blocks_in_path_coords:
+            for block in traversed:
+                if block in path_coords:
+                    path_coords.remove(block)
+                break
+                    
 if __name__ == '__main__':
     vil_length = 85
     num_points = 5
