@@ -207,7 +207,7 @@ def remove_dead_ends(path_coords, intersections):
                 curr_block = block
                 traversed.append(curr_block)
                 blocks_in_path_coords = True
-                 continue
+                continue
                         
         if not blocks_in_path_coords:
             for block in traversed:
