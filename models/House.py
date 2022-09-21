@@ -86,8 +86,8 @@ class House:
         #mc.setBlock(self.structure.frontleft.x, self.structure.frontleft.y + self.structure.height * self.stories + 1, self.structure.frontleft.z, block.GLOWSTONE_BLOCK)
         #mc.setBlock(self.structure.backright.x, self.structure.backright.y + self.structure.height * self.stories + 1, self.structure.backright.z, block.GLOWSTONE_BLOCK)
         
-        #mc.postToChat(f"frontleft.x = {self.structure.frontleft.x}, frontleft.y = {self.structure.frontleft.y + self.structure.height * self.stories + 1}, frontleft.z = {self.structure.frontleft.z}")
-        #mc.postToChat(f"backright.x = {self.structure.backright.x}, backright.y = {self.structure.backright.y + self.structure.height * self.stories + 1}, backright.z = {self.structure.backright.z}")
+        mc.postToChat(f"frontleft.x = {self.structure.frontleft.x}, frontleft.y = {self.structure.frontleft.y + self.structure.height * self.stories + 1}, frontleft.z = {self.structure.frontleft.z}")
+        mc.postToChat(f"backright.x = {self.structure.backright.x}, backright.y = {self.structure.backright.y + self.structure.height * self.stories + 1}, backright.z = {self.structure.backright.z}")
         
         
         # Grabbing the coordinates of the block facing the negative z-direction.
@@ -103,18 +103,34 @@ class House:
                  #-640 1181
                  
                  #642 -1179 642 -1178
-                 #641 -1180 641 
-                 #640 -1181
-                start_point.x -= 1
-                start_point.y += 1
-                start_point.z += 1
+                 #643 -1180 641 
+                 #644 -1181
+                
+                if start_point.x <= 0 and start_point.z >= 0:
+                    
+                    start_point.x += 1
+                    start_point.y += 1
+                    start_point.z += 1
             
-                end_point.x += 1
-                end_point.y += 1
-                end_point.z -= 1
+                    end_point.x -= 1
+                    end_point.y += 1
+                    end_point.z -= 1
             
-                create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
-                print("minus direction")
+                    create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
+                    print("minus direction")
+                    
+                elif start_point.x >= 0 and start_point.z >= 0:
+                    
+                    start_point.x += 1
+                    start_point.y += 1
+                    start_point.z += 1
+                    
+                    end_point.x -= 1
+                    end_point.y += 1
+                    end_point.z -= 1  
+                    
+                    create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)    
+                    
         else:
             
             for positive in range(0, 5):
