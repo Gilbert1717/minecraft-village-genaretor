@@ -129,7 +129,19 @@ class House:
                     end_point.y += 1
                     end_point.z -= 1  
                     
-                    create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)    
+                    create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)   
+                
+                elif start_point.x <= 0 and start_point.z <= 0:
+                    
+                    start_point.x += 1
+                    start_point.y += 1
+                    start_point.z += 1
+                    
+                    end_point.x -= 1
+                    end_point.y += 1
+                    end_point.z -= 1
+                    
+                    create_blocks(mc, start_point, end_point, block.COBBLESTONE.id) 
                     
         else:
             
