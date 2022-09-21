@@ -227,7 +227,7 @@ def checkSteepPath(path_coords): # Function to return a list of y-axis blocks th
     return check_neighbours
 
 def alternateCheckSteepPath(height_dict, front_doors):
-    final_path_height_dict = dict()
+    final_path_height_dict = height_dict.copy()
     looping_path_height_dict = height_dict
     raised_paths = set()
 
@@ -273,7 +273,7 @@ def alternateCheckSteepPath(height_dict, front_doors):
 
         for item in to_be_deleted:
             looping_path_height_dict.pop(item)
-            
+
         if len(looping_path_height_dict) == 0:
             done = True
         else:
