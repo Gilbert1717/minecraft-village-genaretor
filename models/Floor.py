@@ -268,7 +268,7 @@ class Floor:
 
     def create_stair(self,mc):
         stairs = block.STAIRS_WOOD.id
-        support = block.STONE.id
+        support = block.WOOD.id
         if self.structure.length > 0:
             
 
@@ -302,22 +302,20 @@ class Floor:
                 mc.setBlock(vector2.x,vector2.y - 1,vector2.z,support,1)
                 
     def place_furniture(self, mc, floor):
+        print(floor.frontright.x - 1, floor.frontleft.x + 1)
         furniture = rm.random_furniture()
-        if self.structure.length < 0:
-            try:
-                place_frontwall = random.randrange(floor.frontright.x - 1, floor.frontleft.x + 1)
-                check_block = mc.getBlock(place_frontwall + 1, floor.frontleft.y + 1, floor.frontleft.z)
-                mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 1, furniture)
-            except:
-                pass
-
+        
+        if floor.frontright.x < floor.frontleft.x:
+            place_frontwall = random.randrange(floor.frontright.x - 1, floor.frontleft.x + 1)
+            check_block = mc.getBlock(place_frontwall + 1, floor.frontleft.y + 1, floor.frontleft.z)
+            mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 1, furniture)
+            
         else:
-            try:
-                place_frontwall = random.randrange(floor.frontleft.x + 1, floor.frontright.x - 1)
-                check_block = mc.getBlock(place_frontwall + 1, floor.frontleft.y + 1, floor.frontleft.z)
-                mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z + 1, furniture)
-            except:
-                pass
+            place_frontwall = random.randrange(floor.frontleft.x + 1, floor.frontright.x - 1)
+            check_block = mc.getBlock(place_frontwall + 1, floor.frontleft.y + 1, floor.frontleft.z)
+            mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z + 1, furniture)
+            
+            
                 
             
             

@@ -25,7 +25,10 @@ class House:
     def create_floor(self, mc: Minecraft):
         material = rm.random_floors()
         colour = random.randint(1,3)
-        lightBlock_offset_z = random.randint(2, 3)
+        if self.structure.length > 0 :
+            lightBlock_offset_z = random.randint(2, 3)
+        else:
+            lightBlock_offset_z = random.randint(-3, -2)
         lightBlock_offset_x = random.randint(2, 3)
         
         
