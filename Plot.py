@@ -108,11 +108,11 @@ class Plot:
                 x,y,z = query_result[0]
                 block_id = query_result[1]
 
-                if block_id == 0: #then the block is a seagrass
+                if block_id == 0: #prevents an infinite loop when the block is a seagrass
                     self.height_dict[(x,z)] = y
                     self.block_dict[(x,z)] = block.WATER.id
                     
-                elif block_id not in ground: # block_id != to prevent Done being set to false at seagrass
+                elif block_id not in ground:
                     Done = False
                     redo.add((x,y,z))
                 
@@ -271,7 +271,7 @@ class Plot:
             ##########
 
 
-        #interpolate from the corner diagonal to the corner sides
+        #interpolate from the corner diagonal to the plot buffer border
         x,z = corner_coords[1]
             #########
         y_diff = self.height_dict[x,z-3] - ybase_1
@@ -344,7 +344,7 @@ class Plot:
             ##########
 
 
-        #interpolate from the corner diagonal to the corner sides
+        #interpolate from the corner diagonal to the plot buffer border
         x,z = corner_coords[1]
             #########
         y_diff = self.height_dict[x,z-3] - ybase_1
@@ -417,7 +417,7 @@ class Plot:
             ##########
 
 
-        #interpolate from the corner diagonal to the corner sides
+        #interpolate from the corner diagonal to the plot buffer border
         x,z = corner_coords[1]
             #########
         y_diff = self.height_dict[x,z+3] - ybase_1
@@ -490,7 +490,7 @@ class Plot:
             ##########
 
 
-        #interpolate from the corner diagonal to the corner sides
+        #interpolate from the corner diagonal to the plot buffer border
         x,z = corner_coords[1]
             #########
         y_diff = self.height_dict[x,z+3] - ybase_1
@@ -550,7 +550,6 @@ class Plot:
 
     def connect_with_paths(self,path_coords, intersection_coords, bordering_paths, vil_start, vil_end):
         # staring from one block away from the front door, travel facing self.direction until it connects to a path block. 
-        # traverse the path away from the centre of the village in the perpendicular direction, and delete that section if there is no intersection.
         # add the connection as an intersection, then add the new path connection to the path blocks list
         # if the front door is outside of the village area, connect to the nearest block in bordering_paths in terms of the self.direction axis.
         connection = []
@@ -573,7 +572,7 @@ class Plot:
                 else:
                     for z in range(nearest.z, new_path.z):
                         connection.append(Vec3(new_path.x, 0, z))
-                intersection_coords.append(Vec3(new_path.x,0,z + 1))
+                intersection_coords.append(nearest)
                 connection.append(Vec3(new_path.x,0,z + 1))
 
             else:
@@ -605,11 +604,12 @@ class Plot:
                 else:
                     for z in range(nearest.z, new_path.z):
                         connection.append(Vec3(new_path.x, 0, z))
-                intersection_coords.append(Vec3(new_path.x,0,z + 1))
+                intersection_coords.append(nearest)
+
                 connection.append(Vec3(new_path.x,0,z + 1))
 
             else:
-                while new_path not in path_coords:
+                while new_path not in path_coords: # infinite loops here very frequently
                     new_path = Vec3(new_path.x + 1, 0,  new_path.z)
                     connection.append(new_path)
                 else:
@@ -637,7 +637,7 @@ class Plot:
                 else:
                     for x in range(nearest.x, new_path.x):
                         connection.append(Vec3(x, 0, new_path.z))
-                    intersection_coords.append(Vec3(x + 1, 0, new_path.z))
+                    intersection_coords.append(nearest)
                     connection.append(Vec3(x + 1, 0, new_path.z))
             else:
                 while new_path not in path_coords:
@@ -668,7 +668,7 @@ class Plot:
                 else:
                     for x in range(nearest.x, new_path.x):
                         connection.append(Vec3(x, 0, new_path.z))
-                intersection_coords.append(Vec3(x + 1,0,new_path.z))
+                intersection_coords.append(nearest)
                 connection.append(Vec3(x + 1,0,new_path.z))
     
             else:
@@ -681,6 +681,7 @@ class Plot:
                         new_path = Vec3(new_path.x, 0,  new_path.z + 1)
 
         path_coords.extend(connection)
+        intersection_coords.extend(connection)# hacky way to 
         return path_coords
 
 

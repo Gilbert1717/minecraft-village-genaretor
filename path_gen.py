@@ -118,7 +118,8 @@ def generate_path_and_plots(vil_start, vil_end, vil_center, vor_amount):
                         intersection_coords.append(vec3.Vec3(x,0,z)) 
 
                 if (x == vil_start.x or x == vil_end.x) or (z == vil_start.z or z == vil_end.z):
-                    bordering_paths.append(vec3.Vec3(x,0,z))
+                    bordering_paths.append(vec3.Vec3(x,0,z)) 
+                    # creates a list of path blocks located in the village border, used for path connection algorithms later on
     
 
     
@@ -128,29 +129,64 @@ def generate_path_and_plots(vil_start, vil_end, vil_center, vor_amount):
 
 def get_path_height(path_coords):
     path_coords_tuple = []
+    path_height_set = set() # used set instead of list because query_blocks returns duplicate results for some reason
+    height_dict = dict()
+    block_dict = dict()
+    ground =  [ block.GRASS.id, block.DIRT.id, block.WATER_STATIONARY.id, block.SAND.id, block.WATER_FLOWING.id,
+                    block.STONE.id, block.CLAY.id, block.MYCELIUM.id, block.SANDSTONE.id]
+
     for coord in path_coords:
         path_coords_tuple.append((coord.x,coord.z))
 
-    query_results = query_blocks(path_coords_tuple,'world.getHeight(%d,%d)',int)
-    #DOES NOT CHECK FOR LEAVES OR TREES OR WATER
-    #TODO: MAKE IT CHECK LEAVES AND OTHER STUFF
-    for result in query_results:
-        mc.setBlocks(   result[0][0]-1,    result[1],    result[0][1]-1, 
-                        result[0][0]+1,    result[1],    result[0][1]+1, block.COBBLESTONE.id)
+    Done = False
 
-    #for coord in path_coords:
-        #print('getting block height for', coord.x, coord.z)
-        #coord.y = getBlockHeight(coord.x, coord.z)
-    #    mc.setBlock(coord.x, coord.y, coord.z, block.COBBLESTONE.id)
-    
-    
-    #for coord in path_coords:
-    #    mc.setBlocks(   coord.x-1,    coord.y,    coord.z-1, 
-    #                    coord.x+1,    coord.y,    coord.z+1, block.COBBLESTONE.id)
-        #mc.setBlock(   coord.x,    100,    coord.z, block.GLOWING_OBSIDIAN)
+    while not Done:
+        Done = True
+        redo = set()
+        path_height_set = set()
+            
+        query_results = query_blocks(path_coords_tuple,'world.getHeight(%d,%d)',int)
 
+        for query_result in query_results:
+            x = query_result[0][0]
+            z = query_result[0][1]
+            y = query_result[1]
+                
+            height_dict[(x,z)] = y
+            path_height_set.add((x,y,z))
+        
 
+        query_results = query_blocks(path_height_set,'world.getBlock(%d,%d,%d)',int)
+        
+        for query_result in query_results:
+            x,y,z = query_result[0]
+            block_id = query_result[1]
+
+            if block_id == 0: #prevents an infinite loop when the block is a seagrass
+                height_dict[(x,z)] = y
+                block_dict[(x,z)] = block.WATER.id
+                    
+            elif block_id not in ground:
+                Done = False
+                redo.add((x,y,z))
+                
+
+            height_dict[(x,z)] = y
+            block_dict[(x,z)] = block_id
+
+            
+        if Done:
+            break
+        else:
+            for x,y,z in redo:
+                mc.setBlock(x,y,z,block.AIR.id)
+
+            #re-assign terrain cords for the next iteration
+            path_coords_tuple = []
+            for x,y,z in redo:
+                path_coords_tuple.append((x,z))
     
+    return height_dict
 
 
 def getBlockHeight(block_x, block_z):
@@ -190,30 +226,172 @@ def checkSteepPath(path_coords): # Function to return a list of y-axis blocks th
     #TODO: Place the path with these y-coords and set the blocks above them to air.
     return check_neighbours
 
-def remove_dead_ends(path_coords, intersections):
-    #traverse the path away from the village centre
-    traversed = []
+def alternateCheckSteepPath(path_coords, front_doors):
+    final_path_height_dict = dict()
+    looping_path_height_dict = dict()
+    raised_paths = set()
+
+    for coord in path_coords:
+        final_path_height_dict[(coord.x,coord.z)] = coord.y
+        looping_path_height_dict = dict()
+
+    done = False
+    loop_counter = 0
+
+    while not done:
+        loop_counter += 1
+        for curr_x, curr_z in looping_path_height_dict:
+            curr_y = looping_path_height_dict[(curr_x),(curr_z)]
+            surrounding_blocks = [  (curr_x + 1, curr_z + 1), 
+                                    (curr_x    , curr_z + 1),
+                                    (curr_x - 1, curr_z + 1),
+                                    (curr_x + 1, curr_z),
+                                    (curr_x - 1, curr_z),
+                                    (curr_x + 1, curr_z - 1),
+                                    (curr_x   , curr_z - 1),
+                                    (curr_x - 1, curr_z - 1),]
+
+            dict_change = False
+            for surrounding_x,surrounding_z in surrounding_blocks:
                     
-    curr_block = new_path
+                if (surrounding_x, surrounding_z) in looping_path_height_dict:
+                    surrounding_block_y = looping_path_height_dict[(surrounding_x,surrounding_z)]
 
-    while curr_block not in intersection_coords:
-        blocks_in_path_coords = False
-        potential_next_blocks = [   Vec3(curr_block.x + 1, 0, curr_block.z + n),
-                                    Vec3(curr_block.x    , 0, curr_block.z + n),
-                                    Vec3(curr_block.x - 1, 0, curr_block.z + n),]
+                    if surrounding_block_y < curr_y -1 and (surrounding_x,surrounding_z) not in front_doors:
+                        final_path_height_dict[(surrounding_x,surrounding_z)] = surrounding_block_y + 1
+                        looping_path_height_dict[(surrounding_x,surrounding_z)] = surrounding_block_y + 1
+                        raised_paths.add((surrounding_x,surrounding_z))
+                        dict_change = True
 
-        for block in potential_next_blocks:
-             if block in path_coords:
-                curr_block = block
-                traversed.append(curr_block)
-                blocks_in_path_coords = True
-                continue
+                    elif surrounding_block_y < curr_y -1 and (surrounding_x,surrounding_z) in front_doors:
+                        final_path_height_dict[(curr_x,curr_z)] = curr_y - 1
+                        looping_path_height_dict[(curr_x,curr_z)] = curr_y - 1
+                        raised_paths.add((curr_x,curr_z))
+                        dict_change = True
+
+            if not dict_change:
+                looping_path_height_dict.pop((curr_x,curr_z))
+
+        if len(looping_path_height_dict) == 0:
+            done = True
+        else:
+            done = False
+        
+        if loop_counter == 99999:
+            print('steep path function has given up')
+            break
                         
-        if not blocks_in_path_coords:
-            for block in traversed:
-                if block in path_coords:
-                    path_coords.remove(block)
-                break
+    new_path_coords = []
+    for x,z in final_path_height_dict:
+        new_path_coords.append(vec3.Vec3(x, final_path_height_dict[(x,z)], z))
+    
+    return new_path_coords,raised_paths
+
+def remove_dead_ends(path_coords, intersections, bordering_paths, vil_start, vil_end): 
+    #TODO: make this add some kind of structure at the dead ends instead
+    #traverses the path away in all 4 direction from all intersection blocks
+    #,if it doesnt encounter another intersection block, it deletes the traversed path
+    for bordering_block in bordering_paths:
+
+        ### checks if the bordering path has been connected by another plot
+        curr_block = bordering_block
+        surrounding_blocks = [  vec3.Vec3(curr_block.x + 1, 0, curr_block.z + 1), 
+                                vec3.Vec3(curr_block.x    , 0, curr_block.z + 1),
+                                vec3.Vec3(curr_block.x - 1, 0, curr_block.z + 1),
+                                vec3.Vec3(curr_block.x + 1, 0, curr_block.z),
+                                vec3.Vec3(curr_block.x - 1, 0, curr_block.z),
+                                vec3.Vec3(curr_block.x + 1, 0, curr_block.z - 1),
+                                vec3.Vec3(curr_block.x    , 0, curr_block.z - 1),
+                                vec3.Vec3(curr_block.x - 1, 0, curr_block.z - 1),]
+        in_intersections = False
+        for surrounding_block in surrounding_blocks:
+            if surrounding_block in intersections:
+                in_intersections = True
+        ###
+        if in_intersections: # if yes, there is no need to remove the path
+            continue
+        else: # if no, traverse the path towards the village until you hit an intersection block.
+            axis = ''
+
+            #checks for the traversal axis and direction
+            if curr_block.x == vil_start.x:
+                axis = 'x'
+                dir = 1
+            elif curr_block.x == vil_end.x:
+                axis = 'x'
+                dir = -1
+            elif curr_block.z == vil_start.z:
+                axis = 'z'
+                dir = 1
+            elif curr_block.z == vil_end.z:
+                axis = 'z'
+                dir = -1
+            
+            if axis == 'x':
+                traversed = []
+
+                while curr_block not in intersections:
+                    next_blocks_in_intersections = False
+                    next_blocks_not_in_path_coords = False
+                    potential_next_blocks = [   vec3.Vec3(curr_block.x + dir, 0, curr_block.z + 1),
+                                                vec3.Vec3(curr_block.x + dir, 0, curr_block.z    ),
+                                                vec3.Vec3(curr_block.x + dir, 0, curr_block.z - 1),
+                                                vec3.Vec3(curr_block.x,       0, curr_block.z + 1),
+                                                vec3.Vec3(curr_block.x,       0, curr_block.z - 1),]
+
+
+                    for block in potential_next_blocks:
+                        if block in path_coords and block not in intersections:
+                            curr_block = block
+                            traversed.append(curr_block)
+                        
+                        if block in intersections:
+                            next_blocks_in_intersections = True
+
+                            for block2 in potential_next_blocks:
+                                if block2 in traversed:
+                                    traversed.remove(block2)
+                        
+                        if block not in path_coords:
+                            next_blocks_not_in_path_coords = True
+
+                    if next_blocks_in_intersections or next_blocks_not_in_path_coords:
+                        for block in traversed:
+                            if block in path_coords:
+                                path_coords.remove(block)
+                        break
+            else:
+                traversed = []
+
+                while curr_block not in intersections:
+                    next_blocks_in_intersections = False
+                    next_blocks_not_in_path_coords = False
+                    potential_next_blocks = [   vec3.Vec3(curr_block.x + 1, 0, curr_block.z + dir),
+                                                vec3.Vec3(curr_block.x    , 0, curr_block.z + dir),
+                                                vec3.Vec3(curr_block.x - 1, 0, curr_block.z + dir),
+                                                vec3.Vec3(curr_block.x + 1, 0, curr_block.z      ),
+                                                vec3.Vec3(curr_block.x - 1, 0, curr_block.z      )]
+
+                    for block in potential_next_blocks:
+                        if block in path_coords and block not in intersections:
+                            curr_block = block
+                            traversed.append(curr_block)
+                        
+                        if block in intersections:
+                            next_blocks_in_intersections = True
+
+                            for block2 in potential_next_blocks:
+                                if block2 in traversed:
+                                    traversed.remove(block2)
+                        
+                        if block not in path_coords:
+                            next_blocks_not_in_path_coords = True
+
+                    if next_blocks_in_intersections or next_blocks_not_in_path_coords:
+                        for block in traversed:
+                            if block in path_coords:
+                                path_coords.remove(block)
+                        break
                     
 if __name__ == '__main__':
     vil_length = 85
