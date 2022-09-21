@@ -90,15 +90,9 @@ if __name__ == "__main__":
     #ran = RandomiseMaterial()
     #ran.rooftop(mc,position .x,position.y,position.z)
     
-    #stories = random.randint(1,3)
-    #house1 = House(structure1,3)
-    #house1.create_house(mc)
     
     #material = ran.random_furniture()
     
-    #mc.setBlock(position.x, position.y, position.z, material)
-    # mc.setBlock(vector1.x + 1, vector1.y + 2, vector1.z,64,8)
-    # mc.setBlock(vector1.x + 1, vector1.y + 1, vector1.z,64,0)
     
     # quit = False
     
@@ -112,15 +106,15 @@ if __name__ == "__main__":
                 
     #         elif chatEvent.message.upper() == "HOUSE":
                 
-    #             position = mc.player.getTilePos()
-    #             # vecPos = vec3.Vec3(position)
-    #             vecPos = position
-    #             weith = random.randint(8,12)
-    #             length = random.randint(12,16)
-    #             structure1 = Structure(position,weith,length)
-    #             print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
-    #             house1 = House(structure1,3)
-    #             house1.create_house(mc)
+    position = mc.player.getTilePos()
+    vecPos = vec3.Vec3(position)
+    vecPos = position
+    weith = random.randint(8,12)
+    length = random.randint(12,16)
+    structure1 = Structure(position,weith,length)
+    print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
+    house1 = House(structure1)
+    house1.create_house(mc)
     
     
 
