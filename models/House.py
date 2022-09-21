@@ -37,15 +37,18 @@ class House:
             structure = self.structure
             floor = Floor(structure, storey)
             create_blocks(mc, floor.frontleft, floor.backright, material, colour)
-            
+        
+        for storey in range(self.stories):
+            structure = self.structure
+            floor = Floor(structure, storey)
             """ADDING LIGHTING BY INCORPORATING IT INTO THE FLOOR BY ITERATING THROUGH ROWS AND COLUMNS"""
             for i in range(floor.frontleft.x, floor.backright.x, lightBlock_offset_x): 
                 block_difference_x = i - floor.frontleft.x # Setting the offset position to place glowstone on the row
                 for z in range(floor.frontleft.z, floor.backright.z, lightBlock_offset_z): 
                     block_difference_z = z - floor.frontleft.z # Setting the offset position to place glowstone on column
-                    mc.setBlock(floor.frontleft.x + block_difference_x, floor.frontleft.y + self.structure.height + 1,
+                    mc.setBlock(floor.frontleft.x + block_difference_x, floor.frontleft.y + self.structure.height,
                                 floor.frontleft.z + block_difference_z, block.GLOWSTONE_BLOCK.id)
-                
+                    print(f"glowstone block at: {floor.frontleft.x + block_difference_x}, {floor.frontleft.y + self.structure.height}, {floor.frontleft.z + block_difference_z}")
             self.floors.append(floor)
 
     def create_rooms(self,mc):
