@@ -96,52 +96,19 @@ class House:
         
         # Creating the roof top on top of the house, placing the blocks accordingly depending on if it is facing -z or +z direction.
         if check_negativeBlock == block.AIR.id:
-            #TODO: if the coords are negative, change if we add/subtract
+            
             for minus in range(0, 5):
-                 #-642 1179
-                 #-641 1180
-                 #-640 1181
-                 
-                 #642 -1179 642 -1178
-                 #643 -1180 641 
-                 #644 -1181
-                
-                if start_point.x <= 0 and start_point.z >= 0:
                     
-                    start_point.x += 1
-                    start_point.y += 1
-                    start_point.z += 1
+                start_point.x += 1
+                start_point.y += 1
+                start_point.z += 1
+        
+                end_point.x -= 1
+                end_point.y += 1
+                end_point.z -= 1
             
-                    end_point.x -= 1
-                    end_point.y += 1
-                    end_point.z -= 1
-            
-                    create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
-                    print("minus direction")
-                    
-                elif start_point.x >= 0 and start_point.z >= 0:
-                    
-                    start_point.x += 1
-                    start_point.y += 1
-                    start_point.z += 1
-                    
-                    end_point.x -= 1
-                    end_point.y += 1
-                    end_point.z -= 1  
-                    
-                    create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)   
-                
-                elif start_point.x <= 0 and start_point.z <= 0:
-                    
-                    start_point.x += 1
-                    start_point.y += 1
-                    start_point.z += 1
-                    
-                    end_point.x -= 1
-                    end_point.y += 1
-                    end_point.z -= 1
-                    
-                    create_blocks(mc, start_point, end_point, block.COBBLESTONE.id) 
+                create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
+                print("minus direction")               
                     
         else:
             
