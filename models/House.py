@@ -39,7 +39,7 @@ class House:
                 block_difference_x = i - floor.frontleft.x # Setting the offset position to place glowstone on the row
                 for z in range(floor.frontleft.z, floor.backright.z, lightBlock_offset_z): 
                     block_difference_z = z - floor.frontleft.z # Setting the offset position to place glowstone on column
-                    mc.setBlock(floor.frontleft.x + block_difference_x, floor.frontleft.y + self.structure.height,
+                    mc.setBlock(floor.frontleft.x + block_difference_x, floor.frontleft.y + self.structure.height - 1,
                                 floor.frontleft.z + block_difference_z, block.GLOWSTONE_BLOCK.id)
                 
             self.floors.append(floor)
