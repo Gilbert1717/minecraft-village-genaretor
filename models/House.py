@@ -1,3 +1,4 @@
+from tracemalloc import start
 from mcpi.minecraft import Minecraft
 from mcpi import block
 from models.Floor import *
@@ -86,7 +87,10 @@ class House:
 
     def create_roof(self,mc):
         
-        # Creates the ceiling for the final floor of the house and initialises the two opposite corners.
+        # mc.postToChat(f"frontleft.x = {self.structure.frontleft.x}, frontleft.y = {self.structure.frontleft.y + self.structure.height * self.stories + 1}, frontleft.z = {self.structure.frontleft.z}")
+        # mc.postToChat(f"backright.x = {self.structure.backright.x}, backright.y = {self.structure.backright.y + self.structure.height * self.stories + 1}, backright.z = {self.structure.backright.z}")
+        
+        # Creates the ceiling of the house
         start_point = vec3.Vec3(self.structure.frontleft.x,
                                 self.structure.frontleft.y + self.structure.height * self.stories, 
                                 self.structure.frontleft.z)
@@ -95,33 +99,18 @@ class House:
                                 self.structure.backright.z)
         create_blocks(mc, start_point, end_point)
         
-        """CREATE TWO TYPES OF ROOF. ONE WITH BLOCKS AND ONE WITH STAIRS."""
-        # Creating the base of the roof
-        start_point.y += 1
-        
-        create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
-        
-        
+
         # Grabbing the coordinates of the block facing the negative z-direction.
         negative_z = Vec3(self.structure.frontleft.x, self.structure.frontleft.y + self.structure.height * self.stories + 1, self.structure.frontleft.z - 1)
         check_negativeBlock = mc.getBlock(negative_z)
         
-        
-        mc.setBlock(self.structure.frontleft.x, self.structure.frontleft.y + self.structure.height * self.stories + 1, self.structure.frontleft.z, block.GLOWSTONE_BLOCK)
-        
-        mc.setBlock(self.structure.backright.x, self.structure.backright.y + self.structure.height * self.stories + 1, self.structure.backright.z, block.GLOWSTONE_BLOCK)
-        mc.setBlock(self.structure.backleft.x, self.structure.backleft.y + self.structure.height * self.stories + 1, self.structure.backleft.z, block.GLOWSTONE_BLOCK)
-        
-        mc.postToChat(f"frontleft.x = {self.structure.frontleft.x}, frontleft.y = {self.structure.frontleft.y + self.structure.height * self.stories + 1}, frontleft.z = {self.structure.frontleft.z}")
-        mc.postToChat(f"backright.x = {self.structure.backright.x}, backright.y = {self.structure.backright.y + self.structure.height * self.stories + 1}, backright.z = {self.structure.backright.z}")
-        
-        
         # Choosing which rooftype to give the house
-        roofType = 0
+        roofType = random.randint(0, 1)
         
+        # If roofType = 0, create a rooftop with stairs.
         if roofType == 0:
             
-            # Initialises the start point and end point for roofType 0.
+            # Initialises the start point and end point for roofType 0. For Right and Left.
             start_pointLeft = vec3.Vec3(self.structure.frontleft.x,
                                 self.structure.frontleft.y + self.structure.height * self.stories, 
                                 self.structure.frontleft.z)
@@ -130,15 +119,6 @@ class House:
                                 self.structure.backleft.z)
 
 
-            # Creating the blocks placed underneath stairs.
-            block_startLeft = vec3.Vec3(self.structure.frontleft.x,
-                                self.structure.frontleft.y + self.structure.height * self.stories, 
-                                self.structure.frontleft.z)
-            block_endLeft = vec3.Vec3(self.structure.backleft.x,
-                                self.structure.backleft.y + self.structure.height * self.stories, 
-                                self.structure.backleft.z)
-            
-            # Initialising the right starting point and end point for roofType 0.
             start_pointRight = vec3.Vec3(self.structure.frontright.x,
                                 self.structure.frontright.y + self.structure.height * self.stories, 
                                 self.structure.frontright.z)
@@ -147,7 +127,17 @@ class House:
                                 self.structure.backright.y + self.structure.height * self.stories, 
                                 self.structure.backright.z)
             
-            # Initialising the right starting point and end point for roofType 0.
+            
+            
+            # Creating the blocks placed underneath stairs for Right and Left.
+            block_startLeft = vec3.Vec3(self.structure.frontleft.x,
+                                self.structure.frontleft.y + self.structure.height * self.stories, 
+                                self.structure.frontleft.z)
+            block_endLeft = vec3.Vec3(self.structure.backleft.x,
+                                self.structure.backleft.y + self.structure.height * self.stories, 
+                                self.structure.backleft.z)
+            
+            
             block_startRight = vec3.Vec3(self.structure.frontright.x,
                                 self.structure.frontright.y + self.structure.height * self.stories, 
                                 self.structure.frontright.z)
@@ -156,22 +146,40 @@ class House:
                                 self.structure.backright.y + self.structure.height * self.stories, 
                                 self.structure.backright.z)
             
-            # Creating stair structure at the base.
+            
+
+            # Raising the height to be above the ceiling for proper stair placement.
             start_pointLeft.y += 1
             end_pointLeft.y += 1
-            create_blocks(mc, start_pointLeft, end_pointLeft, block.STAIRS_COBBLESTONE.withData(0))
             
             start_pointRight.y += 1
             end_pointRight.y += 1
-            create_blocks(mc, start_pointRight, end_pointRight, block.STAIRS_COBBLESTONE.withData(1))
+
             
-            # Creating the roof structure on top of the house, placing blocks accordingly if it is facing -z or +z direction.
+            # Creating the actual roof on top of the house, placing blocks accordingly if it is facing -z or +z direction.
             if check_negativeBlock == block.AIR.id:
                 
+                # Creating roof structure at the base
                 create_blocks(mc, start_pointLeft, end_pointLeft, block.STAIRS_COBBLESTONE.withData(0))
+                create_blocks(mc, start_pointRight, end_pointRight, block.STAIRS_COBBLESTONE.withData(1))
                 
-                # Creating stairs facing east.
-                for minusEast in range(0, 5):
+                
+                # Find the midpoint to see how many times we need to iterate to complete the roof.
+                midpoint = math.ceil(self.structure.width / 2)
+                mc.postToChat(f"midpoint: {midpoint}")
+                
+                
+                # If the width is even, the middle will be empty. So we will fill it with blocks.
+                if (self.structure.width % 2) == 0:
+                    roof_midpoint = self.structure.frontleft.x + midpoint
+                    
+                    mc.setBlocks(roof_midpoint, self.structure.frontleft.y + self.structure.height * self.stories, self.structure.frontleft.z,
+                                roof_midpoint, self.structure.backleft.y + self.structure.height * self.stories + midpoint, self.structure.backleft.z,
+                                block.STONE_BRICK.withData(2))
+                    
+                    
+                # Creating stairs facing east for the left half of the house.
+                for minusEast in range(1, midpoint):
                     
                     start_pointLeft.x += 1
                     start_pointLeft.y += 1
@@ -187,8 +195,9 @@ class House:
                     create_blocks(mc, start_pointLeft, end_pointLeft, block.STAIRS_COBBLESTONE.withData(0))
                     create_blocks(mc, block_startLeft, block_endLeft, block.STONE_BRICK.withData(2))
                     
-                # Creating stairs facing west.
-                for minusWest in range(0, 5):
+                    
+                # Creating stairs facing west for the right half of the house.
+                for minusWest in range(1, midpoint):
                     
                     start_pointRight.x -= 1
                     start_pointRight.y += 1
@@ -204,12 +213,25 @@ class House:
                     create_blocks(mc, start_pointRight, end_pointRight, block.STAIRS_COBBLESTONE.withData(1))
                     create_blocks(mc, block_startRight, block_endRight, block.STONE_BRICK.withData(2))
             
+            
+            
+        # Creating block roof
         elif roofType == 1:
+            
+            # Setting the foundation and raising blocks from the ceiling to the surface.
+            start_point.y += 1
+            create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
+            
             
             # Creating the roof structure on top of the house, placing the blocks accordingly depending on if it is facing -z or +z direction.
             if check_negativeBlock == block.AIR.id:
             
-                for minus in range(0, 5):
+                # Find the midpoint to see how many iterations we need to complete the roof.
+                midpoint = math.ceil(self.structure.width / 2)
+                mc.postToChat(f"midpoint: {midpoint}")    
+                    
+                # Creating the roof structure.
+                for minus in range(1, midpoint):
                     
                     start_point.x += 1
                     start_point.y += 1
@@ -220,11 +242,18 @@ class House:
                     end_point.z -= 1
             
                     create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
-                    print("minus direction")               
+                    print("minus direction")    
+                               
                     
             else:
-            
-                for positive in range(0, 5):
+                
+                # Find the midpoint to see how many iterations we need to complete the roof.
+                midpoint = math.ceil(self.structure.width / 2)
+                mc.postToChat(f"midpoint: {midpoint}")   
+                
+                
+                # Creating the roof structure.
+                for positive in range(1, midpoint):
             
                     start_point.x += 1
                     start_point.y += 1
