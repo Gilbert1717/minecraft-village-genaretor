@@ -41,29 +41,41 @@ if __name__ == "__main__":
                         vil_start.y,
                         vil_start.z + vil_length)
     
-    #vil_center = vec3.Vec3( vil_start.x + (vil_end.x - vil_start.x)//2,
-    #                        0,
-    #                        vil_start.z + (vil_end.z - vil_start.z)//2)
+    vil_center = vec3.Vec3( vil_start.x + (vil_end.x - vil_start.x)//2,
+                            0,
+                            vil_start.z + (vil_end.z - vil_start.z)//2)
 
     
-    #paths,intersections, bordering_paths, plots = path_gen.generate_path_and_plots(vil_start, vil_end, vil_center, num_points)
+    paths,intersections, bordering_paths, plots = path_gen.generate_path_and_plots(vil_start, vil_end, vil_center, num_points)
     
-    #front_doors = []
-    #for plot in plots:
-    #    plot.terraform()
-    #    plot.place_house(plot.get_structure())
-    #    plot.connect_with_paths(paths,intersections,bordering_paths,vil_start, vil_end)
-    #    front_doors.append((plot.front_door.x, plot.front_door.z))
+    front_doors = []
+    for plot in plots:
+        plot.terraform()
+        plot.get_structure()
+        #plot.place_house(plot.get_structure())
+        front_door_path = plot.connect_with_paths(paths,intersections,bordering_paths,vil_start, vil_end)
+        front_doors.append((front_door_path.x,front_door_path.z))
         
-    #height_dict = path_gen.get_path_height(paths)
-    #path_gen.alternateCheckSteepPath(height_dict,front_doors)
-    #for path in paths:
-    #    mc.setBlock(path.x, path.y, path.z, block.COAL_ORE)
+        
+    height_dict = path_gen.get_path_height(paths)
+    
+    paths, raised_paths,final_height_dict = path_gen.alternateCheckSteepPath(height_dict,front_doors)
+
+    blocks_to_add_support = []
+    blocks_to_add_support.extend(paths)
+
+    for plot in plots:
+        blocks_to_add_support.extend(plot.structure_corners)
+    
+    path_gen.add_support_blocks(blocks_to_add_support)
+    
+    for path in paths:
+        mc.setBlock(path.x, path.y, path.z, block.COAL_ORE)
+        print('placing', path.x, path.y, path.z)
+    
 
     #for blocks in intersections:
     #    mc.setBlock(blocks.x, 100, blocks.z, block.BRICK_BLOCK.id)
-    
-    print(vil_start, vil_end)
     #mc.setBlocks(-200,0,-200,100,200,0)
     #mc.setBlocks(-200,-3,-200,0,200,2)
     #house1_location = McPosition(x,y,z)
@@ -85,8 +97,8 @@ if __name__ == "__main__":
     length = random.randint(-16,-12)
     structure1 = Structure(position,width,length)
     # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
-    house1 = House(structure1,3)
-    house1.create_house(mc)
+    #house1 = House(structure1,3)
+    #house1.create_house(mc)
     #ran = RandomiseMaterial()
     #ran.rooftop(mc,position .x,position.y,position.z)
     

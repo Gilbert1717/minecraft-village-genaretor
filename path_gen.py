@@ -101,6 +101,7 @@ def generate_path_and_plots(vil_start, vil_end, vil_center, vor_amount):
                 path_coords.append(vec3.Vec3(x, 0, z)) # get the y coord later with getblockheight
         
                 ############ this code block populates voronoi_distances with a voronoi point's distance to the closest path.
+                ############ used to determine plot sizes
                 if distances[0][0] not in voronoi_distances:
                     voronoi_distances[distances[0][0]] = distances[0][1]
 
@@ -128,6 +129,7 @@ def generate_path_and_plots(vil_start, vil_end, vil_center, vor_amount):
     return path_coords,intersection_coords,bordering_paths, plots
 
 def get_path_height(path_coords):
+    """iteratively gets path block heights until the block at y-level is in the list of ground blocks"""
     path_coords_tuple = []
     path_height_set = set() # used set instead of list because query_blocks returns duplicate results for some reason
     height_dict = dict()
@@ -178,7 +180,7 @@ def get_path_height(path_coords):
         if Done:
             break
         else:
-            for x,y,z in redo:
+            for x,y,z in redo: #deletes the non-ground blocks
                 mc.setBlock(x,y,z,block.AIR.id)
 
             #re-assign terrain cords for the next iteration
@@ -227,19 +229,21 @@ def checkSteepPath(path_coords): # Function to return a list of y-axis blocks th
     return check_neighbours
 
 def alternateCheckSteepPath(height_dict, front_doors):
+    """compares items in height dict with its surrounding blocks' height, if it's lower than -1, raise the surrounding block.
+    if the surrounding block is a front door path, lower the current block instead. repeat until done"""
     final_path_height_dict = height_dict.copy()
-    looping_path_height_dict = height_dict.copy()
+    looping_path_height_dict = height_dict.copy() 
+    #the algorithm adds and removes blocks to the looping dict depending on whether it could be a steep block.
+    #algorithm ends when len(looping dict) is 0 or loop_counter = 99999
     raised_paths = set()
-
-
 
     done = False
     loop_counter = 0
 
     while not done:
         loop_counter += 1
-        to_be_deleted = []
-        to_be_added = []
+        to_be_deleted = []  # not able to change a dict's size during iteration,
+        to_be_added = []    # these 2 variables stores items temporarily until after the end of the for loop
 
         for curr_x, curr_z in looping_path_height_dict:
             curr_y = looping_path_height_dict[(curr_x),(curr_z)]
@@ -262,9 +266,8 @@ def alternateCheckSteepPath(height_dict, front_doors):
                         #raise the surrounding block by 1
                         final_path_height_dict[(surrounding_x,surrounding_z)] = surrounding_block_y + 1
                         to_be_added.append((surrounding_x,surrounding_z,surrounding_block_y + 1))
-                        
                         raised_paths.add((surrounding_x,surrounding_z))
-                        print('raised', (surrounding_x,surrounding_z) )
+                        
                         dict_change = True
 
                     elif surrounding_block_y < curr_y -1 and (surrounding_x,surrounding_z) in front_doors:
@@ -273,7 +276,7 @@ def alternateCheckSteepPath(height_dict, front_doors):
                         
                         to_be_added.append((curr_x,curr_z,curr_y - 1))
                         raised_paths.add((curr_x,curr_z))
-                        print('dropped', (curr_x,curr_z) )
+                        
                         dict_change = True
 
             if not dict_change:
@@ -302,9 +305,10 @@ def alternateCheckSteepPath(height_dict, front_doors):
     return new_path_coords,raised_paths,final_path_height_dict
 
 def remove_dead_ends(path_coords, intersections, bordering_paths, vil_start, vil_end): 
-    #TODO: make this add some kind of structure at the dead ends instead
-    #traverses the path away in all 4 direction from all intersection blocks
-    #,if it doesnt encounter another intersection block, it deletes the traversed path
+    ###### FUNCTION NOT USED ANYMORE!!!!! TOO MANY COMPLICATIONS WITH UNINTENDED PATH BLOCK DELETIONS
+    ###### USING add_construction_blockades() INSTEAD
+    #traverses the path away in all 4 direction from all intersection blocks,
+    #if it doesnt encounter another intersection block, delete the traversed path
     for bordering_block in bordering_paths:
 
         ### checks if the bordering path has been connected by another plot
@@ -406,7 +410,25 @@ def remove_dead_ends(path_coords, intersections, bordering_paths, vil_start, vil
                             if block in path_coords:
                                 path_coords.remove(block)
                         break
-                    
+
+def add_support_blocks(blocks):
+    """adds fence posts below unsupported structures"""
+    ground =  [ block.GRASS.id, block.DIRT.id, block.WATER_STATIONARY.id, block.SAND.id, block.WATER_FLOWING.id,
+                    block.STONE.id, block.CLAY.id, block.MYCELIUM.id, block.SANDSTONE.id]
+    height_dict = dict()
+    blocks_tuple = 
+    for a_block in blocks:
+        height_dict[(a_block.x, a_block.z)] = a_block.y - 1
+    
+    
+    done = False
+    while not done:
+
+        blocks_below = query_blocks
+
+def add_construction_blockades(bordering_path,vil_start,vil_end):
+    """adds construction blockades to the dead ends"""
+    pass
 if __name__ == '__main__':
     vil_length = 85
     num_points = 5

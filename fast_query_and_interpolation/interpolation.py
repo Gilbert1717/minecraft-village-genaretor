@@ -21,7 +21,8 @@ def sigmoid(p, s, step):
 def scale_sigmoid(p,s,step,y_diff, initial_y):
         """
         y_diff: difference betwen y values at the start and end
-        initial_y: y value at the start"""
+        initial_y: y value at the start
+        """
         interpolated = [] 
         for scaler in sigmoid(p ,s, step):
             interpolated.append(int(scaler * y_diff) + initial_y)

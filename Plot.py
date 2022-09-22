@@ -90,7 +90,7 @@ class Plot:
 
         while not Done:
             Done = True
-            redo = set() # used set instead of list because query_blocks returns duplicate results for some reason
+            redo = set() # used set instead of list because query_blocks returns duplicated results for some reason
             ground_blocks = set()
             
             terrain_height = query_blocks(terrain_coords,'world.getHeight(%d,%d)',int)
@@ -170,10 +170,15 @@ class Plot:
             
             self.structure = structure
 
+            self.structure_corners = []
+            self.structure_corners.extend([ structure.frontleft,
+                                            structure.frontright,
+                                            structure.backleft,
+                                            structure.backright])
             return structure
                 
 
-    def place_land(self):
+    def flatten_plot(self):
         #clears the space above the plot
         mc.setBlocks(   self.plot_start.x, self.plot_start.y + 1, self.plot_start.z,
                         self.plot_end.x, self.plot_end.y + 30, self.plot_end.z, block.AIR.id)
@@ -188,10 +193,9 @@ class Plot:
     
                 
     def terraform(self):
-        self.place_land()
-        
+        self.flatten_plot()
         ###### most of the code blocks here are very similar,
-        ###### but different enough so that there isnt an obvious and elegant way to condense them into multiple calls of a function
+        ###### but different enough so that there isnt an obvious and elegant way to condense them into repeating calls of one function with different parameters
 
         # terraforms the "-x" side of the plot
         x = self.plot_start.x
@@ -489,12 +493,13 @@ class Plot:
         return house.front_door
 
     def connect_with_paths(self,path_coords, intersection_coords, bordering_paths, vil_start, vil_end):
-        # staring from one block away from the front door, travel facing self.direction until it connects to a path block. 
+        # starting from 2 blocks after the front door, travel facing self.direction until it connects to a path block. 
         # add the connection as an intersection, then add the new path connection to the path blocks list
         # if the front door is outside of the village area, connect to the nearest block in bordering_paths in terms of the self.direction axis.
         connection = []
         if self.direction == 'x-':
             new_path = Vec3(self.house_door.x, 0, self.house_door.z -2) # starting point
+            front_door_path = Vec3(self.house_door.x, 0, self.house_door.z -2)
             connection.append(new_path)
             intersection_coords.append(new_path)
 
@@ -510,7 +515,8 @@ class Plot:
 
             if Plot.out_of_range(new_path, vil_start, vil_end) or no_path_ahead:
                 nearest = Plot.find_nearest_bordering_paths(new_path,
-                                    [coord for coord in bordering_paths if coord.z == vil_end.z or coord.z == vil_start.z]) # makes sure that nearest isnt 
+                                    [coord for coord in bordering_paths if coord.z == vil_end.z or coord.z == vil_start.z])
+                                    # makes sure that nearest is on the same side of the border
 
                 if new_path.x < nearest.x:
                     dir = 1
@@ -542,6 +548,7 @@ class Plot:
 
         elif self.direction =='x+':
             new_path = Vec3(self.house_door.x, 0, self.house_door.z +2) # starting point
+            front_door_path = Vec3(self.house_door.x, 0, self.house_door.z +2)
             connection.append(new_path)
             intersection_coords.append(new_path)
 
@@ -590,6 +597,7 @@ class Plot:
 
         elif self.direction =='z-':
             new_path = Vec3(self.house_door.x, 0, self.house_door.z -2) # starting point
+            front_door_path = Vec3(self.house_door.x, 0, self.house_door.z -2)
             connection.append(new_path)
             intersection_coords.append(new_path)
 
@@ -636,6 +644,7 @@ class Plot:
 
         elif self.direction =='z+':
             new_path = Vec3(self.house_door.x, 0, self.house_door.z +2) # starting point
+            front_door_path = Vec3(self.house_door.x, 0, self.house_door.z +2)
             connection.append(new_path)
             intersection_coords.append(new_path)
             
@@ -684,7 +693,7 @@ class Plot:
 
         path_coords.extend(connection)
         intersection_coords.extend(connection)
-        return path_coords
+        return front_door_path
 
 
     def out_of_range(starting_point, vil_start, vil_end):
