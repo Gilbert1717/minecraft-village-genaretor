@@ -228,7 +228,7 @@ def checkSteepPath(path_coords): # Function to return a list of y-axis blocks th
 
 def alternateCheckSteepPath(height_dict, front_doors):
     final_path_height_dict = height_dict.copy()
-    looping_path_height_dict = height_dict
+    looping_path_height_dict = height_dict.copy()
     raised_paths = set()
 
 
@@ -239,6 +239,7 @@ def alternateCheckSteepPath(height_dict, front_doors):
     while not done:
         loop_counter += 1
         to_be_deleted = []
+
         for curr_x, curr_z in looping_path_height_dict:
             curr_y = looping_path_height_dict[(curr_x),(curr_z)]
             surrounding_blocks = [  (curr_x + 1, curr_z + 1), 
@@ -253,19 +254,23 @@ def alternateCheckSteepPath(height_dict, front_doors):
             dict_change = False
             for surrounding_x,surrounding_z in surrounding_blocks:
                     
-                if (surrounding_x, surrounding_z) in looping_path_height_dict:
+                if (surrounding_x, surrounding_z) in final_path_height_dict:
                     surrounding_block_y = looping_path_height_dict[(surrounding_x,surrounding_z)]
 
                     if surrounding_block_y < curr_y -1 and (surrounding_x,surrounding_z) not in front_doors:
+                        #raise the surrounding block by 1
                         final_path_height_dict[(surrounding_x,surrounding_z)] = surrounding_block_y + 1
                         looping_path_height_dict[(surrounding_x,surrounding_z)] = surrounding_block_y + 1
                         raised_paths.add((surrounding_x,surrounding_z))
+                        print('raised', (surrounding_x,surrounding_z) )
                         dict_change = True
 
                     elif surrounding_block_y < curr_y -1 and (surrounding_x,surrounding_z) in front_doors:
+                        #raise the current block by 1
                         final_path_height_dict[(curr_x,curr_z)] = curr_y - 1
                         looping_path_height_dict[(curr_x,curr_z)] = curr_y - 1
                         raised_paths.add((curr_x,curr_z))
+                        print('dropped', (curr_x,curr_z) )
                         dict_change = True
 
             if not dict_change:
@@ -287,7 +292,7 @@ def alternateCheckSteepPath(height_dict, front_doors):
     for x,z in final_path_height_dict:
         new_path_coords.append(vec3.Vec3(x, final_path_height_dict[(x,z)], z))
     
-    return new_path_coords,raised_paths
+    return new_path_coords,raised_paths,final_path_height_dict
 
 def remove_dead_ends(path_coords, intersections, bordering_paths, vil_start, vil_end): 
     #TODO: make this add some kind of structure at the dead ends instead
