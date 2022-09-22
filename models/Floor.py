@@ -305,15 +305,30 @@ class Floor:
         print(floor.frontright.x - 1, floor.frontleft.x + 1)
         furniture = rm.random_furniture()
         
-        if floor.frontright.x < floor.frontleft.x:
-            place_frontwall = random.randrange(floor.frontright.x - 1, floor.frontleft.x + 1)
-            check_block = mc.getBlock(place_frontwall + 1, floor.frontleft.y + 1, floor.frontleft.z)
-            mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 1, furniture)
+        # Grabbing the coordinates of the block facing the negative z-direction.
+        negative_z = Vec3(self.structure.frontleft.x, self.structure.frontleft.y + self.structure.height, self.structure.frontleft.z - 1)
+        check_negativeBlock= mc.getBlock(negative_z)
+        
+        # If the block is facing the -z direction, place furniture blocks accordingly
+        if check_negativeBlock == block.AIR.id:
+            # print(f"x: coords floor.frontleft.x: {floor.frontleft.x}")
+            # print(f"x: coords floor.frontright.x: {floor.frontright.x}")
             
-        else:
+            #Pick a block in between the length of the walls
             place_frontwall = random.randrange(floor.frontleft.x + 1, floor.frontright.x - 1)
-            check_block = mc.getBlock(place_frontwall + 1, floor.frontleft.y + 1, floor.frontleft.z)
-            mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z + 1, furniture)
+            mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z + 2, furniture)
+            
+            print("placing furniture for negative z direction")
+
+        # Else the block is facing the +z direction, place furniture blocks accordingly
+        else:
+            # print(f"x: coords floor.frontleft.x: {floor.frontleft.x}")
+            # print(f"x: coords floor.frontright.x: {floor.frontright.x}")
+            
+            #Pick a block in between the length of the walls
+            place_frontwall = random.randrange(floor.frontleft.x + 1, floor.frontright.x - 1)
+            mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 2, furniture)
+            print("placing furniture for positive z direction")
             
             
                 
