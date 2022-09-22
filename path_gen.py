@@ -135,7 +135,7 @@ def get_path_height(path_coords):
     height_dict = dict()
     block_dict = dict()
     ground =  [ block.GRASS.id, block.DIRT.id, block.WATER_STATIONARY.id, block.SAND.id, block.WATER_FLOWING.id,
-                    block.STONE.id, block.CLAY.id, block.MYCELIUM.id, block.SANDSTONE.id]
+                    block.STONE.id, block.CLAY.id, block.MYCELIUM.id, block.SANDSTONE.id, block.ICE.id]
 
     for coord in path_coords:
         path_coords_tuple.append((coord.x,coord.z))
