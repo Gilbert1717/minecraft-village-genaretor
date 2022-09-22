@@ -213,7 +213,9 @@ class House:
                     create_blocks(mc, start_pointRight, end_pointRight, block.STAIRS_COBBLESTONE.withData(1))
                     create_blocks(mc, block_startRight, block_endRight, block.STONE_BRICK.withData(2))
             
-            
+            else:
+                 #TODO: Implement house correctly, if it is facing the positive z direction.
+                 pass
             
         # Creating block roof
         elif roofType == 1:
