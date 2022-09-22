@@ -175,23 +175,23 @@ class Plot:
 
     def place_land(self):
         #clears the space above the plot
-        mc.setBlocks(   self.plot_start.x, self.plot_start.y, self.plot_start.z,
+        mc.setBlocks(   self.plot_start.x, self.plot_start.y + 1, self.plot_start.z,
                         self.plot_end.x, self.plot_end.y + 30, self.plot_end.z, block.AIR.id)
         
         #places floor
         for x in range(self.plot_start.x, self.plot_end.x +1):
             for z in range(self.plot_start.z, self.plot_end.z +1):
                 y = self.central_point.y
-                mc.setBlocks(   x,y-20,z,
-                                x,y,z, self.block_dict[(x,z)])
+                Plot.place_terraformed_block(x,y,z,self.block_dict[(x,z)])
+                
     
     
                 
     def terraform(self):
         self.place_land()
-
+        
         ###### most of the code blocks here are very similar,
-        ###### but different enough so that there isnt an obvious and elegant way to condense them into one function
+        ###### but different enough so that there isnt an obvious and elegant way to condense them into multiple calls of a function
 
         # terraforms the "-x" side of the plot
         x = self.plot_start.x
@@ -202,11 +202,8 @@ class Plot:
         
             for x_interp in range(self.plot_start.x, self.plot_start.x - 5, -1):
                 y = interpolated.pop(0)
+                Plot.place_terraformed_block(x_interp,y,z,self.block_dict[(x_interp,z)])
                 
-                mc.setBlocks(   x_interp, y - 20,z,
-                                x_interp, y, z, self.block_dict[(x_interp,z)])
-                mc.setBlocks(   x_interp, y + 1, z,
-                                x_interp, y + 21, z, block.AIR.id)
                 
         # terraforms the "+z" side of the plot
         z = self.plot_end.z
@@ -217,11 +214,7 @@ class Plot:
             
             for z_interp in range(self.plot_end.z, self.plot_end.z + 6):
                 y = interpolated.pop(0)
-                
-                mc.setBlocks(   x, y - 20,z_interp,
-                                x, y, z_interp, self.block_dict[(x,z_interp)])
-                mc.setBlocks(   x, y + 1,z_interp,
-                                x, y + 21, z_interp, block.AIR.id)
+                Plot.place_terraformed_block(x,y,z_interp,self.block_dict[(x,z_interp)])
         
         # terraforms the "+x" side of the plot
         x = self.plot_end.x
@@ -232,10 +225,7 @@ class Plot:
             
             for x_interp in range(self.plot_end.x, self.plot_end.x + 6):
                 y = interpolated.pop(0)
-                mc.setBlocks(   x_interp, y - 20,z,
-                                x_interp, y, z, self.block_dict[(x_interp,z)])
-                mc.setBlocks(   x_interp, y + 1, z,
-                                x_interp, y + 21, z, block.AIR.id)
+                Plot.place_terraformed_block(x_interp,y,z,self.block_dict[(x_interp,z)])
         
         # terraforms the "-z" side of the plot
         z = self.plot_start.z
@@ -246,10 +236,7 @@ class Plot:
             
             for z_interp in range(self.plot_start.z, self.plot_start.z - 6, -1):
                 y = interpolated.pop(0)
-                mc.setBlocks(   x, y - 20,z_interp,
-                                x, y, z_interp, self.block_dict[(x,z_interp)])
-                mc.setBlocks(   x, y + 1,z_interp,
-                                x, y + 21, z_interp, block.AIR.id)
+                Plot.place_terraformed_block(x,y,z_interp,self.block_dict[(x,z_interp)])
         
         #interpolate corners
         #corner1
@@ -267,10 +254,7 @@ class Plot:
         
         for x,z in corner_coords:
             y = interpolated.pop(0)
-            mc.setBlocks(   x, y - 20,z,
-                            x, y, z, self.block_dict[(x,z_interp)])
-            mc.setBlocks(   x, y + 1,z,
-                            x, y + 21, z, block.AIR.id)
+            Plot.place_terraformed_block(x,y,z,self.block_dict[(x,z)])
             ##########
 
 
@@ -283,10 +267,7 @@ class Plot:
 
         for z_interp in range(z, z - 4, -1):
             y = interpolated.pop(0)
-            mc.setBlocks(   x, y - 20,z_interp,
-                            x, y, z_interp, self.block_dict[(x,z_interp)])
-            mc.setBlocks(   x, y + 1,z_interp,
-                            x, y + 21, z_interp, block.AIR.id)
+            Plot.place_terraformed_block(x,y,z_interp,self.block_dict[(x,z_interp)])
 
         y_diff = self.height_dict[x-3,z] - ybase_1
 
@@ -294,10 +275,7 @@ class Plot:
 
         for x_interp in range(x, x - 4, -1):
             y = interpolated.pop(0)
-            mc.setBlocks(   x_interp, y - 20,z,
-                            x_interp, y, z, self.block_dict[(x_interp,z)])
-            mc.setBlocks(   x_interp, y + 1,z,
-                            x_interp, y + 21, z, block.AIR.id)
+            Plot.place_terraformed_block(x_interp,y,z,self.block_dict[(x_interp,z)])
             ########
         x,z = corner_coords[2]
 
@@ -307,10 +285,7 @@ class Plot:
 
         for z_interp in range(z, z - 3, -1):
             y = interpolated.pop(0)
-            mc.setBlocks(   x, y - 20,z_interp,
-                            x, y, z_interp, self.block_dict[(x,z_interp)])
-            mc.setBlocks(   x, y + 1,z_interp,
-                            x, y + 21, z_interp, block.AIR.id)
+            Plot.place_terraformed_block(x,y,z_interp,self.block_dict[(x,z_interp)])
 
         y_diff = self.height_dict[x-2,z] - ybase_2
 
@@ -318,10 +293,7 @@ class Plot:
 
         for x_interp in range(x, x - 3, -1):
             y = interpolated.pop(0)
-            mc.setBlocks(   x_interp, y - 20,z,
-                            x_interp, y, z, self.block_dict[(x_interp,z)])
-            mc.setBlocks(   x_interp, y + 1,z,
-                            x_interp, y + 21, z, block.AIR.id)
+            Plot.place_terraformed_block(x_interp,y,z,self.block_dict[(x_interp,z)])
             ##########
         ########
 
@@ -340,10 +312,7 @@ class Plot:
         
         for x,z in corner_coords:
             y = interpolated.pop(0)
-            mc.setBlocks(   x, y - 20,z,
-                            x, y, z, self.block_dict[(x,z_interp)])
-            mc.setBlocks(   x, y + 1,z,
-                            x, y + 21, z, block.AIR.id)
+            Plot.place_terraformed_block(x,y,z,self.block_dict[(x,z)])
             ##########
 
 
@@ -356,10 +325,7 @@ class Plot:
 
         for z_interp in range(z, z - 4, -1):
             y = interpolated.pop(0)
-            mc.setBlocks(   x, y - 20,z_interp,
-                            x, y, z_interp, self.block_dict[(x,z_interp)])
-            mc.setBlocks(   x, y + 1,z_interp,
-                            x, y + 21, z_interp, block.AIR.id)
+            Plot.place_terraformed_block(x,y,z_interp,self.block_dict[(x,z_interp)])
 
         y_diff = self.height_dict[x+3,z] - ybase_1
 
@@ -367,10 +333,7 @@ class Plot:
 
         for x_interp in range(x, x + 4):
             y = interpolated.pop(0)
-            mc.setBlocks(   x_interp, y - 20,z,
-                            x_interp, y, z, self.block_dict[(x_interp,z)])
-            mc.setBlocks(   x_interp, y + 1,z,
-                            x_interp, y + 21, z, block.AIR.id)
+            Plot.place_terraformed_block(x_interp,y,z,self.block_dict[(x_interp,z)])
             ########
         x,z = corner_coords[2]
 
@@ -380,10 +343,7 @@ class Plot:
 
         for z_interp in range(z, z - 3, -1):
             y = interpolated.pop(0)
-            mc.setBlocks(   x, y - 20,z_interp,
-                            x, y, z_interp, self.block_dict[(x,z_interp)])
-            mc.setBlocks(   x, y + 1,z_interp,
-                            x, y + 21, z_interp, block.AIR.id)
+            Plot.place_terraformed_block(x,y,z_interp,self.block_dict[(x,z_interp)])
 
         y_diff = self.height_dict[x+2,z] - ybase_2
 
@@ -391,10 +351,7 @@ class Plot:
 
         for x_interp in range(x, x + 3):
             y = interpolated.pop(0)
-            mc.setBlocks(   x_interp, y - 20,z,
-                            x_interp, y, z, self.block_dict[(x_interp,z)])
-            mc.setBlocks(   x_interp, y + 1,z,
-                            x_interp, y + 21, z, block.AIR.id)
+            Plot.place_terraformed_block(x_interp,y,z,self.block_dict[(x_interp,z)])
             ##########
         ########
     
@@ -413,10 +370,7 @@ class Plot:
         
         for x,z in corner_coords:
             y = interpolated.pop(0)
-            mc.setBlocks(   x, y - 20,z,
-                            x, y, z, self.block_dict[(x,z_interp)])
-            mc.setBlocks(   x, y + 1,z,
-                            x, y + 21, z, block.AIR.id)
+            Plot.place_terraformed_block(x,y,z,self.block_dict[(x,z)])
             ##########
 
 
@@ -429,10 +383,7 @@ class Plot:
 
         for z_interp in range(z, z + 4):
             y = interpolated.pop(0)
-            mc.setBlocks(   x, y - 20,z_interp,
-                            x, y, z_interp, self.block_dict[(x,z_interp)])
-            mc.setBlocks(   x, y + 1,z_interp,
-                            x, y + 21, z_interp, block.AIR.id)
+            Plot.place_terraformed_block(x,y,z_interp,self.block_dict[(x,z_interp)])
 
         y_diff = self.height_dict[x+3,z] - ybase_1
 
@@ -440,10 +391,7 @@ class Plot:
 
         for x_interp in range(x, x + 4):
             y = interpolated.pop(0)
-            mc.setBlocks(   x_interp, y - 20,z,
-                            x_interp, y, z, self.block_dict[(x_interp,z)])
-            mc.setBlocks(   x_interp, y + 1,z,
-                            x_interp, y + 21, z, block.AIR.id)
+            Plot.place_terraformed_block(x_interp,y,z,self.block_dict[(x_interp,z)])
             ########
         x,z = corner_coords[2]
 
@@ -453,10 +401,7 @@ class Plot:
 
         for z_interp in range(z, z + 3):
             y = interpolated.pop(0)
-            mc.setBlocks(   x, y - 20,z_interp,
-                            x, y, z_interp, self.block_dict[(x,z_interp)])
-            mc.setBlocks(   x, y + 1,z_interp,
-                            x, y + 21, z_interp, block.AIR.id)
+            Plot.place_terraformed_block(x,y,z_interp,self.block_dict[(x,z_interp)])
 
         y_diff = self.height_dict[x+2,z] - ybase_2
 
@@ -464,10 +409,7 @@ class Plot:
 
         for x_interp in range(x, x + 3):
             y = interpolated.pop(0)
-            mc.setBlocks(   x_interp, y - 20,z,
-                            x_interp, y, z, self.block_dict[(x_interp,z)])
-            mc.setBlocks(   x_interp, y + 1,z,
-                            x_interp, y + 21, z, block.AIR.id)
+            Plot.place_terraformed_block(x_interp,y,z,self.block_dict[(x_interp,z)])
             ##########
         ########
 
@@ -486,10 +428,7 @@ class Plot:
         
         for x,z in corner_coords:
             y = interpolated.pop(0)
-            mc.setBlocks(   x, y - 20,z,
-                            x, y, z, self.block_dict[(x,z_interp)])
-            mc.setBlocks(   x, y + 1,z,
-                            x, y + 21, z, block.AIR.id)
+            Plot.place_terraformed_block(x,y,z,self.block_dict[(x,z)])
             ##########
 
 
@@ -502,10 +441,7 @@ class Plot:
 
         for z_interp in range(z, z + 4):
             y = interpolated.pop(0)
-            mc.setBlocks(   x, y - 20,z_interp,
-                            x, y, z_interp, self.block_dict[(x,z_interp)])
-            mc.setBlocks(   x, y + 1,z_interp,
-                            x, y + 21, z_interp, block.AIR.id)
+            Plot.place_terraformed_block(x,y,z_interp,self.block_dict[(x,z_interp)])
 
         y_diff = self.height_dict[x-3,z] - ybase_1
 
@@ -513,10 +449,7 @@ class Plot:
 
         for x_interp in range(x, x - 4, -1):
             y = interpolated.pop(0)
-            mc.setBlocks(   x_interp, y - 20,z,
-                            x_interp, y, z, self.block_dict[(x_interp,z)])
-            mc.setBlocks(   x_interp, y + 1,z,
-                            x_interp, y + 21, z, block.AIR.id)
+            Plot.place_terraformed_block(x_interp,y,z,self.block_dict[(x_interp,z)])
             ########
         x,z = corner_coords[2]
 
@@ -526,10 +459,7 @@ class Plot:
 
         for z_interp in range(z, z + 3):
             y = interpolated.pop(0)
-            mc.setBlocks(   x, y - 20,z_interp,
-                            x, y, z_interp, self.block_dict[(x,z_interp)])
-            mc.setBlocks(   x, y + 1,z_interp,
-                            x, y + 21, z_interp, block.AIR.id)
+            Plot.place_terraformed_block(x,y,z_interp,self.block_dict[(x,z_interp)])
 
         y_diff = self.height_dict[x-2,z] - ybase_2
 
@@ -537,13 +467,20 @@ class Plot:
 
         for x_interp in range(x, x - 3, -1):
             y = interpolated.pop(0)
-            mc.setBlocks(   x_interp, y - 20,z,
-                            x_interp, y, z, self.block_dict[(x_interp,z)])
-            mc.setBlocks(   x_interp, y + 1,z,
-                            x_interp, y + 21, z, block.AIR.id)
+            Plot.place_terraformed_block(x_interp,y,z,self.block_dict[(x_interp,z)])
             ##########
         ########
 
+    def place_terraformed_block(x,y,z,block_id):
+        water_blocks = [block.WATER.id, block.WATER_FLOWING.id, block.WATER_STATIONARY.id]
+        mc.setBlocks(       x, y + 1,   z,
+                            x, y + 21,  z, block.AIR.id)
+
+        if block_id in water_blocks:
+            mc.setBlocks(   x, y,       z, block_id)
+        else:
+            mc.setBlocks(   x, y - 20,  z,
+                            x, y,       z, block_id)
 
     def place_house(self, structure):
         house = House(structure)
