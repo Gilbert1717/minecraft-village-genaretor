@@ -51,8 +51,8 @@ if __name__ == "__main__":
     front_doors = []
     for plot in plots:
         plot.terraform()
-        plot.get_structure()
-        #plot.place_house(plot.get_structure())
+        #plot.get_structure()
+        plot.place_house(plot.get_structure())
         front_door_path = plot.connect_with_paths(paths,intersections,bordering_paths,vil_start, vil_end)
         front_doors.append((front_door_path.x,front_door_path.z))
         
@@ -61,23 +61,21 @@ if __name__ == "__main__":
     
     paths, raised_paths,final_height_dict = path_gen.alternateCheckSteepPath(height_dict,front_doors)
 
-    blocks_to_add_support = []
-    blocks_to_add_support.extend(paths)
+    blocks_to_add_support_to = []
+    blocks_to_add_support_to.extend(paths)
 
     for plot in plots:
-        blocks_to_add_support.extend(plot.structure_corners)
+        blocks_to_add_support_to.extend(plot.structure_corners)
     
-    path_gen.add_support_blocks(blocks_to_add_support)
+    path_gen.add_support_blocks(blocks_to_add_support_to)
     
     for path in paths:
-        mc.setBlock(path.x, path.y, path.z, block.COAL_ORE)
-        print('placing', path.x, path.y, path.z)
-    
+        mc.setBlocks(path.x-1, path.y, path.z-1, 
+                     path.x+1, path.y, path.z+1,block.COBBLESTONE.id)
+        print('placing')
 
-    #for blocks in intersections:
-    #    mc.setBlock(blocks.x, 100, blocks.z, block.BRICK_BLOCK.id)
-    #mc.setBlocks(-200,0,-200,100,200,0)
-    #mc.setBlocks(-200,-3,-200,0,200,2)
+
+    path_gen.add_construction_blockades(bordering_paths,intersections,final_height_dict, vil_start, vil_end)
     #house1_location = McPosition(x,y,z)
     #mc.player.setPos(x,y,z)
 

@@ -307,9 +307,7 @@ def remove_dead_ends(path_coords, intersections, bordering_paths, vil_start, vil
         ###
         if in_intersections: # if yes, there is no need to remove the path
             continue
-        else: # if no, traverse the path towards the village until you hit an intersection block.
-            axis = ''
-
+        else: # if no, traverse the path towards the village until you hit an intersection block 
             #checks for the traversal axis and direction
             if curr_block.x == vil_start.x:
                 axis = 'x'
@@ -390,24 +388,97 @@ def remove_dead_ends(path_coords, intersections, bordering_paths, vil_start, vil
                                 path_coords.remove(block)
                         break
 
-def add_support_blocks(blocks):
+def add_support_blocks(potentially_unsupported):
     """adds fence posts below unsupported structures"""
-    ground =  [ block.GRASS.id, block.DIRT.id, block.WATER_STATIONARY.id, block.SAND.id, block.WATER_FLOWING.id,
+    ground =  [ block.GRASS.id, block.DIRT.id, block.SAND.id,
                     block.STONE.id, block.CLAY.id, block.MYCELIUM.id, block.SANDSTONE.id]
     height_dict = dict()
-    blocks_tuple = 
-    for a_block in blocks:
-        height_dict[(a_block.x, a_block.z)] = a_block.y - 1
+    height_tuple = []
     
+    for a_block in potentially_unsupported:
+        height_dict[(a_block.x, a_block.z)] = a_block.y - 1
+        height_tuple.append((a_block.x, a_block.y - 1, a_block.z))
     
     done = False
     while not done:
+        done = True
+        redo = set()
+        blocks_below = query_blocks(height_tuple,'world.getBlock(%d,%d,%d)',int)
 
-        blocks_below = query_blocks
+        for query,result in blocks_below:
+            x,y,z = query
+            block_id = result
+            if block_id not in ground:
+                done = False
+                redo.add((x,y-1,z))
+                mc.setBlock(x,y,z,block.FENCE.id)
+        
 
-def add_construction_blockades(bordering_path,vil_start,vil_end):
+        height_tuple = [] # prepares height_tuple for the next loop
+        for x,y,z in redo:
+            height_tuple.append((x,y,z))
+
+                
+
+
+def add_construction_blockades(bordering_paths, intersections, height_dict, vil_start, vil_end):
     """adds construction blockades to the dead ends"""
-    pass
+    intersections_tuple = [(vec.x,vec.z) for vec in intersections]
+    filtered_bordering_paths = []
+
+    for dead_end in bordering_paths:
+        ### checks if the dead end has been connected by another plot,
+       
+        curr_block = dead_end
+        surrounding_blocks = [  (curr_block.x + 1, curr_block.z + 1), 
+                                (curr_block.x    , curr_block.z + 1),
+                                (curr_block.x - 1, curr_block.z + 1),
+                                (curr_block.x + 1, curr_block.z),
+                                (curr_block.x - 1, curr_block.z),
+                                (curr_block.x + 1, curr_block.z - 1),
+                                (curr_block.x    , curr_block.z - 1),
+                                (curr_block.x - 1, curr_block.z - 1),]
+        satisfies_condition = True
+        for surrounding_block in surrounding_blocks:
+            
+            if surrounding_block in intersections_tuple :
+                satisfies_condition = False
+        
+        if satisfies_condition:
+            filtered_bordering_paths.append((dead_end.x,dead_end.z))
+        
+    for x,z in filtered_bordering_paths:
+        #checks for the dead end direction
+        if x == vil_start.x:
+            axis = 'x'
+                
+        elif x == vil_end.x:
+            axis = 'x'
+                
+        elif z == vil_start.z:
+            axis = 'z'
+                
+        elif z == vil_end.z:
+            axis = 'z'
+
+
+        if axis == 'x':
+            y = height_dict[(x,z)]
+            mc.setBlocks(   x,  y+1,    z-1,
+                            x,  y+1,    z+1,block.FENCE.id)
+            mc.setBlock(x,y+2,z-1,block.WOOL.id,15) #15 is the data id for black wool
+            mc.setBlock(x,y+2,z,block.WOOL.id,4) # 4 is the data id for yellow wool
+            mc.setBlock(x,y+2,z+1,block.WOOL.id,15)
+            print(axis, x,z)
+        else:
+            y = height_dict[(x,z)]
+            mc.setBlocks(   x-1,  y+1,    z,
+                            x+1,  y+1,    z,block.FENCE.id)
+            mc.setBlock(x-1,y+2,z,block.WOOL.id,15) #15 is the data id for black wool
+            mc.setBlock(x,y+2,z,block.WOOL.id,4) # 4 is the data id for yellow wool
+            mc.setBlock(x+1,y+2,z,block.WOOL.id,15)
+            print(axis,x,z)
+
 if __name__ == '__main__':
     vil_length = 85
     num_points = 5

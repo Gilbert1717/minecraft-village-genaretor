@@ -38,7 +38,7 @@ class Plot:
     def __init__(self, central_point, distance_from_path, direction, away) -> None:
         """takes voronoi points in a village as its central point."""
         #TEMP CODE
-        self.house_door = Vec3(central_point.x, 0, central_point.z + 5)
+        #self.house_door = Vec3(central_point.x, 0, central_point.z + 5)
         ####
         self.central_point      = central_point
         self.distance_from_path = distance_from_path
@@ -246,14 +246,13 @@ class Plot:
         #corner1
         #########
             ########## interpolate diagonally from plot corner to outer corner 
-        xs = [x for x in reversed(range(self.plot_start.x - 3, self.plot_start.x + 2))]
-        zs = [z for z in reversed(range(self.plot_start.z - 3, self.plot_start.z + 2))]
+        xs = [x for x in reversed(range(self.plot_start.x - 3, self.plot_start.x + 2))] # shifted the range a little bit towards the plot
+        zs = [z for z in reversed(range(self.plot_start.z - 3, self.plot_start.z + 2))] # to achieve rounded corners
         corner_coords  = [(xs[i],zs[i]) for i in range(5)]
 
         y_diff = self.height_dict[corner_coords[-1]] - self.central_point.y
         
-        interpolated = scale_sigmoid(0.5, 0.5, 6, y_diff, self.central_point.y)
-        
+        interpolated = scale_sigmoid(0.5, 0.5, 6, y_diff, self.central_point.y) # higher slope value to counteract diagonal length looking longer
         ybase_1, ybase_2 = interpolated[1], interpolated[2] # used for interpolating the rest of the corner
         
         for x,z in corner_coords:
@@ -524,7 +523,7 @@ class Plot:
                     dir = -1
 
                 while new_path.x != nearest.x:
-                    new_path = Vec3(new_path.x - dir, 0, new_path.z)
+                    new_path = Vec3(new_path.x + dir, 0, new_path.z)
                     connection.append(new_path)
 
                 if nearest.z > new_path.z:
