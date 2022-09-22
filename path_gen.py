@@ -206,27 +206,6 @@ def getBlockHeight(block_x, block_z):
         #print(block_x, y, block_z, ground_block)
 
     return y
-    
-def checkSteepPath(path_coords): # Function to return a list of y-axis blocks that are one unit apart.
-    
-    check_neighbours = [] # Creates a list to append and check y-axis blocks
-    one_unit = 1
-    
-    for coord in path_coords: # Loops through x,z coords to find y-axis
-        coord.y = getBlockHeight(coord.x, coord.z)
-        
-        check_neighbours.append(coord.y)
-    
-    for index, block_y in enumerate(check_neighbours[:-1]): #Changes the next block to have a height difference of one unit max.
-    
-        difference = check_neighbours[index + 1] - check_neighbours[index]
-    
-        if difference > 1:
-            check_neighbours[index + 1] = check_neighbours[index + 1] - (difference - one_unit)
-    
-    #TODO: Do the reverse so that blocks can go down a steep hill, not only up.
-    #TODO: Place the path with these y-coords and set the blocks above them to air.
-    return check_neighbours
 
 def alternateCheckSteepPath(height_dict, front_doors):
     """compares items in height dict with its surrounding blocks' height, if it's lower than -1, raise the surrounding block.
