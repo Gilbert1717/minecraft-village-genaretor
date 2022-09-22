@@ -101,6 +101,7 @@ def generate_path_and_plots(vil_start, vil_end, vil_center, vor_amount):
                 path_coords.append(vec3.Vec3(x, 0, z)) # get the y coord later with getblockheight
         
                 ############ this code block populates voronoi_distances with a voronoi point's distance to the closest path.
+                ############ used to determine plot sizes
                 if distances[0][0] not in voronoi_distances:
                     voronoi_distances[distances[0][0]] = distances[0][1]
 
@@ -128,12 +129,13 @@ def generate_path_and_plots(vil_start, vil_end, vil_center, vor_amount):
     return path_coords,intersection_coords,bordering_paths, plots
 
 def get_path_height(path_coords):
+    """iteratively gets path block heights until the block at y-level is in the list of ground blocks"""
     path_coords_tuple = []
     path_height_set = set() # used set instead of list because query_blocks returns duplicate results for some reason
     height_dict = dict()
     block_dict = dict()
     ground =  [ block.GRASS.id, block.DIRT.id, block.WATER_STATIONARY.id, block.SAND.id, block.WATER_FLOWING.id,
-                    block.STONE.id, block.CLAY.id, block.MYCELIUM.id, block.SANDSTONE.id]
+                    block.STONE.id, block.CLAY.id, block.MYCELIUM.id, block.SANDSTONE.id, block.ICE.id]
 
     for coord in path_coords:
         path_coords_tuple.append((coord.x,coord.z))
@@ -178,7 +180,7 @@ def get_path_height(path_coords):
         if Done:
             break
         else:
-            for x,y,z in redo:
+            for x,y,z in redo: #deletes the non-ground blocks
                 mc.setBlock(x,y,z,block.AIR.id)
 
             #re-assign terrain cords for the next iteration
@@ -206,19 +208,21 @@ def getBlockHeight(block_x, block_z):
     return y
 
 def alternateCheckSteepPath(height_dict, front_doors):
+    """compares items in height dict with its surrounding blocks' height, if it's lower than -1, raise the surrounding block.
+    if the surrounding block is a front door path, lower the current block instead. repeat until done"""
     final_path_height_dict = height_dict.copy()
-    looping_path_height_dict = height_dict.copy()
+    looping_path_height_dict = height_dict.copy() 
+    #the algorithm adds and removes blocks to the looping dict depending on whether it could be a steep block.
+    #algorithm ends when len(looping dict) is 0 or loop_counter = 99999
     raised_paths = set()
-
-
 
     done = False
     loop_counter = 0
 
     while not done:
         loop_counter += 1
-        to_be_deleted = []
-        to_be_added = []
+        to_be_deleted = []  # not able to change a dict's size during iteration,
+        to_be_added = []    # these 2 variables stores items temporarily until after the end of the for loop
 
         for curr_x, curr_z in looping_path_height_dict:
             curr_y = looping_path_height_dict[(curr_x),(curr_z)]
@@ -241,9 +245,8 @@ def alternateCheckSteepPath(height_dict, front_doors):
                         #raise the surrounding block by 1
                         final_path_height_dict[(surrounding_x,surrounding_z)] = surrounding_block_y + 1
                         to_be_added.append((surrounding_x,surrounding_z,surrounding_block_y + 1))
-                        
                         raised_paths.add((surrounding_x,surrounding_z))
-                        print('raised', (surrounding_x,surrounding_z) )
+                        
                         dict_change = True
 
                     elif surrounding_block_y < curr_y -1 and (surrounding_x,surrounding_z) in front_doors:
@@ -252,7 +255,7 @@ def alternateCheckSteepPath(height_dict, front_doors):
                         
                         to_be_added.append((curr_x,curr_z,curr_y - 1))
                         raised_paths.add((curr_x,curr_z))
-                        print('dropped', (curr_x,curr_z) )
+                        
                         dict_change = True
 
             if not dict_change:
@@ -281,9 +284,10 @@ def alternateCheckSteepPath(height_dict, front_doors):
     return new_path_coords,raised_paths,final_path_height_dict
 
 def remove_dead_ends(path_coords, intersections, bordering_paths, vil_start, vil_end): 
-    #TODO: make this add some kind of structure at the dead ends instead
-    #traverses the path away in all 4 direction from all intersection blocks
-    #,if it doesnt encounter another intersection block, it deletes the traversed path
+    ###### FUNCTION NOT USED ANYMORE!!!!! TOO MANY COMPLICATIONS WITH UNINTENDED PATH BLOCK DELETIONS
+    ###### USING add_construction_blockades() INSTEAD
+    #traverses the path away in all 4 direction from all intersection blocks,
+    #if it doesnt encounter another intersection block, delete the traversed path
     for bordering_block in bordering_paths:
 
         ### checks if the bordering path has been connected by another plot
@@ -303,9 +307,7 @@ def remove_dead_ends(path_coords, intersections, bordering_paths, vil_start, vil
         ###
         if in_intersections: # if yes, there is no need to remove the path
             continue
-        else: # if no, traverse the path towards the village until you hit an intersection block.
-            axis = ''
-
+        else: # if no, traverse the path towards the village until you hit an intersection block 
             #checks for the traversal axis and direction
             if curr_block.x == vil_start.x:
                 axis = 'x'
@@ -385,7 +387,98 @@ def remove_dead_ends(path_coords, intersections, bordering_paths, vil_start, vil
                             if block in path_coords:
                                 path_coords.remove(block)
                         break
-                    
+
+def add_support_blocks(potentially_unsupported):
+    """adds fence posts below unsupported structures"""
+    ground =  [ block.GRASS.id, block.DIRT.id, block.SAND.id,
+                    block.STONE.id, block.CLAY.id, block.MYCELIUM.id, block.SANDSTONE.id]
+    height_dict = dict()
+    height_tuple = []
+    
+    for a_block in potentially_unsupported:
+        height_dict[(a_block.x, a_block.z)] = a_block.y - 1
+        height_tuple.append((a_block.x, a_block.y - 1, a_block.z))
+    
+    done = False
+    while not done:
+        done = True
+        redo = set()
+        blocks_below = query_blocks(height_tuple,'world.getBlock(%d,%d,%d)',int)
+
+        for query,result in blocks_below:
+            x,y,z = query
+            block_id = result
+            if block_id not in ground:
+                done = False
+                redo.add((x,y-1,z))
+                mc.setBlock(x,y,z,block.FENCE.id)
+        
+
+        height_tuple = [] # prepares height_tuple for the next loop
+        for x,y,z in redo:
+            height_tuple.append((x,y,z))
+
+                
+
+
+def add_construction_blockades(bordering_paths, intersections, height_dict, vil_start, vil_end):
+    """adds construction blockades to the dead ends"""
+    intersections_tuple = [(vec.x,vec.z) for vec in intersections]
+    filtered_bordering_paths = []
+
+    for dead_end in bordering_paths:
+        ### checks if the dead end has been connected by another plot,
+       
+        curr_block = dead_end
+        surrounding_blocks = [  (curr_block.x + 1, curr_block.z + 1), 
+                                (curr_block.x    , curr_block.z + 1),
+                                (curr_block.x - 1, curr_block.z + 1),
+                                (curr_block.x + 1, curr_block.z),
+                                (curr_block.x - 1, curr_block.z),
+                                (curr_block.x + 1, curr_block.z - 1),
+                                (curr_block.x    , curr_block.z - 1),
+                                (curr_block.x - 1, curr_block.z - 1),]
+        satisfies_condition = True
+        for surrounding_block in surrounding_blocks:
+            
+            if surrounding_block in intersections_tuple :
+                satisfies_condition = False
+        
+        if satisfies_condition:
+            filtered_bordering_paths.append((dead_end.x,dead_end.z))
+        
+    for x,z in filtered_bordering_paths:
+        #checks for the dead end direction
+        if x == vil_start.x:
+            axis = 'x'
+                
+        elif x == vil_end.x:
+            axis = 'x'
+                
+        elif z == vil_start.z:
+            axis = 'z'
+                
+        elif z == vil_end.z:
+            axis = 'z'
+
+
+        if axis == 'x':
+            y = height_dict[(x,z)]
+            mc.setBlocks(   x,  y+1,    z-1,
+                            x,  y+1,    z+1,block.FENCE.id)
+            mc.setBlock(x,y+2,z-1,block.WOOL.id,15) #15 is the data id for black wool
+            mc.setBlock(x,y+2,z,block.WOOL.id,4) # 4 is the data id for yellow wool
+            mc.setBlock(x,y+2,z+1,block.WOOL.id,15)
+            print(axis, x,z)
+        else:
+            y = height_dict[(x,z)]
+            mc.setBlocks(   x-1,  y+1,    z,
+                            x+1,  y+1,    z,block.FENCE.id)
+            mc.setBlock(x-1,y+2,z,block.WOOL.id,15) #15 is the data id for black wool
+            mc.setBlock(x,y+2,z,block.WOOL.id,4) # 4 is the data id for yellow wool
+            mc.setBlock(x+1,y+2,z,block.WOOL.id,15)
+            print(axis,x,z)
+
 if __name__ == '__main__':
     vil_length = 85
     num_points = 5
