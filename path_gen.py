@@ -464,6 +464,34 @@ def add_construction_blockades(bordering_paths, intersections, height_dict, vil_
             axis = 'z'
 
         PathObjects.Path_Objects.construction_blockade(mc,x,y,z,axis)
+
+def add_lamp_posts(intersections, height_dict):
+    intersections_tuple = [(vec.x,vec.z) for vec in intersections]
+    used_intersections = []
+
+    for intersection in intersections:
+        
+        curr_block = intersection
+        surrounding_blocks = [  (curr_block.x + 1, curr_block.z + 1), 
+                                (curr_block.x    , curr_block.z + 1),
+                                (curr_block.x - 1, curr_block.z + 1),
+                                (curr_block.x + 1, curr_block.z),
+                                (curr_block.x - 1, curr_block.z),
+                                (curr_block.x + 1, curr_block.z - 1),
+                                (curr_block.x    , curr_block.z - 1),
+                                (curr_block.x - 1, curr_block.z - 1),]
+
+        viable = True
+
+        for surrounding_block in surrounding_blocks:
+            if surrounding_block in intersections_tuple or surrounding_block in used_intersections:
+                viable = False
+
+        if viable:
+            y = height_dict[(curr_block.x, curr_block.z)]
+            PathObjects.Path_Objects.lampPost(mc, curr_block.x, y, curr_block.z)
+
+        
         
 
 if __name__ == '__main__':
