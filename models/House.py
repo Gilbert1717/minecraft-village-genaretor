@@ -278,7 +278,10 @@ class House:
             start_point.y += 1
             create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
             
-            
+            # Grabbing the coordinates of the block facing the negative z-direction.
+            negative_z = Vec3(self.structure.frontleft.x, self.structure.frontleft.y + self.structure.height * self.stories + 1, self.structure.frontleft.z - 1)
+            check_negativeBlock = mc.getBlock(negative_z)
+        
             # Creating the roof structure on top of the house, placing the blocks accordingly depending on if it is facing -z or +z direction.
             if check_negativeBlock == block.AIR.id:
             
@@ -306,22 +309,23 @@ class House:
                 # Find the midpoint to see how many iterations we need to complete the roof.
                 midpoint = math.ceil(self.structure.width / 2)
                 mc.postToChat(f"midpoint: {midpoint}")   
-                
+                mc.postToChat(f"frontleft: {start_point.x}, {start_point.z}")
+                mc.postToChat(f"backright: {end_point.x}, {end_point.z}")
                 
                 # Creating the roof structure.
                 for positive in range(1, midpoint):
-            
+                    
                     start_point.x += 1
                     start_point.y += 1
                     start_point.z -= 1
-            
+        
                     end_point.x -= 1
                     end_point.y += 1
                     end_point.z += 1
             
                     create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
-                    print("positive direction")
-                    print(self.structure.frontleft.z + 1) 
+                    print("positive direction")    
+            
    
         
     def create_walls(self,mc):
