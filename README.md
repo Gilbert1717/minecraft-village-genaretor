@@ -36,9 +36,9 @@ Yiqi
 
 
 Tommy
-  - House *change this to be more descriptive*
+  - House: roof, furniture, walls(horizontal and verticaal outlines) and lighting for floor function.
   - Initial algorithm for grounding and smoothing paths
-  - *add more stuff here*
+  - furniture and RandomiseMaterial class
 
 Kurniawan
   - Village structure
