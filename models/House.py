@@ -237,11 +237,37 @@ class House:
                 
                 # Create stairs facing the east direction
                 for positiveEast in range(1, midpoint):
-                    pass
-                
+                    
+                    start_pointLeft.x -= 1
+                    start_pointLeft.y += 1
+                    
+                    end_pointLeft.x -= 1
+                    end_pointLeft.y += 1
+                    
+                    block_startLeft.x -= 1
+                    
+                    block_endLeft.x -= 1
+                    block_endLeft.y += 1
+
+                    create_blocks(mc, start_pointLeft, end_pointLeft, block.STAIRS_COBBLESTONE.withData(0))
+                    create_blocks(mc, block_startLeft, block_endLeft, block.STONE_BRICK.withData(2))
+                    
                 # Create stairs facing the west direction
                 for positiveWest in range(1, midpoint):
-                    pass
+                    
+                    start_pointLeft.x += 1
+                    start_pointRight.y += 1
+                    
+                    end_pointLeft.x += 1
+                    end_pointLeft.y += 1
+                    
+                    block_startLeft.x += 1
+                    
+                    block_endLeft.x += 1
+                    block_endLeft.y += 1
+
+                    create_blocks(mc, start_pointLeft, end_pointLeft, block.STAIRS_COBBLESTONE.withData(0))
+                    create_blocks(mc, block_startLeft, block_endLeft, block.STONE_BRICK.withData(2))
                 
                 
                 
