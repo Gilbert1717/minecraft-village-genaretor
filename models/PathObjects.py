@@ -24,6 +24,9 @@ class Path_Objects:
         mc.setBlock(x_coord - one_unit, y_coord + lamp_height, z_coord, trapdoor, trapdoor_west)
         mc.setBlock(x_coord + one_unit, y_coord + lamp_height, z_coord, trapdoor, trapdoor_east)
 
+        mc.setBlock(x_coord,y_coord + lamp_height, z_coord, block.GLOWSTONE_BLOCK.id)
+        mc.setBlock(x_coord,y_coord + lamp_height + 1, z_coord, trapdoor)
+
     def setFlowers(): # Lay out flowers near path_gen
         pass 
 
