@@ -21,24 +21,25 @@ Ideally, any disputes reagarding the contributions should be resolved prior to s
 
 
 > **P.S from Kurniawan:** My contributions in GitHub may look overly-inflated because i've added ``mcpi_query_performance.py`` from an external source.
-> Additionally, my codes contains lots of repetition and uses similar logic, Working on them has inflated my additions and deletions
+> Additionally, my code contains lots of repetition and uses similar logic, Working on them has inflated my additions and deletions
 
 ## High-level contribution summary
-- Alex
+Alex
   - Pyramid roof
 
-- Yiqi
+Yiqi
   - House *change this to be more descriptive*
   - *add more stuff here*
 
-- Tommy
+Tommy
   - House *change this to be more descriptive*
   - Initial algorithm for grounding and smoothing paths
   - *add more stuff here*
 
-- Kurniawan
+Kurniawan
   - Village structure
   - Path generation
+  - Plot Class
 
 # Video
 WIP
