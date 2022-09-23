@@ -156,7 +156,7 @@ class House:
             end_pointRight.y += 1
 
             
-            # Creating the actual roof on top of the house, placing blocks accordingly if it is facing -z or +z direction.
+            # Implements house facing the -z direction.
             if check_negativeBlock == block.AIR.id:
                 
                 # Creating roof structure at the base
@@ -213,10 +213,37 @@ class House:
                     create_blocks(mc, start_pointRight, end_pointRight, block.STAIRS_COBBLESTONE.withData(1))
                     create_blocks(mc, block_startRight, block_endRight, block.STONE_BRICK.withData(2))
             
-            else:
-                 #TODO: Implement house correctly, if it is facing the positive z direction.
-                 pass
             
+            # Else implement house correctly, if it is facing the positive z direction.
+            else:
+                 
+                 # Creating roof structure at the base
+                create_blocks(mc, start_pointLeft, end_pointLeft, block.STAIRS_COBBLESTONE.withData(0))
+                create_blocks(mc, start_pointRight, end_pointRight, block.STAIRS_COBBLESTONE.withData(1))
+                
+                
+                # Find midpoint to see how many iterations are required to fill in the roof.
+                midpoint = math.ceil(self.structure.width / 2)
+                mc.postToChat(f"positive z, midpoint: {midpoint}")
+                
+                # If the width is even, the middle will be empty. So we will fill it with blocks.
+                if (self.structure.width % 2) == 0:
+                    roof_midpoint = self.structure.frontleft.x + midpoint
+                    
+                    mc.setBlocks(roof_midpoint, self.structure.frontleft.y + self.structure.height * self.stories, self.structure.frontleft.z,
+                                roof_midpoint, self.structure.backleft.y + self.structure.height * self.stories + midpoint, self.structure.backleft.z,
+                                block.STONE_BRICK.withData(2))
+                
+                # Create stairs facing the east direction
+                for positiveEast in range(1, midpoint):
+                    pass
+                
+                # Create stairs facing the west direction
+                for positiveWest in range(1, midpoint):
+                    pass
+                
+                
+                
         # Creating block roof
         elif roofType == 1:
             
