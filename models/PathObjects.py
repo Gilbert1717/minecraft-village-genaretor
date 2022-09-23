@@ -11,7 +11,7 @@ class Path_Objects:
         trapdoor_north = 4
         trapdoor_south = 5
         trapdoor_west = 6        
-        trapdoor_east = 7
+        trapdoor_east = 7   
 
         mc.setBlock(x_coord, y_coord, z_coord, block.MOSS_STONE.id)
 
@@ -29,3 +29,21 @@ class Path_Objects:
 
     def setBench(): # Lay out chairs/benches near path_gen
         pass
+
+    def construction_blockade(mc,x,y,z,axis):
+        if axis == 'x':
+            
+            mc.setBlocks(   x,  y+1,    z-1,
+                            x,  y+1,    z+1,block.FENCE.id)
+            mc.setBlock(x,y+2,z-1,block.WOOL.id,15) #15 is the data id for black wool
+            mc.setBlock(x,y+2,z,block.WOOL.id,4) # 4 is the data id for yellow wool
+            mc.setBlock(x,y+2,z+1,block.WOOL.id,15)
+            print(axis, x,z)
+        else:
+            
+            mc.setBlocks(   x-1,  y+1,    z,
+                            x+1,  y+1,    z,block.FENCE.id)
+            mc.setBlock(x-1,y+2,z,block.WOOL.id,15) 
+            mc.setBlock(x,y+2,z,block.WOOL.id,4)
+            mc.setBlock(x+1,y+2,z,block.WOOL.id,15)
+            print(axis,x,z)

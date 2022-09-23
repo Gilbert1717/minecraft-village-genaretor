@@ -9,6 +9,7 @@ import random
 import math
 
 from Plot import Plot
+from models import PathObjects
 
 mc = minecraft.Minecraft.create()
 
@@ -98,7 +99,7 @@ def generate_path_and_plots(vil_start, vil_end, vil_center, vor_amount):
             distance_sub = distances[0][1] - distances[1][1] # difference in distance between the 2 closest vornoi points
             
             if distance_sub >= -1 and distance_sub <= 1:
-                path_coords.append(vec3.Vec3(x, 0, z)) # get the y coord later with getblockheight
+                path_coords.append(vec3.Vec3(x, 0, z)) # get the y coord later
         
                 ############ this code block populates voronoi_distances with a voronoi point's distance to the closest path.
                 ############ used to determine plot sizes
@@ -448,6 +449,7 @@ def add_construction_blockades(bordering_paths, intersections, height_dict, vil_
             filtered_bordering_paths.append((dead_end.x,dead_end.z))
         
     for x,z in filtered_bordering_paths:
+        y = height_dict[(x,z)]
         #checks for the dead end direction
         if x == vil_start.x:
             axis = 'x'
@@ -461,23 +463,8 @@ def add_construction_blockades(bordering_paths, intersections, height_dict, vil_
         elif z == vil_end.z:
             axis = 'z'
 
-
-        if axis == 'x':
-            y = height_dict[(x,z)]
-            mc.setBlocks(   x,  y+1,    z-1,
-                            x,  y+1,    z+1,block.FENCE.id)
-            mc.setBlock(x,y+2,z-1,block.WOOL.id,15) #15 is the data id for black wool
-            mc.setBlock(x,y+2,z,block.WOOL.id,4) # 4 is the data id for yellow wool
-            mc.setBlock(x,y+2,z+1,block.WOOL.id,15)
-            print(axis, x,z)
-        else:
-            y = height_dict[(x,z)]
-            mc.setBlocks(   x-1,  y+1,    z,
-                            x+1,  y+1,    z,block.FENCE.id)
-            mc.setBlock(x-1,y+2,z,block.WOOL.id,15) #15 is the data id for black wool
-            mc.setBlock(x,y+2,z,block.WOOL.id,4) # 4 is the data id for yellow wool
-            mc.setBlock(x+1,y+2,z,block.WOOL.id,15)
-            print(axis,x,z)
+        PathObjects.Path_Objects.construction_blockade(mc,x,y,z,axis)
+        
 
 if __name__ == '__main__':
     vil_length = 85
