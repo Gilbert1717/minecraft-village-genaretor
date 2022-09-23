@@ -45,5 +45,7 @@ Kurniawan
   - Path generation
   - Plot Class
 
+# Libraries used
+we've used code from https://github.com/joseph-reynolds/mcpi_fast_query to make querying blocks faster
 # Video
 WIP
