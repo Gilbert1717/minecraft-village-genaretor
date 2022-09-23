@@ -6,6 +6,7 @@ from mcpi import vec3
 from RandomiseMaterial import RandomiseMaterial
 import random 
 import math
+from fast_query_and_interpolation.mcpi_query_performance import query_blocks
 
 rm = RandomiseMaterial()
 
@@ -102,7 +103,7 @@ class House:
 
         # Grabbing the coordinates of the block facing the negative z-direction.
         negative_z = Vec3(self.structure.frontleft.x, self.structure.frontleft.y + self.structure.height * self.stories + 1, self.structure.frontleft.z - 1)
-        check_negativeBlock = mc.getBlock(negative_z)
+        check_negativeBlock = query_blocks(negative_z,'world.getBlock(%d,%d,%d)',int)
         
         # Choosing which rooftype to give the house
         roofType = random.randint(0, 1)
