@@ -10,3 +10,35 @@ Ignore and do not modify the contents of the .devcontainer folder. (In case it i
 Please summarise each team member's contributions here. Include both an approximate, percentage-based breakdown (e.g., "Anna: 25%, Tom: 25%, Claire: 25%, Halil: 25%") **and a high-level summary of what each member worked on, in dot-point form**.
 
 Ideally, any disputes reagarding the contributions should be resolved prior to submission, but if there is an unresolved dispute then please indicate that this is the case. Do not override each other's contribution statements immediately prior to the deadline -- this will be viewed dimly by the markers!
+
+## Contribution percentages
+|Student name          |GitHub username   |Percentage|
+|----------------------|------------------|----------|
+|Cheah, Alex Kim Kuan  |alexkim1996       |00.3%|
+|Du, Yiqi              |s3665887          |29.9%|
+|Nguyen,Tommy          |tommyStudies      |29.9%|
+|Zhen, Kurniawan Zhong |k-z-z             |39.9%|
+
+
+> **P.S from Kurniawan:** My contributions in GitHub may look overly-inflated because i've added ``mcpi_query_performance.py`` from an external source.
+> Additionally, my codes contains lots of repetition and uses similar logic, Working on them has inflated my additions and deletions
+
+## High-level contribution summary
+- Alex
+  - Pyramid roof
+
+- Yiqi
+  - House *change this to be more descriptive*
+  - *add more stuff here*
+
+- Tommy
+  - House *change this to be more descriptive*
+  - Initial algorithm for grounding and smoothing paths
+  - *add more stuff here*
+
+- Kurniawan
+  - Village structure
+  - Path generation
+
+# Video
+WIP
