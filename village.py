@@ -80,6 +80,13 @@ if __name__ == "__main__":
 
     path_gen.add_construction_blockades(bordering_paths,intersections,final_height_dict, vil_start, vil_end)
     path_gen.add_lamp_posts(intersections,height_dict)
+
+
+
+
+
+
+    
     #house1_location = McPosition(x,y,z)
     #mc.player.setPos(x,y,z)
 
@@ -93,11 +100,11 @@ if __name__ == "__main__":
     # position = vec3.Vec3(0,0,0)
     # mc.setBlocks(x,y - 1,z,x + 30, y + 50, z + 30, 0)
     # mc.setBlocks(x + 10,y -1,z + 10,x - 30, y + 50, z - 30, 0)
-    position = mc.player.getTilePos()
+    # position = mc.player.getTilePos()
     # vecPos = vec3.Vec3(position)
-    width = random.randint(8,12)
-    length = random.randint(-16,-12)
-    structure1 = Structure(position,width,length)
+    # width = random.randint(8,12)
+    # length = random.randint(-16,-12)
+    # structure1 = Structure(position,width,length)
     # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
     #house1 = House(structure1,3)
     #house1.create_house(mc)
@@ -120,15 +127,15 @@ if __name__ == "__main__":
                 
     #         elif chatEvent.message.upper() == "HOUSE":
                 
-    position = mc.player.getTilePos()
-    vecPos = vec3.Vec3(position)
-    vecPos = position
-    weith = random.randint(8,12)
-    length = random.randint(12,16)
-    structure1 = Structure(position,weith,length)
-    print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
-    house1 = House(structure1)
-    house1.create_house(mc)
+    # position = mc.player.getTilePos()
+    # vecPos = vec3.Vec3(position)
+    # vecPos = position
+    # weith = random.randint(8,12)
+    # length = random.randint(12,16)
+    # structure1 = Structure(position,weith,length)
+    # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
+    # house1 = House(structure1)
+    # house1.create_house(mc)
     
     
 
