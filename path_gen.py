@@ -211,10 +211,18 @@ def getBlockHeight(block_x, block_z):
 def alternateCheckSteepPath(height_dict, front_doors):
     """compares items in height dict with its surrounding blocks' height, if it's lower than -1, raise the surrounding block.
     if the surrounding block is a front door path, lower the current block instead. repeat until done"""
+    front_doors_tuple = [(front_door.x, front_door.z) for front_door in front_doors]
+    for front_door in front_doors:
+        height_dict[(front_door.x, front_door.z)] = front_door.y # makes sure that the front door path height is level with the front door
+    
     final_path_height_dict = height_dict.copy()
-    looping_path_height_dict = height_dict.copy() 
+    looping_path_height_dict = height_dict.copy()
     #the algorithm adds and removes blocks to the looping dict depending on whether it could be a steep block.
     #algorithm ends when len(looping dict) is 0 or loop_counter = 99999
+
+    front_doors_tuple = [(front_door.x, front_door.z) for front_door in front_doors]
+    for front_door in front_doors:
+        height_dict[(front_door.x, front_door.z)] = front_door.y
     raised_paths = set()
 
     done = False
@@ -242,7 +250,7 @@ def alternateCheckSteepPath(height_dict, front_doors):
                 if (surrounding_x, surrounding_z) in final_path_height_dict:
                     surrounding_block_y = final_path_height_dict[(surrounding_x,surrounding_z)]
 
-                    if surrounding_block_y < curr_y -1 and (surrounding_x,surrounding_z) not in front_doors:
+                    if surrounding_block_y < curr_y -1 and (surrounding_x,surrounding_z) not in front_doors_tuple:
                         #raise the surrounding block by 1
                         final_path_height_dict[(surrounding_x,surrounding_z)] = surrounding_block_y + 1
                         to_be_added.append((surrounding_x,surrounding_z,surrounding_block_y + 1))
@@ -250,7 +258,7 @@ def alternateCheckSteepPath(height_dict, front_doors):
                         
                         dict_change = True
 
-                    elif surrounding_block_y < curr_y -1 and (surrounding_x,surrounding_z) in front_doors:
+                    elif surrounding_block_y < curr_y -1 and (surrounding_x,surrounding_z) in front_doors_tuple:
                         #raise the current block by 1
                         final_path_height_dict[(curr_x,curr_z)] = curr_y - 1
                         

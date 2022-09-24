@@ -685,6 +685,8 @@ class Plot:
 
         path_coords.extend(connection)
         intersection_coords.extend(connection)
+
+        front_door_path = Vec3(front_door_path.x, self.central_point.y, front_door_path.z)
         return front_door_path
 
 

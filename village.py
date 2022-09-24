@@ -22,7 +22,8 @@ def get_village_coords(mc):
         checks does not work with netherite sword"""
     blockevents = mc.events.pollBlockHits()
 
-    mc.postToChat('right click on a block while holdling a sword to set village location')
+    mc.postToChat('right click on a block while holdling a wooden sword to set the village location. ')
+    mc.postToChat('the village will generate towards postive x & z away from the block')
     while blockevents == []:
         blockevents = mc.events.pollBlockHits()
     
@@ -54,7 +55,7 @@ if __name__ == "__main__":
         #plot.get_structure()
         plot.place_house(plot.get_structure())
         front_door_path = plot.connect_with_paths(paths,intersections,bordering_paths,vil_start, vil_end)
-        front_doors.append((front_door_path.x,front_door_path.z))
+        front_doors.append(front_door_path)
         
         
     height_dict = path_gen.get_path_height(paths)
@@ -72,10 +73,13 @@ if __name__ == "__main__":
     for path in paths:
         mc.setBlocks(path.x-1, path.y, path.z-1, 
                      path.x+1, path.y, path.z+1,block.COBBLESTONE.id)
-        print('placing')
-
+    
+    for plot in plots: # clears out the doorway
+        mc.setBlock(plot.house_door.x, plot.house_door.y + 1, plot.house_door.z -1, block.AIR.id)
+        mc.setBlock(plot.house_door.x, plot.house_door.y + 1, plot.house_door.z +1, block.AIR.id)
 
     path_gen.add_construction_blockades(bordering_paths,intersections,final_height_dict, vil_start, vil_end)
+    path_gen.add_lamp_posts(intersections,height_dict)
     #house1_location = McPosition(x,y,z)
     #mc.player.setPos(x,y,z)
 
