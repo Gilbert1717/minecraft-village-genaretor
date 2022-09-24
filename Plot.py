@@ -37,9 +37,9 @@ class Plot:
    
     def __init__(self, central_point, distance_from_path, direction, away) -> None:
         """takes voronoi points in a village as its central point."""
-        #TEMP CODE
+        #TEMPORARY CODE to test village.py without creating a house
         #self.house_door = Vec3(central_point.x, 0, central_point.z + 5)
-        ####
+        ############################################################
         self.central_point      = central_point
         self.distance_from_path = distance_from_path
         self.direction          = direction
@@ -65,14 +65,7 @@ class Plot:
         
         self.create_terrain_dict()
 
-        if self.direction == 'x-':
-            mc.setBlock(self.central_point.x, 100, self.central_point.z, block.CHEST.id)
-        elif self.direction == 'x+':
-            mc.setBlock(self.central_point.x, 100, self.central_point.z, block.CRAFTING_TABLE.id)
-        elif self.direction == 'z-':
-            mc.setBlock(self.central_point.x, 100, self.central_point.z, block.DIAMOND_BLOCK.id)
-        elif self.direction == 'z+':
-            mc.setBlock(self.central_point.x, 100, self.central_point.z, block.END_STONE.id)
+
 
 
     def create_terrain_dict(self):
@@ -480,7 +473,7 @@ class Plot:
                             x, y + 21,  z, block.AIR.id)
 
         if block_id in water_blocks:
-            mc.setBlocks(   x, y,       z, block_id)
+            mc.setBlock(   x, y,       z, block.WATER_STATIONARY.id)
         else:
             mc.setBlocks(   x, y - 20,  z,
                             x, y,       z, block_id)
