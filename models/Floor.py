@@ -301,27 +301,48 @@ class Floor:
                 mc.setBlock(vector2.x,vector2.y,vector2.z,stairs,1)
                 mc.setBlock(vector2.x,vector2.y - 1,vector2.z,support,1)
                 
+                
     def place_furniture(self, mc, floor):
-        print(floor.frontright.x - 1, floor.frontleft.x + 1)
+        
+        # Choosing furniture material
         furniture = rm.random_furniture()
+        
+        # Initialising door block.
+        door = 64
         
         # Grabbing the coordinates of the block facing the negative z-direction.
         negative_z = Vec3(self.structure.frontleft.x, self.structure.frontleft.y + self.structure.height, self.structure.frontleft.z - 1)
         check_negativeBlock= mc.getBlock(negative_z)
         
+        
         # If the block is facing the -z direction, place furniture blocks accordingly
         if check_negativeBlock == block.AIR.id:
             
             if floor.frontleft.x + 1 == floor.frontright.x - 1:
-                place_frontwall = floor.frontleft.x
-                mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 2, furniture)
                 
+                place_frontwall = floor.frontleft.x
+                check_door = mc.getBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 1, furniture)
+                
+                if check_door == door:
+                    mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 2, furniture)
+                
+                else:
+                    mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 1, furniture)
+                    
             else:
                 
                 #Pick a block in between the length of the walls
                 place_frontwall = random.randrange(floor.frontleft.x + 1, floor.frontright.x - 1)
-                mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z + 2, furniture)
+                check_door = mc.getBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z + 1, furniture)
+                
+                
+                if check_door == door:
+                    mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z + 2, furniture)
+                    
+                else:
+                    mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z + 1, furniture)
                 print("placing furniture for negative z direction")
+
 
         # Else the block is facing the +z direction, place furniture blocks accordingly
         else:
@@ -329,12 +350,27 @@ class Floor:
             #Pick a block in between the length of the walls
             if floor.frontleft.x + 1 == floor.frontright.x - 1:
                 place_frontwall = floor.frontleft.x
-                mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 2, furniture)
+                check_door = mc.getBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 1, furniture)
+                
+                if check_door == door:
+                    mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 2, furniture)
+                
+                else:
+                    mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 1, furniture)
+                    
             
             else:
                 
                 place_frontwall = random.randrange(floor.frontleft.x + 1, floor.frontright.x - 1)
-                mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 2, furniture)
+                check_door = mc.getBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 1, furniture)
+                
+                
+                if check_door == door:
+                    mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 2, furniture)
+                    
+                else:
+                    mc.setBlock(place_frontwall, floor.frontleft.y + 1, floor.frontleft.z - 1, furniture)
+                    
                 print("placing furniture for positive z direction")
             
             
