@@ -195,8 +195,8 @@ def get_path_height(path_coords):
 def getBlockHeight(block_x, block_z):
     """DOES NOT WORK IF SETWORLDSPAWN HEIGHT IS NOT SET TO 0"""
     y = mc.getHeight(block_x, block_z)
-    
-    ground_block = mc.getBlock(block_x, y, block_z)
+    groundblock_pos = vec3.Vec3(block_x, y, block_z)
+    ground_block = mc.getBlock(groundblock_pos)
     
     while (ground_block != block.GRASS.id and ground_block != block.DIRT.id and
             ground_block !=block.WATER_STATIONARY.id and ground_block != block.WATER_FLOWING.id 

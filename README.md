@@ -14,10 +14,10 @@ Ideally, any disputes reagarding the contributions should be resolved prior to s
 ## Contribution percentages
 |Student name          |GitHub username   |Percentage|
 |----------------------|------------------|----------|
-|Cheah, Alex Kim Kuan  |alexkim1996       |00.3%(1%)|
-|Du, Yiqi              |s3665887          |29.9%(33%)|
-|Nguyen,Tommy          |tommyStudies      |29.9%(33%)|
-|Zhen, Kurniawan Zhong |k-z-z             |39.9%(33%)|
+|Cheah, Alex Kim Kuan  |alexkim1996       |1% |
+|Du, Yiqi              |s3665887          |33% |
+|Nguyen,Tommy          |tommyStudies      |33% |
+|Zhen, Kurniawan Zhong |k-z-z             |33% |
 
 
 > **P.S from Kurniawan:** My contributions in GitHub may look overly-inflated because i've added ``mcpi_query_performance.py`` from an external source.
@@ -32,13 +32,13 @@ Yiqi
   - Stureture class, partial code of House and Floor class
   - House frame creation (floors, rooms, walls, stairs, windows and doors)
   - Some work regarding path_gen Integration
-  Yiqi Du S3665887 -- 33%
+ 
 
 
 Tommy
-  - House *change this to be more descriptive*
+  - House: roof, furniture, walls(horizontal and verticaal outlines) and lighting for floor function.
   - Initial algorithm for grounding and smoothing paths
-  - *add more stuff here*
+  - furniture and RandomiseMaterial class
 
 Kurniawan
   - Village structure

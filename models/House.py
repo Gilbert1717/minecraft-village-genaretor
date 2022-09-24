@@ -6,6 +6,7 @@ from mcpi import vec3
 from RandomiseMaterial import RandomiseMaterial
 import random 
 import math
+from fast_query_and_interpolation.mcpi_query_performance import query_blocks
 
 rm = RandomiseMaterial()
 
@@ -156,7 +157,7 @@ class House:
             end_pointRight.y += 1
 
             
-            # Creating the actual roof on top of the house, placing blocks accordingly if it is facing -z or +z direction.
+            # Implements house facing the -z direction.
             if check_negativeBlock == block.AIR.id:
                 
                 # Creating roof structure at the base
@@ -213,10 +214,63 @@ class House:
                     create_blocks(mc, start_pointRight, end_pointRight, block.STAIRS_COBBLESTONE.withData(1))
                     create_blocks(mc, block_startRight, block_endRight, block.STONE_BRICK.withData(2))
             
-            else:
-                 #TODO: Implement house correctly, if it is facing the positive z direction.
-                 pass
             
+            # Else implement house correctly, if it is facing the positive z direction.
+            else:
+                 
+                 # Creating roof structure at the base
+                create_blocks(mc, start_pointLeft, end_pointLeft, block.STAIRS_COBBLESTONE.withData(0))
+                create_blocks(mc, start_pointRight, end_pointRight, block.STAIRS_COBBLESTONE.withData(1))
+                
+                
+                # Find midpoint to see how many iterations are required to fill in the roof.
+                midpoint = math.ceil(self.structure.width / 2)
+                mc.postToChat(f"positive z, midpoint: {midpoint}")
+                
+                # If the width is even, the middle will be empty. So we will fill it with blocks.
+                if (self.structure.width % 2) == 0:
+                    roof_midpoint = self.structure.frontleft.x + midpoint
+                    
+                    mc.setBlocks(roof_midpoint, self.structure.frontleft.y + self.structure.height * self.stories, self.structure.frontleft.z,
+                                roof_midpoint, self.structure.backleft.y + self.structure.height * self.stories + midpoint, self.structure.backleft.z,
+                                block.STONE_BRICK.withData(2))
+                
+                # Create stairs facing the east direction
+                for positiveEast in range(1, midpoint):
+                    
+                    start_pointLeft.x -= 1
+                    start_pointLeft.y += 1
+                    
+                    end_pointLeft.x -= 1
+                    end_pointLeft.y += 1
+                    
+                    block_startLeft.x -= 1
+                    
+                    block_endLeft.x -= 1
+                    block_endLeft.y += 1
+
+                    create_blocks(mc, start_pointLeft, end_pointLeft, block.STAIRS_COBBLESTONE.withData(0))
+                    create_blocks(mc, block_startLeft, block_endLeft, block.STONE_BRICK.withData(2))
+                    
+                # Create stairs facing the west direction
+                for positiveWest in range(1, midpoint):
+                    
+                    start_pointLeft.x += 1
+                    start_pointRight.y += 1
+                    
+                    end_pointLeft.x += 1
+                    end_pointLeft.y += 1
+                    
+                    block_startLeft.x += 1
+                    
+                    block_endLeft.x += 1
+                    block_endLeft.y += 1
+
+                    create_blocks(mc, start_pointLeft, end_pointLeft, block.STAIRS_COBBLESTONE.withData(0))
+                    create_blocks(mc, block_startLeft, block_endLeft, block.STONE_BRICK.withData(2))
+                
+                
+                
         # Creating block roof
         elif roofType == 1:
             
@@ -224,7 +278,10 @@ class House:
             start_point.y += 1
             create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
             
-            
+            # Grabbing the coordinates of the block facing the negative z-direction.
+            negative_z = Vec3(self.structure.frontleft.x, self.structure.frontleft.y + self.structure.height * self.stories + 1, self.structure.frontleft.z - 1)
+            check_negativeBlock = mc.getBlock(negative_z)
+        
             # Creating the roof structure on top of the house, placing the blocks accordingly depending on if it is facing -z or +z direction.
             if check_negativeBlock == block.AIR.id:
             
@@ -252,22 +309,23 @@ class House:
                 # Find the midpoint to see how many iterations we need to complete the roof.
                 midpoint = math.ceil(self.structure.width / 2)
                 mc.postToChat(f"midpoint: {midpoint}")   
-                
+                mc.postToChat(f"frontleft: {start_point.x}, {start_point.z}")
+                mc.postToChat(f"backright: {end_point.x}, {end_point.z}")
                 
                 # Creating the roof structure.
                 for positive in range(1, midpoint):
-            
+                    
                     start_point.x += 1
                     start_point.y += 1
                     start_point.z -= 1
-            
+        
                     end_point.x -= 1
                     end_point.y += 1
                     end_point.z += 1
             
                     create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
-                    print("positive direction")
-                    print(self.structure.frontleft.z + 1) 
+                    print("positive direction")    
+            
    
         
     def create_walls(self,mc):
