@@ -204,7 +204,6 @@ def getBlockHeight(block_x, block_z):
         
         y = y - 1
         ground_block = mc.getBlock(block_x, y, block_z)
-        #print(block_x, y, block_z, ground_block)
 
     return y
 

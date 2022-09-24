@@ -311,8 +311,6 @@ class Floor:
         
         # If the block is facing the -z direction, place furniture blocks accordingly
         if check_negativeBlock == block.AIR.id:
-            # print(f"x: coords floor.frontleft.x: {floor.frontleft.x}")
-            # print(f"x: coords floor.frontright.x: {floor.frontright.x}")
             
             if floor.frontleft.x + 1 == floor.frontright.x - 1:
                 place_frontwall = floor.frontleft.x
@@ -327,8 +325,6 @@ class Floor:
 
         # Else the block is facing the +z direction, place furniture blocks accordingly
         else:
-            # print(f"x: coords floor.frontleft.x: {floor.frontleft.x}")
-            # print(f"x: coords floor.frontright.x: {floor.frontright.x}")
             
             #Pick a block in between the length of the walls
             if floor.frontleft.x + 1 == floor.frontright.x - 1:

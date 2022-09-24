@@ -3,35 +3,36 @@ from mcpi import block
 class Path_Objects:
 
     def lampPost(mc, x_coord, y_coord, z_coord): # Create lampPost for path_gen
-        #TODO: Use getheight function, to ensure that it doesnt place into the ground, but ontop.
+        
         lamp_height = 4
-        one_unit = 1
+        
         # Initialising trap door block and trap_door positions that aren't in the API.
+        
         trapdoor = 96
         trapdoor_north = 4
         trapdoor_south = 5
         trapdoor_west = 6        
         trapdoor_east = 7   
 
+        # Placing base of lamp post
         mc.setBlock(x_coord, y_coord, z_coord, block.MOSS_STONE.id)
 
-        for i in range(one_unit, lamp_height):
+        # Placing fence till lamp_height
+        for i in range(1, lamp_height):
+            
             mc.setBlock(x_coord, y_coord + i, z_coord, block.FENCE.id)
 
-        mc.setBlock(x_coord, y_coord + lamp_height, z_coord - one_unit, trapdoor, trapdoor_north)
-        mc.setBlock(x_coord, y_coord + lamp_height, z_coord + one_unit, trapdoor, trapdoor_south)
 
-        mc.setBlock(x_coord - one_unit, y_coord + lamp_height, z_coord, trapdoor, trapdoor_west)
-        mc.setBlock(x_coord + one_unit, y_coord + lamp_height, z_coord, trapdoor, trapdoor_east)
+        # Setting down the trapdoors for the lamp post.
+        mc.setBlock(x_coord, y_coord + lamp_height, z_coord - 1, trapdoor, trapdoor_north)
+        mc.setBlock(x_coord, y_coord + lamp_height, z_coord + 1, trapdoor, trapdoor_south)
+
+        mc.setBlock(x_coord - 1, y_coord + lamp_height, z_coord, trapdoor, trapdoor_west)
+        mc.setBlock(x_coord + 1, y_coord + lamp_height, z_coord, trapdoor, trapdoor_east)
 
         mc.setBlock(x_coord,y_coord + lamp_height, z_coord, block.GLOWSTONE_BLOCK.id)
         mc.setBlock(x_coord,y_coord + lamp_height + 1, z_coord, trapdoor)
-
-    def setFlowers(): # Lay out flowers near path_gen
-        pass 
-
-    def setBench(): # Lay out chairs/benches near path_gen
-        pass
+        
 
     def construction_blockade(mc,x,y,z,axis):
         if axis == 'x':

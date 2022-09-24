@@ -27,10 +27,10 @@ class RandomiseMaterial:
         number = random.randrange(0, len(exterior_blocks)) 
         randomBlock = block.DIRT.id
 
-        randomBlock = exterior_blocks[number]
+        randomBlock = exterior_blocks[number] # Returning the random block
         
-        # print(f"exterior block: {randomBlock}")
         return randomBlock
+    
     
     def random_floors(mc): #Returns a block material to use for the floors of the house
         
@@ -48,9 +48,10 @@ class RandomiseMaterial:
         number = random.randrange(0, len(floor_blocks))
         
         randomBlock = block.DIRT.id
-        randomBlock  = floor_blocks[number]
+        randomBlock  = floor_blocks[number] # Returning the random block
         
         return randomBlock
+    
     
     def random_furniture(mc): # Returns furniture blocks to randomly place in the house.
         
@@ -75,9 +76,10 @@ class RandomiseMaterial:
         number = random.randrange(0, len(furniture_blocks))
         
         randomBlock = block.DIRT.id
-        randomBlock = furniture_blocks[number]
+        randomBlock = furniture_blocks[number] # Returning the random block
         
         return randomBlock
+        
         
 #builds a pyramid roof
     def rooftop(self, mc,x,y,z):
@@ -89,8 +91,6 @@ class RandomiseMaterial:
         mc.setBlocks(x+1,y + y_offset+1,z+1, x + x_offset-1, y + y_offset+1, z + z_offset-1, block.WOOD_PLANKS.withData(2))
         mc.setBlocks(x+2,y + y_offset+2,z+2, x + x_offset-2, y + y_offset+2, z + z_offset-2, block.WOOD_PLANKS.withData(1))
         mc.setBlocks(x+3,y + y_offset+3,z+3, x + x_offset-3, y + y_offset+3, z + z_offset-3, block.WOOD_PLANKS.withData(2))
-        
-    #TODO colorID + randomize roofs 
 
     
     def vertical_outline_blocks(mc): # Returns blocks to use for the outline of the house.
@@ -104,9 +104,10 @@ class RandomiseMaterial:
         number = random.randrange(0, len(outline_blocks))
         
         randomBlock = block.DIRT.id
-        randomBlock = outline_blocks[number]
+        randomBlock = outline_blocks[number] # Returning the random block
         
         return randomBlock
+    
     
     def east_outline_blocks(mc, wood_block): # Returns the horizontal (east/west) version of vertical_outline_blocks
         
@@ -119,6 +120,7 @@ class RandomiseMaterial:
         elif wood_block == block.WOOD.withData(2):
             return block.WOOD.withData(6) # BIRCH OAK, EAST/WEST
     
+    
     def north_outline_blocks(mc, wood_block): # Returns the horizontal (north/west) version of vertical_outline_blocks
         
         if wood_block == block.WOOD.withData(0):
@@ -130,7 +132,3 @@ class RandomiseMaterial:
         elif wood_block == block.WOOD.withData(2):
             return block.WOOD.withData(10) # BIRCH OAK, NORTH/WEST
         
-    #TODO create roof structures + randomize roofs
-    #TODO create wall outer layer to add more aesthetic
-    #TODO place a form of lighting, whether that be patterned glowstone floors or torches.
-    #TODO room decorations/furniture
