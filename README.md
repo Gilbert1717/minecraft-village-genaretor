@@ -48,4 +48,6 @@ Kurniawan
 # Libraries used
 we've used code from https://github.com/joseph-reynolds/mcpi_fast_query to make querying blocks faster
 # Video
-Assignment Video (WIP): https://rmiteduau-my.sharepoint.com/personal/s3845257_student_rmit_edu_au/_layouts/15/stream.aspx?id=%2Fpersonal%2Fs3845257%5Fstudent%5Frmit%5Fedu%5Fau%2FDocuments%2Ftwo%5Fof%5Fthree%2Emp4&ga=1
+Assignment Video: https://rmiteduau-my.sharepoint.com/:v:/g/personal/s3845257_student_rmit_edu_au/EYWXpnN8t7xFio0Evf7jkSUBgl2R4oYALXAeArgT_hym6w?e=dEzs43
+
+Requires RMIT Email/Account to access.
