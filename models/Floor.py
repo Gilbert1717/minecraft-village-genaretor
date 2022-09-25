@@ -52,9 +52,6 @@ def create_door(mc,vector1,vector2):
             while (mc.getBlock(create_x, vector1.y + 2, vector1.z + 1) != Air or
                     mc.getBlock(create_x, vector1.y + 2, vector1.z - 1) != Air or 
                     mc.getBlock(create_x, vector1.y + 2, vector1.z) == window_block):
-                print('left',mc.getBlock(create_x, vector1.y + 2, vector1.z + 1))
-                print('right',mc.getBlock(create_x, vector1.y + 2, vector1.z - 1))
-                print('widnow',mc.getBlock(create_x, vector1.y + 2, vector1.z))
                 create_x = vector1.x + random.randint(2,width - 2)
                 
                
@@ -178,7 +175,6 @@ class Floor:
     def create_window(self,mc,floor):
         # create window on front wall
         window = 95
-        # print(floor.frontleft.x,self.frontleft.x)
         if floor.frontleft.z == self.frontleft.z:
             wall_width = abs(floor.frontright.x - floor.frontleft.x)
             
