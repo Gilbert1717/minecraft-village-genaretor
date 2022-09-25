@@ -27,15 +27,15 @@ def create_door(mc,vector1,vector2):
         length = abs(vector2.z - vector1.z)
         if vector2.z > vector1.z:
             create_z = vector1.z + random.randint(3,length - 3)
-            while (mc.getBlock(vector1.x + 1, vector1.y + 1, create_z) != Air or
-                    mc.getBlock(vector1.x - 1, vector1.y + 1, create_z ) != Air or
+            while (mc.getBlock(vector1.x + 1, vector1.y + 2, create_z) != Air or
+                    mc.getBlock(vector1.x - 1, vector1.y + 2, create_z ) != Air or
                     mc.getBlock(vector1.x, vector1.y + 2, create_z) == window_block):
                 create_z = vector1.z + random.randint(3,length - 3)
             
         else:
             create_z = vector1.z - random.randint(3,length - 3)
-            while (mc.getBlock(vector1.x + 1, vector1.y + 1, create_z) != Air or
-                    mc.getBlock(vector1.x - 1, vector1.y + 1, create_z) != Air or
+            while (mc.getBlock(vector1.x + 1, vector1.y + 2, create_z) != Air or
+                    mc.getBlock(vector1.x - 1, vector1.y + 2, create_z) != Air or
                     mc.getBlock(vector1.x, vector1.y + 2, create_z) == window_block):
                 create_z = vector1.z - random.randint(3,length - 3)
         mc.setBlock(vector1.x, vector1.y + 1, create_z, block.AIR)
@@ -49,17 +49,20 @@ def create_door(mc,vector1,vector2):
         width = abs(vector2.x - vector1.x)
         if vector2.x > vector1.x:
             create_x = vector1.x + random.randint(2,width - 2)
-            while (mc.getBlock(create_x, vector1.y + 1, vector1.z + 1) != Air or
-                    mc.getBlock(create_x, vector1.y + 1, vector1.z - 1) != Air or 
+            while (mc.getBlock(create_x, vector1.y + 2, vector1.z + 1) != Air or
+                    mc.getBlock(create_x, vector1.y + 2, vector1.z - 1) != Air or 
                     mc.getBlock(create_x, vector1.y + 2, vector1.z) == window_block):
+                print('left',mc.getBlock(create_x, vector1.y + 2, vector1.z + 1))
+                print('right',mc.getBlock(create_x, vector1.y + 2, vector1.z - 1))
+                print('widnow',mc.getBlock(create_x, vector1.y + 2, vector1.z))
                 create_x = vector1.x + random.randint(2,width - 2)
                 
                
             
         else:
             create_x = vector1.x - random.randint(2,width - 2)
-            while (mc.getBlock(create_x, vector1.y + 1, vector1.z + 1) != Air or
-                    mc.getBlock(create_x, vector1.y + 1, vector1.z - 1) != Air or
+            while (mc.getBlock(create_x, vector1.y + 2, vector1.z + 1) != Air or
+                    mc.getBlock(create_x, vector1.y + 2, vector1.z - 1) != Air or
                     mc.getBlock(create_x, vector1.y + 2, vector1.z) != window_block):
                 create_x = vector1.x - random.randint(2,width - 2)
                
@@ -133,7 +136,7 @@ class Floor:
             rooms = self.rooms
         if abs(floor.structure.width) > min_room_width and abs(floor.structure.length) > min_room_length:           
             if abs(floor.structure.width) >= abs(floor.structure.length):
-                split = random.randrange(int(floor.structure.width/2),floor.structure.width - min_room_width//2,1) 
+                split = random.randrange(math.floor(floor.structure.width/2),floor.structure.width - min_room_width//2,1) 
                 floor1,floor2 = floor.split_horizontal(split)
                 diagonal_point = create_vector(floor1.frontright, 0, floor.structure.height - 1, floor.structure.length)
                 create_blocks(mc, floor1.frontright, diagonal_point)
@@ -150,7 +153,7 @@ class Floor:
                 create_door(mc,McPosition1,McPosition2)
             else:
                 if floor.structure.length < 0:
-                    split = random.randint(floor.structure.length + min_room_length//2, int(floor.structure.length/2))
+                    split = random.randint(floor.structure.length + min_room_length//2, math.ceil(floor.structure.length/2))
                 else:
                     split = random.randrange(int(floor.structure.length/2),floor.structure.length - min_room_length//2)
                 floor1,floor2 = floor.split_vertical(split)

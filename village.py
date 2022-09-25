@@ -11,8 +11,7 @@ from RandomiseMaterial import RandomiseMaterial
 import random
 
 from models.House import House
-from models.Structure import Structure, Vector
-
+from models.Structure import *
 
 import path_gen
 
@@ -128,14 +127,16 @@ if __name__ == "__main__":
     #         elif chatEvent.message.upper() == "HOUSE":
                 
     # position = mc.player.getTilePos()
-    # vecPos = vec3.Vec3(position)
-    # vecPos = position
-    # weith = random.randint(8,12)
-    # length = random.randint(12,16)
-    # structure1 = Structure(position,weith,length)
+    # vecPos = create_vector(position,0, -12, -5)
+    # weith = random.randint(15,20)
+    # length = random.randint(20,30)
+    # structure1 = Structure(vecPos,weith,length)
     # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
     # house1 = House(structure1)
     # house1.create_house(mc)
+
+
+    
     
     
 
