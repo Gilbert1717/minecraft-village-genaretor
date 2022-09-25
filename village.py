@@ -86,55 +86,7 @@ if __name__ == "__main__":
 
 
     
-    #house1_location = McPosition(x,y,z)
-    #mc.player.setPos(x,y,z)
-
-     #while mc.getBlock(x + 1,y,z + 1) is 0:
-       # y = y - 1
-    # print(x,y,z)
-    # mc.setBlock(x + 1,y + 1,z + 1, 1) 
-    # x = 0
-    # y = 0
-    # z = 0
-    # position = vec3.Vec3(0,0,0)
-    # mc.setBlocks(x,y - 1,z,x + 30, y + 50, z + 30, 0)
-    # mc.setBlocks(x + 10,y -1,z + 10,x - 30, y + 50, z - 30, 0)
-    # position = mc.player.getTilePos()
-    # vecPos = vec3.Vec3(position)
-    # width = random.randint(8,12)
-    # length = random.randint(-16,-12)
-    # structure1 = Structure(position,width,length)
-    # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
-    #house1 = House(structure1,3)
-    #house1.create_house(mc)
-    #ran = RandomiseMaterial()
-    #ran.rooftop(mc,position .x,position.y,position.z)
-    
-    
-    #material = ran.random_furniture()
-    
-    
-    # quit = False
-    
-    # while not quit:
-    #     chatEvents = mc.events.pollChatPosts()
-        
-    #     for chatEvent in chatEvents:
-            
-    #         if chatEvent.message.upper() == "QUIT":
-    #             quit = True
-                
-    #         elif chatEvent.message.upper() == "HOUSE":
-                
-    # position = mc.player.getTilePos()
-    # vecPos = create_vector(position,0, -12, -5)
-    # weith = random.randint(15,20)
-    # length = random.randint(20,30)
-    # structure1 = Structure(vecPos,weith,length)
-    # print(structure1.frontleft.x,structure1.frontleft.z,structure1.frontright.x,structure1.frontright.z)
-    # house1 = House(structure1)
-    # house1.create_house(mc)
-
+   
 
     
     

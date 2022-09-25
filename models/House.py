@@ -397,8 +397,7 @@ class House:
         for floor in self.floors:
             for room in floor.rooms:
                 floor.create_window(mc,room)   
-                # print(floor.frontleft.x,floor.frontleft.y,floor.frontleft.z)
-                # print(room.frontleft.x,room.frontleft.y,room.frontleft.z)  
+               
     
 
     def front_side(self,mc):
@@ -424,7 +423,7 @@ class House:
         for floor in self.floors:
             for room in floor.rooms:
                 floor.place_furniture(mc, room)
-                # print("placing furniture")
+                
 
     def create_house(self,mc):
         self.create_floor(mc)
@@ -435,9 +434,6 @@ class House:
         self.create_windows(mc)
         self.front_side(mc)
         self.create_furniture(mc)
-        # self.back_window(mc)
-        # self.side_window(mc,self.structure.frontleft)
-        # self.side_window(mc,self.structure.frontright)
-        
+       
 
 
