@@ -428,7 +428,7 @@ class House:
         self.create_walls(mc)
         self.create_windows(mc)
         self.creating_front_door(mc)
-        # self.create_furniture(mc)
+        self.create_furniture(mc)
          
        
 
