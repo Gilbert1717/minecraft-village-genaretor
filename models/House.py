@@ -68,7 +68,7 @@ class House:
                     block_difference_z = z - floor.frontleft.z # Setting the offset position to place glowstone on column
                     mc.setBlock(floor.frontleft.x + block_difference_x, floor.frontleft.y + self.structure.height,
                                 floor.frontleft.z + block_difference_z, block.GLOWSTONE_BLOCK.id)
-                    print(f"glowstone block at: {floor.frontleft.x + block_difference_x}, {floor.frontleft.y + self.structure.height}, {floor.frontleft.z + block_difference_z}")
+                    
             self.floors.append(floor)
 
 
@@ -307,8 +307,7 @@ class House:
                     end_point.z -= 1
                     
                     # Placing the roof structure
-                    create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
-                    print("minus direction")    
+                    create_blocks(mc, start_point, end_point, block.COBBLESTONE.id) 
                                
                     
             else:
@@ -328,9 +327,7 @@ class House:
                     end_point.z += 1
 
                     # Placing the roof structure 
-                    create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)
-                    print("positive direction")    
-            
+                    create_blocks(mc, start_point, end_point, block.COBBLESTONE.id)  
    
         
     def create_walls(self,mc):
