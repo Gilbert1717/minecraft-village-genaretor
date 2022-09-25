@@ -390,8 +390,8 @@ class House:
                 floor.create_window(mc,room)   
                
     
-
-    def front_side(self,mc):
+    
+    def creating_front_door(self,mc):
         Air = 0
         window_block = 95
         door = 64
@@ -423,7 +423,7 @@ class House:
         self.create_stairs(mc)
         self.create_walls(mc)
         self.create_windows(mc)
-        self.front_side(mc)
+        self.creating_front_door(mc)
         self.create_furniture(mc)
        
 
