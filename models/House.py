@@ -10,14 +10,13 @@ from fast_query_and_interpolation.mcpi_query_performance import query_blocks
 
 rm = RandomiseMaterial()
 
-         
 
 
 class House:
     def __init__ (self,structure):
         self.structure = structure
-        self.stories = 5
-        # random.randint(0,10)
+        # randomly make the stories of the house between 1 to 6
+        self.stories = random.randint(0,5)
         self.height = structure.height * self.stories
         # Floor list restore all the floor instance in the house
         self.floors = []
@@ -398,12 +397,25 @@ class House:
         for floor in self.floors:
             for room in floor.rooms:
                 floor.create_window(mc,room)   
-                # print(floor.frontleft.x,floor.frontleft.y,floor.frontleft.z)
-                # print(room.frontleft.x,room.frontleft.y,room.frontleft.z)  
+               
     
 
     def front_side(self,mc):
-        self.front_door = create_door(mc,self.structure.frontleft,self.structure.frontright)
+        Air = 0
+        window_block = 95
+        door = 64
+        # assign a variable to make the code easier to read
+        vector = self.structure.frontleft
+        create_x = random.randint(self.structure.frontleft.x, self.structure.frontright.x)
+        while (mc.getBlock(create_x, vector.y + 2, vector.z + 1) != Air or
+                mc.getBlock(create_x, vector.y + 2, vector.z - 1) != Air or 
+                mc.getBlock(create_x, vector.y + 2, vector.z) == window_block):
+            create_x = random.randint(self.structure.frontleft.x, self.structure.frontright.x)
+        mc.setBlock(create_x, vector.y + 1, vector.z, block.AIR)
+        mc.setBlock(create_x, vector.y + 2, vector.z, block.AIR)
+        mc.setBlock(create_x , vector.y + 2, vector.z,door,8)
+        mc.setBlock(create_x , vector.y + 1, vector.z,door,0)
+        self.front_door = Vec3(create_x, self.structure.frontleft.y, self.structure.frontleft.z)
         
 
     def create_furniture(self, mc):
@@ -411,7 +423,7 @@ class House:
         for floor in self.floors:
             for room in floor.rooms:
                 floor.place_furniture(mc, room)
-                # print("placing furniture")
+                
 
     def create_house(self,mc):
         self.create_floor(mc)
@@ -422,9 +434,6 @@ class House:
         self.create_windows(mc)
         self.front_side(mc)
         self.create_furniture(mc)
-        # self.back_window(mc)
-        # self.side_window(mc,self.structure.frontleft)
-        # self.side_window(mc,self.structure.frontright)
-        
+       
 
 
