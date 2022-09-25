@@ -170,7 +170,6 @@ class House:
                 
                 # Find the midpoint to see how many times we need to iterate to complete the roof.
                 midpoint = math.ceil(self.structure.width / 2)
-                mc.postToChat(f"midpoint: {midpoint}")
                 
                 
                 # If the width is even, the middle will be empty. So we will fill it with blocks.
@@ -228,7 +227,6 @@ class House:
                 
                 # Find midpoint to see how many iterations are required to fill in the roof.
                 midpoint = math.ceil(self.structure.width / 2)
-                mc.postToChat(f"positive z, midpoint: {midpoint}")
                 
                 
                 # If the width is even, the middle will be empty. So we will fill it with blocks.
@@ -295,7 +293,7 @@ class House:
             
                 # Find the midpoint to see how many iterations we need to complete the roof.
                 midpoint = math.ceil(self.structure.width / 2)
-                mc.postToChat(f"midpoint: {midpoint}")    
+ 
                     
                 # Creating the roof structure.
                 for minus in range(1, midpoint):
@@ -316,11 +314,7 @@ class House:
             else:
                 
                 # Find the midpoint to see how many iterations we need to complete the roof.
-                midpoint = math.ceil(self.structure.width / 2)
-                mc.postToChat(f"midpoint: {midpoint}")   
-                mc.postToChat(f"frontleft: {start_point.x}, {start_point.z}")
-                mc.postToChat(f"backright: {end_point.x}, {end_point.z}")
-                
+                midpoint = math.ceil(self.structure.width / 2) 
                 
                 # Creating the roof structure.
                 for positive in range(1, midpoint):
