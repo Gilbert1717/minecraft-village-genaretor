@@ -27,6 +27,7 @@ def create_door(mc,vector1,vector2):
         length = abs(vector2.z - vector1.z)
         if vector2.z > vector1.z:
             create_z = vector1.z + random.randint(3,length - 3)
+            # check if the randomised coordinate is suitable for placing a door
             while (mc.getBlock(vector1.x + 1, vector1.y + 2, create_z) != Air or
                     mc.getBlock(vector1.x - 1, vector1.y + 2, create_z ) != Air or
                     mc.getBlock(vector1.x, vector1.y + 2, create_z) == window_block):
@@ -34,10 +35,12 @@ def create_door(mc,vector1,vector2):
             
         else:
             create_z = vector1.z - random.randint(3,length - 3)
+            # check if the randomised coordinate is suitable for placing a door
             while (mc.getBlock(vector1.x + 1, vector1.y + 2, create_z) != Air or
                     mc.getBlock(vector1.x - 1, vector1.y + 2, create_z) != Air or
                     mc.getBlock(vector1.x, vector1.y + 2, create_z) == window_block):
                 create_z = vector1.z - random.randint(3,length - 3)
+        # Place the door on room's wall
         mc.setBlock(vector1.x, vector1.y + 1, create_z, block.AIR)
         mc.setBlock(vector1.x, vector1.y + 2, create_z, block.AIR)
         mc.setBlock(vector1.x, vector1.y + 2, create_z,door,8)
